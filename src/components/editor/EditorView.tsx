@@ -10,6 +10,7 @@ import { PrintPreview } from '@/components/pages/PrintPreview';
 import { Button } from '@/components/ui/button';
 import { PrinterIcon } from '@/components/ui/icons';
 import { PageSettings } from '@/components/workspace/PageSettings';
+import { GrammarPanel } from '@/components/workspace/GrammarPanel';
 import { VersionHistory } from '@/components/workspace/VersionHistory';
 import { useEditorShortcuts } from '@/hooks/useEditorShortcuts';
 import { setLanguage } from '@/lib/document-ops';
@@ -131,6 +132,7 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
             </section>
           ) : null}
           {panel.kind === 'versions' ? <VersionHistory /> : null}
+          {panel.kind === 'grammar' ? <GrammarPanel doc={doc} /> : null}
         </div>
 
         <div
