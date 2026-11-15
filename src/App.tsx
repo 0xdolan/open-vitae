@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EditorView } from '@/components/editor/EditorView';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ResumeLibrary } from '@/components/library/ResumeLibrary';
 import { SampleGallery } from '@/components/library/SampleGallery';
 import { StorageNotice } from '@/components/StorageNotice';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/Toaster';
 import { useHashRoute } from '@/hooks/useHashRoute';
+import { applyDocumentLocale, useT } from '@/i18n';
 import { useFontStore, useResumeStore } from '@/stores';
 
 function Messages() {
+  const t = useT();
   const message = useResumeStore((s) => s.message);
   const invalidCount = useResumeStore((s) => s.invalidCount);
   const dismissMessage = useResumeStore((s) => s.dismissMessage);
@@ -23,14 +26,13 @@ function Messages() {
         >
           <p>{message}</p>
           <Button variant="ghost" size="sm" onClick={dismissMessage}>
-            Dismiss
+            {t('app.dismiss')}
           </Button>
         </div>
       ) : null}
       {invalidCount > 0 ? (
         <p role="status" className="rounded-lg border border-stone-300 bg-white px-4 py-3 text-sm">
-          {invalidCount === 1 ? 'One saved resume' : `${invalidCount} saved resumes`} could not be
-          read and {invalidCount === 1 ? 'was' : 'were'} left untouched.
+          {t('app.unreadable', { count: invalidCount })}
         </p>
       ) : null}
     </>
@@ -38,32 +40,40 @@ function Messages() {
 }
 
 function LibraryView() {
+  const t = useT();
   const clearAll = useResumeStore((s) => s.clearAll);
   const [confirmClear, setConfirmClear] = useState(false);
 
   return (
     <div className="flex flex-col gap-8">
-      <header>
-        <h1 className="text-brand text-3xl font-bold tracking-tight">Open Vitae</h1>
-        <p className="text-stone-600">
-          A private resume builder that runs entirely in your browser.
-        </p>
+      <header className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1
+            className="text-brand text-3xl font-bold tracking-tight"
+            tabIndex={-1}
+            id="page-title"
+          >
+            {t('app.name')}
+          </h1>
+          <p className="text-stone-600">{t('app.tagline')}</p>
+        </div>
+        <LanguageSwitcher />
       </header>
       <StorageNotice />
       <Messages />
       <ResumeLibrary />
       <SampleGallery />
       <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-4 text-sm text-stone-500">
-        <p>Free software under GPL-3.0.</p>
+        <p>{t('app.licence')}</p>
         <Button variant="danger-ghost" size="sm" onClick={() => setConfirmClear(true)}>
-          Delete all data in this browser
+          {t('app.deleteAll')}
         </Button>
       </footer>
       <ConfirmDialog
         open={confirmClear}
-        title="Delete all data?"
-        description="Every resume, every saved version, every font you loaded, every draft and setting stored by Open Vitae in this browser will be removed. This cannot be undone. Export backups first if you might need them."
-        confirmLabel="Delete everything"
+        title={t('app.deleteAllTitle')}
+        description={t('app.deleteAllBody')}
+        confirmLabel={t('app.deleteAllConfirm')}
         onCancel={() => setConfirmClear(false)}
         onConfirm={() => {
           void clearAll().then(() => useFontStore.getState().reset());
@@ -75,26 +85,31 @@ function LibraryView() {
 }
 
 function NotFound() {
+  const t = useT();
   return (
     <div className="mx-auto max-w-md py-16 text-center">
-      <h1 className="text-xl font-bold">This resume is not in this browser</h1>
-      <p className="mt-2 text-stone-600">
-        It may have been deleted, or it was saved in another browser or device.
-      </p>
+      <h1 className="text-xl font-bold" tabIndex={-1} id="page-title">
+        {t('app.notFoundTitle')}
+      </h1>
+      <p className="mt-2 text-stone-600">{t('app.notFoundBody')}</p>
       <a href="#/" className="text-brand mt-4 inline-block font-semibold underline">
-        Back to my resumes
+        {t('app.backToLibrary')}
       </a>
     </div>
   );
 }
 
 export function App() {
+  const t = useT();
   const init = useResumeStore((s) => s.init);
   const flush = useResumeStore((s) => s.flush);
   const status = useResumeStore((s) => s.status);
   const setActive = useResumeStore((s) => s.setActive);
   const route = useHashRoute();
   const doc = useResumeStore((s) => (route.name === 'editor' ? s.resumes[route.id] : undefined));
+
+  // The page language and direction follow the interface language.
+  useEffect(() => applyDocumentLocale(t.locale), [t.locale]);
 
   useEffect(() => {
     void init();
@@ -120,7 +135,7 @@ export function App() {
 
   let content;
   if (status === 'idle' || status === 'loading') {
-    content = <p className="text-sm text-stone-600">Loading your resumes…</p>;
+    content = <p className="text-sm text-stone-600">{t('app.loading')}</p>;
   } else if (route.name === 'library') {
     content = <LibraryView />;
   } else if (doc) {
@@ -136,7 +151,19 @@ export function App() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-[110rem] flex-col gap-4 p-3 sm:p-6">
-      <main>{content}</main>
+      <a
+        href="#main"
+        className="bg-brand sr-only fixed top-2 start-2 z-50 rounded-md px-3 py-2 text-white focus:not-sr-only"
+        onClick={(event) => {
+          event.preventDefault();
+          document.getElementById('main')?.focus();
+        }}
+      >
+        {t('app.skipToContent')}
+      </a>
+      <main id="main" tabIndex={-1} className="outline-none">
+        {content}
+      </main>
       <Toaster />
     </div>
   );

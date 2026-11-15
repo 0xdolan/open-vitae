@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useToastStore, type Toast } from '@/stores/toast-store';
+import { useT } from '@/i18n';
 
 function SuccessIcon() {
   return (
@@ -20,6 +21,7 @@ function ErrorIcon() {
 }
 
 function ToastItem({ toast }: { readonly toast: Toast }) {
+  const t = useT();
   const dismiss = useToastStore((s) => s.dismiss);
 
   return (
@@ -59,7 +61,7 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
         type="button"
         onClick={() => dismiss(toast.id)}
         className="absolute end-2 top-2 rounded-md px-2 py-1 text-stone-500 hover:bg-stone-100 hover:text-ink"
-        aria-label="Dismiss notification"
+        aria-label={t('toast.dismiss')}
       >
         ×
       </button>
@@ -84,10 +86,11 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
 
 /** Notifications in the bottom corner on the reading-end side (right in LTR, left in RTL). */
 export function Toaster() {
+  const t = useT();
   const toasts = useToastStore((s) => s.toasts);
   return (
     <ol
-      aria-label="Notifications"
+      aria-label={t('toast.region')}
       className="pointer-events-none fixed end-4 bottom-4 z-50 flex flex-col items-end gap-2"
     >
       {toasts.map((t) => (

@@ -13,6 +13,7 @@ import {
 
 import { arrayMove } from '@/lib/document-ops';
 import { cn } from '@/lib/utils';
+import { useT } from '@/i18n';
 
 /**
  * Where a dragged item lands: the number of other items whose vertical middle
@@ -76,6 +77,7 @@ export function SortableList<T>({
 }: SortableListProps<T>) {
   const instructionsId = useId();
   const [drag, setDrag] = useState<DragState | null>(null);
+  const t = useT();
   const [announcement, setAnnouncement] = useState('');
   const itemRefs = useRef(new Map<string, HTMLLIElement>());
   const handleRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -93,7 +95,7 @@ export function SortableList<T>({
     }
   });
 
-  const position = (index: number) => `position ${index + 1} of ${items.length}`;
+  const position = (index: number) => t('sort.position', { index: index + 1, total: items.length });
 
   const finish = useCallback(
     (state: DragState, commit: boolean) => {
@@ -103,12 +105,12 @@ export function SortableList<T>({
       if (commit && state.over !== state.from) {
         refocusId.current = state.mode === 'keyboard' ? state.id : null;
         onMove(state.from, state.over);
-        setAnnouncement(`${name} dropped at ${position(state.over)}.`);
+        setAnnouncement(t('sort.dropped', { name, position: position(state.over) }));
       } else {
         setAnnouncement(
           commit
-            ? `${name} dropped in its original place.`
-            : `Move cancelled. ${name} is back at ${position(state.from)}.`,
+            ? t('sort.droppedSame', { name })
+            : t('sort.cancelled', { name, position: position(state.from) }),
         );
       }
     },
@@ -177,9 +179,7 @@ export function SortableList<T>({
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
         setDrag({ id, from: index, over: index, mode: 'keyboard' });
-        setAnnouncement(
-          `Picked up ${name}, ${position(index)}. Use the arrow keys to move, Space to drop, Escape to cancel.`,
-        );
+        setAnnouncement(t('sort.picked', { name, position: position(index) }));
       }
       return;
     }
@@ -187,7 +187,7 @@ export function SortableList<T>({
     const moveTo = (over: number) => {
       const clamped = Math.max(0, Math.min(items.length - 1, over));
       setDrag({ ...picked, over: clamped });
-      setAnnouncement(`${name}, ${position(clamped)}.`);
+      setAnnouncement(t('sort.moved', { name, position: position(clamped) }));
     };
 
     switch (event.key) {
@@ -251,7 +251,7 @@ export function SortableList<T>({
                     if (el) handleRefs.current.set(id, el);
                     else handleRefs.current.delete(id);
                   },
-                  'aria-label': `Reorder ${name}`,
+                  'aria-label': t('sort.reorder', { name }),
                   'aria-describedby': instructionsId,
                   'aria-pressed': isDragging && drag?.mode === 'keyboard' ? true : undefined,
                   onPointerDown: (e) => onPointerDown(e, id, originalIndex),
@@ -271,8 +271,7 @@ export function SortableList<T>({
         })}
       </ul>
       <p id={instructionsId} className="sr-only">
-        Drag with a mouse or finger, or press Space or Enter to pick up, use the arrow keys to move,
-        then Space or Enter to drop. Press Escape to cancel.
+        {t('sort.help')}
       </p>
       <p aria-live="assertive" className="sr-only">
         {announcement}
