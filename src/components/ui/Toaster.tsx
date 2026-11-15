@@ -38,7 +38,19 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       <div className="min-w-0">
         <p className="font-semibold text-ink">{toast.title}</p>
         {toast.description ? (
-          <p className="mt-0.5 text-sm break-words text-stone-600">{toast.description}</p>
+          <p className="mt-0.5 text-sm break-words text-stone-600" dir="auto">{toast.description}</p>
+        ) : null}
+        {toast.action ? (
+          <button
+            type="button"
+            className="text-brand mt-2 rounded-md text-sm font-semibold underline-offset-2 hover:underline"
+            onClick={() => {
+              toast.action?.onClick();
+              dismiss(toast.id);
+            }}
+          >
+            {toast.action.label}
+          </button>
         ) : null}
       </div>
       <button
