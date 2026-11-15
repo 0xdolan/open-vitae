@@ -8,6 +8,7 @@ import { emailError, urlError } from '@/lib/field-validation';
 import type { Profile, ResumeDocument } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
 
+import { PhotoField } from '@/components/photo/PhotoField';
 import { RichTextField } from '@/components/rich-text/RichTextField';
 import { PanelHeading } from './PanelHeading';
 
@@ -48,6 +49,8 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
           />
         ))}
       </div>
+
+      <PhotoField doc={doc} />
 
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-1 text-xs font-semibold text-stone-700">Links</legend>
