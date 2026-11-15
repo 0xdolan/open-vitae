@@ -35,11 +35,12 @@ Nothing is sent to a server. Clearing the site's data in the browser removes all
 
 ```text
 ResumeDocument
-├── schemaVersion        format version, currently 1
+├── schemaVersion        format version, currently 2
 ├── id, name, language   language is a BCP 47 tag such as en, fa, ckb
 ├── createdAt, updatedAt ISO 8601 timestamps
 ├── layout               page size, orientation, margin, page breaks, direction,
-│                        font, base text size, line height, accent colour
+│                        font, base text size, line height, accent colour,
+│                        indent size (indentCh) and nesting limit (maxDepth)
 ├── profile              name, headline, email, phone, location, website,
 │                        links[], summary (rich text), name and headline styles
 ├── photo?               data URL, alignment, shape, width
@@ -68,7 +69,7 @@ Data is validated **on every read and every write**. Invalid data is never writt
 | Links on the page         | Only absolute `http`, `https`, `mailto`, `tel` become links when drawn | `javascript:` and `data:` links |
 | Photo                     | PNG, JPEG or WebP data URL, about 5 MB at most    | SVG with scripts, oversized storage   |
 | Ids                       | 1–64 URL-safe characters, unique in the document  | Broken lists and drag and drop        |
-| Rich text                 | 100,000 characters, then sanitised by DOMPurify   | Scripts, event handlers, iframes      |
+| Rich text                 | 2 MB (room for small images), then sanitised; styles, classes and images go through allowlists | Scripts, handlers, iframes, remote images, positioning |
 | Unknown fields            | Dropped                                           | Smuggling data through imports        |
 
 The sanitiser ([`src/lib/sanitize.ts`](../src/lib/sanitize.ts)) keeps formatting, lists, tables, links and the `dir` and `lang` attributes needed for mixed-direction text. It removes everything else and makes links open in a new tab with `rel="noopener noreferrer"`. [`SafeHtml`](../src/components/SafeHtml.tsx) is the only component allowed to insert HTML; lint blocks it everywhere else.
@@ -80,6 +81,11 @@ Every document has a `schemaVersion`. When the shape of stored data changes:
 1. Raise `RESUME_SCHEMA_VERSION` in `src/schema/resume.ts`.
 2. Add a migration to `MIGRATIONS` in [`src/lib/migrations.ts`](../src/lib/migrations.ts), keyed by the version it upgrades from.
 3. Add a test that upgrades a document from the old version.
+
+| Version | Phase | Change                                                         |
+| ------- | ----- | -------------------------------------------------------------- |
+| 1       | 2     | First format                                                   |
+| 2       | 4     | Adds `layout.indentCh` (default 4) and `layout.maxDepth` (default unlimited) |
 
 Documents are migrated before validation, on load and on import. A document from a **newer** app version is refused with a clear message instead of being damaged. Unreadable entries are reported and left in storage untouched.
 

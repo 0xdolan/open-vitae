@@ -1,6 +1,6 @@
 # The editor
 
-Previous: [Data and storage](07-data-and-storage.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Data and storage](07-data-and-storage.md) · Next: [Rich text editor](09-rich-text-editor.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -58,7 +58,7 @@ After a keyboard drop, focus stays on the moved item's handle so it can be moved
 ## Editing content
 
 - **Entries** open and close like an accordion. Each has show/hide, duplicate and delete buttons. Field labels match the section: "Job title" and "Company or organisation" for experience, "Degree or qualification" and "School or university" for education, "Language" and "Level" for languages, and so on.
-- **Descriptions and the summary** use a basic editor for now: write paragraphs, and start a line with "- " for a bullet. Text with formatting the basic editor cannot keep (bold, links, tables) is shown read-only, with an explicit option to convert it to plain text. The full rich text editor replaces this in phase 4.
+- **Descriptions and the summary** use the full rich text editor, described in [Rich text editor](09-rich-text-editor.md).
 - **Deleting a section** shows a message with an **Undo** button that puts it back where it was.
 - All text fields follow the direction of what is typed, so Persian or Arabic entries display correctly in an English interface and the other way round.
 
@@ -95,7 +95,6 @@ Values that could affect the page itself (colours, font names, ids, photos) are 
 | `src/components/editor/Navigator.tsx`        | Side panel                                      |
 | `src/components/editor/ProfilePanel.tsx`     | Profile form and links                          |
 | `src/components/editor/SectionPanel.tsx`     | Section form and entries                        |
-| `src/components/editor/DescriptionField.tsx` | Basic description editor                        |
 | `src/components/ui/sortable.tsx`             | Accessible reorderable list                     |
 | `src/lib/document-ops.ts`                    | Pure edits: add, move, duplicate, remove        |
 | `src/lib/plain-text.ts`                      | Simple rich text ⇄ plain text                   |
@@ -104,4 +103,4 @@ Values that could affect the page itself (colours, font names, ids, photos) are 
 
 ---
 
-Previous: [Data and storage](07-data-and-storage.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Data and storage](07-data-and-storage.md) · Next: [Rich text editor](09-rich-text-editor.md) · [Docs home](README.md) · [Main README](../README.md)

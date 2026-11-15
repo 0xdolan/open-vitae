@@ -8,6 +8,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Full rich text editor for descriptions and the summary: headings, fonts, sizes, line spacing, bold, italic, underline, strikethrough, subscript, superscript, colours, highlight, alignment, paragraph direction, quotes, horizontal lines, links, emoji, cut, copy and paste as plain text.
+- Bulleted and numbered lists that nest, with indent size (default 4 spaces) and an optional nesting limit in Page setup.
+- Tables with rows, columns, merged cells, header row and a borderless option.
+- Images embedded from files, shrunk and stripped of metadata, with alignment and width.
+- Code blocks with syntax highlighting for 20 languages, in a monospaced font.
+- Find and replace (match case, whole words in any script), format painter, text presets, word and character counts, spell check toggle.
+- Pronunciation guide in the README.
+
+### Changed
+
+- Resume format version 2: indent size and nesting limit. Older resumes and backups are upgraded automatically.
+- The sanitiser now allows the editor's formatting through strict allowlists and removes remote images entirely.
 - Separate library and editor screens with addresses that survive reloads and work with the back button.
 - Navigator side panel: page setup, profile, sections in page order, add section, version history.
 - Drag and drop for sections, entries and links that works with a mouse, touch and the keyboard, with screen reader announcements.

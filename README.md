@@ -4,7 +4,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 3 of 11. A working editor with drag-and-drop sections, undo and live preview; autosave with a full version history; JSON backups; five sample resumes. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 4 of 11. A full rich text editor (tables, images, code, find and replace, nested lists); drag-and-drop sections with undo and live preview; autosave with a full version history; JSON backups; five sample resumes. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -97,6 +97,7 @@ open-vitae/
 7. [Roadmap](docs/06-roadmap.md)
 8. [Data and storage](docs/07-data-and-storage.md)
 9. [The editor](docs/08-editor.md)
+10. [Rich text editor](docs/09-rich-text-editor.md)
 
 ## Contributing
 
