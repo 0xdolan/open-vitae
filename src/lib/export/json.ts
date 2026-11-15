@@ -7,7 +7,7 @@ import { exportFileName } from './file-name';
 export const EXPORT_FORMAT = 'open-vitae';
 export const EXPORT_FORMAT_VERSION = 1;
 
-/** The file people download. The import screen (phase 8) reads exactly this. */
+/** The file people download, and the import reads back (see lib/interchange/import-file.ts). */
 export interface JsonExportEnvelope {
   readonly format: typeof EXPORT_FORMAT;
   readonly formatVersion: typeof EXPORT_FORMAT_VERSION;
