@@ -62,6 +62,27 @@ describe('version repository', () => {
     expect((await repo.load(doc.id, v1?.id ?? ''))?.photo?.dataUrl).toBe(photo.dataUrl);
   });
 
+  it('keeps the uncropped source picture once and restores it with the photo', async () => {
+    const { store, repo, doc } = setup();
+    const source = {
+      dataUrl: `data:image/webp;base64,${'B'.repeat(6000)}`,
+      width: 1200,
+      height: 1600,
+      crop: { x: 100, y: 200, width: 900, height: 900, rotation: 0 },
+    } as const;
+    const photo = { dataUrl: `data:image/jpeg;base64,${'C'.repeat(3000)}`, align: 'end', shape: 'rounded', widthMm: 32, source } as const;
+    const v1 = await repo.record({ ...doc, photo }, { reason: 'created' });
+    await repo.record(rename({ ...doc, photo }, 'Two'), { reason: 'autosave' });
+
+    expect((await store.keys()).filter((k) => k.startsWith('photo:'))).toHaveLength(2);
+    const loaded = await repo.load(doc.id, v1?.id ?? '');
+    expect(loaded?.photo?.source).toEqual(source);
+    expect(loaded?.photo?.dataUrl).toBe(photo.dataUrl);
+
+    // Both images stay while a version refers to them.
+    expect(await repo.collectGarbage()).toBe(0);
+  });
+
   it('prunes old autosaves but keeps named versions and the latest', async () => {
     const { repo, doc } = setup();
     await repo.record(doc, { reason: 'created' });

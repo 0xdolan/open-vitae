@@ -8,6 +8,7 @@ import type {
   ProfileLink,
   ResumeDocument,
   ResumeItem,
+  ResumePhoto,
   ResumeSection,
 } from '@/schema/resume';
 
@@ -222,4 +223,35 @@ export function setLanguage(doc: ResumeDocument, language: string): ResumeDocume
     };
   }
   return { ...doc, language, layout, sections };
+}
+
+/** Default placement for a newly added photo. */
+export const DEFAULT_PHOTO_SETTINGS: Pick<ResumePhoto, 'align' | 'shape' | 'widthMm'> = {
+  align: 'end',
+  shape: 'rounded',
+  widthMm: 30,
+};
+
+/** Add or replace the photo, keeping the current placement when there is one. */
+export function setPhoto(
+  doc: ResumeDocument,
+  photo: Pick<ResumePhoto, 'dataUrl' | 'source'> & Partial<ResumePhoto>,
+): ResumeDocument {
+  const placement = doc.photo
+    ? { align: doc.photo.align, shape: doc.photo.shape, widthMm: doc.photo.widthMm }
+    : DEFAULT_PHOTO_SETTINGS;
+  return { ...doc, photo: { ...placement, ...photo } };
+}
+
+export function updatePhoto(
+  doc: ResumeDocument,
+  patch: Partial<Pick<ResumePhoto, 'align' | 'shape' | 'widthMm'>>,
+): ResumeDocument {
+  return doc.photo ? { ...doc, photo: { ...doc.photo, ...patch } } : doc;
+}
+
+export function removePhoto(doc: ResumeDocument): ResumeDocument {
+  const next = { ...doc };
+  delete next.photo;
+  return next;
 }

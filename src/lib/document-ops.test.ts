@@ -18,8 +18,11 @@ import {
   moveSection,
   removeItem,
   removeLink,
+  removePhoto,
   removeSection,
   setLanguage,
+  setPhoto,
+  updatePhoto,
   updateItem,
   updateLink,
   updateProfile,
@@ -159,5 +162,24 @@ describe('setLanguage', () => {
     const doc = { ...createBlankResume('Test', 'ltr') };
     const custom = { ...doc, layout: { ...doc.layout, fontFamily: 'Arial' } };
     expect(setLanguage(custom, 'fa').layout.fontFamily).toBe('Arial');
+  });
+});
+
+describe('photo', () => {
+  const image = 'data:image/webp;base64,QUJD';
+
+  it('adds a photo with default placement, keeps placement when replaced, and removes it', () => {
+    const doc = createBlankResume('Test', 'ltr');
+    const added = setPhoto(doc, { dataUrl: image });
+    expect(added.photo).toEqual({ dataUrl: image, align: 'end', shape: 'rounded', widthMm: 30 });
+    expect(resumeSchema.safeParse(added).success).toBe(true);
+
+    const moved = updatePhoto(added, { align: 'center', widthMm: 40 });
+    const replaced = setPhoto(moved, { dataUrl: 'data:image/jpeg;base64,REVG' });
+    expect(replaced.photo).toMatchObject({ align: 'center', widthMm: 40, shape: 'rounded' });
+
+    const removed = removePhoto(replaced);
+    expect('photo' in removed).toBe(false);
+    expect(updatePhoto(removed, { widthMm: 20 })).toBe(removed);
   });
 });

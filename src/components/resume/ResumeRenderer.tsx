@@ -2,6 +2,7 @@ import { useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { SafeHtml } from '@/components/SafeHtml';
 import { fontStack } from '@/config/fonts';
+import { PHOTO_RADIUS } from '@/config/layout';
 import { isValidEmail } from '@/lib/field-validation';
 import { isSafeUrl, telUrl } from '@/lib/url';
 import { cn } from '@/lib/utils';
@@ -31,7 +32,7 @@ function displayUrl(url: string): string {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
 
-function ContactLine({ doc }: { readonly doc: ResumeDocument }) {
+function ContactLine({ doc, centred = false }: { readonly doc: ResumeDocument; readonly centred?: boolean }) {
   const { email, phone, location, website, links } = doc.profile;
   const parts: ReactNode[] = [];
 
@@ -58,7 +59,7 @@ function ContactLine({ doc }: { readonly doc: ResumeDocument }) {
 
   if (parts.length === 0) return null;
   return (
-    <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[0.9em] text-stone-600">
+    <p className={cn('mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[0.9em] text-stone-600', centred && 'justify-center')}>
       {parts.map((part, i) => (
         <span key={i} className="inline-flex items-center gap-3">
           {i > 0 ? <span aria-hidden="true" className="text-stone-300">•</span> : null}
@@ -216,7 +217,23 @@ export function ResumeRenderer({ doc, selectedSectionId, onSectionClick, pageBlo
       }}
     >
       {showHeader ? (
-      <header data-ov-b="header">
+      <header
+        data-ov-b="header"
+        className={cn(
+          doc.photo && 'flex gap-5',
+          doc.photo?.align === 'center' && 'flex-col items-center text-center',
+          doc.photo?.align === 'end' && 'flex-row-reverse justify-between',
+        )}
+      >
+        {doc.photo ? (
+          <img
+            src={doc.photo.dataUrl}
+            alt={profile.fullName ? `Photo of ${profile.fullName}` : 'Photo'}
+            className="shrink-0 object-cover"
+            style={{ width: `${doc.photo.widthMm}mm`, borderRadius: PHOTO_RADIUS[doc.photo.shape] }}
+          />
+        ) : null}
+        <div className={cn('min-w-0', doc.photo?.align !== 'center' && doc.photo && 'flex-1')}>
         {profile.fullName ? (
           <h1 className="text-[2.2em] leading-tight font-bold" style={toCss(profile.nameStyle)}>
             {profile.fullName}
@@ -227,7 +244,8 @@ export function ResumeRenderer({ doc, selectedSectionId, onSectionClick, pageBlo
             {profile.headline}
           </p>
         ) : null}
-        <ContactLine doc={doc} />
+        <ContactLine doc={doc} centred={doc.photo?.align === 'center'} />
+        </div>
       </header>
       ) : null}
 

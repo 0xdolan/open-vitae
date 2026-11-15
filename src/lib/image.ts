@@ -20,7 +20,7 @@ export class ImageError extends Error {
   override readonly name = 'ImageError';
 }
 
-function loadImage(file: Blob): Promise<HTMLImageElement> {
+export function loadImage(file: Blob): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
