@@ -40,7 +40,7 @@ export const financeSample: SampleDefinition = {
             location: 'Chicago, IL',
             dateRange: '2018 – 2021',
             descriptionHtml: bullets(
-              'Ran FP&A for a $220M commercial lending portfolio.',
+              'Ran FP&amp;A for a $220M commercial lending portfolio.',
               'Designed stress-testing scenarios adopted in the bank’s annual capital plan.',
               'Partnered with credit risk to reprice 140 loans, adding $3.1M in annual interest income.',
             ),
