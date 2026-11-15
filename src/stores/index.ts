@@ -34,10 +34,13 @@ export const useResumeStore = createResumeStore({
   appVersion: __APP_VERSION__,
 });
 
+/** Registers fonts with the browser; exporters read from it which fonts to embed. */
+export const fontRegistrar = createBrowserRegistrar();
+
 /** Fonts: bundled, system, loaded from files (kept in this browser) and Google Fonts (with consent). */
 export const useFontStore = createFontStore({
   kv,
-  registrar: createBrowserRegistrar(),
+  registrar: fontRegistrar,
   preferences: createLocalFontPreferences(),
   baseUrl: import.meta.env.BASE_URL,
 });
