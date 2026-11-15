@@ -102,3 +102,152 @@ export const ArrowDownIcon = (p: IconProps) => (
     <path d="M12 5v14M19 12l-7 7-7-7" />
   </Icon>
 );
+
+// ---------------------------------------------------------------- rich text toolbar
+
+export const AlignLeftIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+  </Icon>
+);
+
+export const AlignCenterIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 6h16M7 10h10M4 14h16M7 18h10" />
+  </Icon>
+);
+
+export const AlignRightIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 6h16M10 10h10M4 14h16M10 18h10" />
+  </Icon>
+);
+
+export const AlignJustifyIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+  </Icon>
+);
+
+export const ListIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M9 6h11M9 12h11M9 18h11" />
+    <circle cx="4.5" cy="6" r="1" fill="currentColor" />
+    <circle cx="4.5" cy="12" r="1" fill="currentColor" />
+    <circle cx="4.5" cy="18" r="1" fill="currentColor" />
+  </Icon>
+);
+
+export const ListOrderedIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M10 6h10M10 12h10M10 18h10M4 4h1v4M4 14h2l-2 3h2" />
+  </Icon>
+);
+
+export const IndentIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 6h16M10 10h10M10 14h10M4 18h16M4 9l3 3-3 3" />
+  </Icon>
+);
+
+export const OutdentIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 6h16M10 10h10M10 14h10M4 18h16M7 9l-3 3 3 3" />
+  </Icon>
+);
+
+export const LinkIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" />
+    <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" />
+  </Icon>
+);
+
+export const ImageIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="9" cy="9" r="2" />
+    <path d="m21 15-5-5L5 21" />
+  </Icon>
+);
+
+export const TableIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M3 10h18M3 15h18M9 4v16M15 4v16" />
+  </Icon>
+);
+
+export const QuoteIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M7 7H4v6h3l-1 4M17 7h-3v6h3l-1 4" />
+  </Icon>
+);
+
+export const CodeIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m8 7-5 5 5 5M16 7l5 5-5 5" />
+  </Icon>
+);
+
+export const CodeBlockIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="m9 10-2 2 2 2M15 10l2 2-2 2" />
+  </Icon>
+);
+
+export const MinusIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 12h16" />
+  </Icon>
+);
+
+export const ScissorsIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="6" cy="6" r="3" />
+    <circle cx="6" cy="18" r="3" />
+    <path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12" />
+  </Icon>
+);
+
+export const ClipboardIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="8" y="2" width="8" height="4" rx="1" />
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+  </Icon>
+);
+
+export const SearchIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.3-4.3" />
+  </Icon>
+);
+
+export const BrushIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M18 2l4 4-9.5 9.5-4-4z" />
+    <path d="M8.5 11.5 6 14c-2 2-2 4-4 6 3 0 6-.5 8-2.5l2.5-2.5" />
+  </Icon>
+);
+
+export const EraserIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21z" />
+    <path d="M22 21H7M5 11l9 9" />
+  </Icon>
+);
+
+export const SmileIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
+  </Icon>
+);
+
+export const SpellcheckIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m6 16 6-12 6 12M8 12h8M16 20l2 2 4-4" />
+  </Icon>
+);
