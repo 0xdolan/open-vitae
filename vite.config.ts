@@ -85,7 +85,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,woff2}', 'fonts/manifest.json'],
         navigateFallback: `${base}index.html`,
       },
     }),
