@@ -345,3 +345,42 @@
     color: #1c1917;
   }
 }
+
+/* ---------------------------------------------------------------- pages and printing */
+
+/* Colours and borders print as shown, without the "background graphics" option. */
+.ov-page {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* Filled only while printing (see PrintLayer). */
+.ov-print-layer {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  body > :not(.ov-print-layer) {
+    display: none !important;
+  }
+
+  .ov-print-layer {
+    display: block;
+  }
+
+  .ov-print-page {
+    break-after: page;
+    break-inside: avoid;
+  }
+
+  .ov-print-page:last-child {
+    break-after: auto;
+  }
+}

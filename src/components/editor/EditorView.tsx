@@ -2,12 +2,17 @@ import { useEffect, useState } from 'react';
 
 import { FontsManager } from '@/components/fonts/FontsManager';
 import { FontStatusNotice } from '@/components/fonts/FontStatusNotice';
-import { PagePreview } from '@/components/PagePreview';
-import { ResumeRenderer } from '@/components/resume/ResumeRenderer';
+import { FlowMeasure } from '@/components/pages/FlowMeasure';
+import { PageStack } from '@/components/pages/PageStack';
+import { PrintLayer } from '@/components/pages/PrintLayer';
+import { PrintPreview } from '@/components/pages/PrintPreview';
+import { Button } from '@/components/ui/button';
+import { PrinterIcon } from '@/components/ui/icons';
 import { PageSettings } from '@/components/workspace/PageSettings';
 import { VersionHistory } from '@/components/workspace/VersionHistory';
 import { useEditorShortcuts } from '@/hooks/useEditorShortcuts';
 import { setLanguage } from '@/lib/document-ops';
+import type { PageSlice } from '@/lib/pagination';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeLayout } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
@@ -27,6 +32,8 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
   const updateActive = useResumeStore((s) => s.updateActive);
   const [panel, setPanel] = useState<Panel>({ kind: 'profile' });
   const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
+  const [pages, setPages] = useState<PageSlice[] | null>(null);
+  const [printPreview, setPrintPreview] = useState(false);
   useEditorShortcuts();
 
   // If the selected section disappears (deleted, undo, another tab), fall back to the profile.
@@ -46,6 +53,10 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
   return (
     <div className="flex flex-col gap-4">
       <EditorHeader doc={doc} />
+      <PrintPreview open={printPreview} doc={doc} pages={pages} onClose={() => setPrintPreview(false)} />
+      <PrintLayer doc={doc} pages={pages} />
+      {/* Measures pages even while the preview tab is hidden on small screens. */}
+      <FlowMeasure doc={doc} onPages={setPages} />
 
       <FontStatusNotice doc={doc} onOpenFonts={() => select({ kind: 'page' })} />
 
@@ -101,13 +112,18 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
           )}
         >
           <div className="rounded-xl bg-stone-200/60 p-3">
-            <PagePreview pageSize={doc.layout.pageSize} orientation={doc.layout.orientation} marginMm={doc.layout.marginMm}>
-              <ResumeRenderer
-                doc={doc}
-                selectedSectionId={panel.kind === 'section' ? panel.id : undefined}
-                onSectionClick={(id) => select({ kind: 'section', id })}
-              />
-            </PagePreview>
+            <PageStack
+              doc={doc}
+              pages={pages}
+              label="Page preview"
+              selectedSectionId={panel.kind === 'section' ? panel.id : undefined}
+              onSectionClick={(id) => select({ kind: 'section', id })}
+              actions={
+                <Button size="sm" onClick={() => setPrintPreview(true)}>
+                  <PrinterIcon /> Print preview
+                </Button>
+              }
+            />
           </div>
           <p className="mt-2 text-center text-xs text-stone-500">Click a section on the page to edit it.</p>
         </div>
