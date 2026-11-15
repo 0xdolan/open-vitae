@@ -22,7 +22,7 @@ import { SECTION_KINDS } from '@/config/sections';
  * Changing the shape of stored data means bumping RESUME_SCHEMA_VERSION and
  * adding a migration in src/lib/migrations.ts.
  */
-export const RESUME_SCHEMA_VERSION = 1;
+export const RESUME_SCHEMA_VERSION = 2;
 
 const idSchema = z.string().regex(/^[A-Za-z0-9_-]{1,64}$/, 'Invalid id');
 
@@ -131,6 +131,10 @@ export const layoutSchema = z.object({
   baseFontSizePt: range(LIMITS.baseFontSizePt),
   lineHeight: range(LIMITS.lineHeight),
   accentColor: hexColorSchema,
+  /** Indent step in character widths; 4 means "four spaces". */
+  indentCh: range(LIMITS.indentCh),
+  /** Deepest list or indent level allowed; null means unlimited. */
+  maxDepth: z.number().int().min(LIMITS.maxDepth.min).max(LIMITS.maxDepth.max).nullable(),
 });
 
 /** Collect every id in a document so duplicates can be rejected. */

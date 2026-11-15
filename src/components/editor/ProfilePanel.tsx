@@ -8,7 +8,7 @@ import { emailError, urlError } from '@/lib/field-validation';
 import type { Profile, ResumeDocument } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
 
-import { DescriptionField } from './DescriptionField';
+import { RichTextField } from '@/components/rich-text/RichTextField';
 import { PanelHeading } from './PanelHeading';
 
 type ProfileTextField = 'fullName' | 'headline' | 'email' | 'phone' | 'location' | 'website';
@@ -107,10 +107,14 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
         </Button>
       </fieldset>
 
-      <DescriptionField
+      <RichTextField
         label="Summary"
         html={profile.summaryHtml}
         placeholder="Two or three sentences about what you do and what you are looking for."
+        language={doc.language}
+        accentColor={doc.layout.accentColor}
+        indentCh={doc.layout.indentCh}
+        maxDepth={doc.layout.maxDepth}
         onChange={(summaryHtml) => updateActive((d) => updateProfile(d, { summaryHtml }), { group: 'profile.summary' })}
       />
     </section>

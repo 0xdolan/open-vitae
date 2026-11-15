@@ -1,4 +1,5 @@
 import { DEFAULT_FONT_BY_DIRECTION, type TextDirection } from '@/config/fonts';
+import { DEFAULT_INDENT_CH } from '@/config/layout';
 import { DEFAULT_PAGE_SIZE } from '@/config/page-sizes';
 import { defaultSectionTitle, type SectionKind } from '@/config/sections';
 import { createId } from '@/lib/id';
@@ -24,6 +25,8 @@ export const DEFAULT_LAYOUT: ResumeLayout = {
   baseFontSizePt: 10,
   lineHeight: 1.4,
   accentColor: '#14532d',
+  indentCh: DEFAULT_INDENT_CH,
+  maxDepth: null,
 };
 
 /** Item content without an id; every text field is optional. */

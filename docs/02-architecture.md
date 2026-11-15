@@ -31,7 +31,8 @@ Previous: [Getting started](01-getting-started.md) · Next: [Git flow](03-git-fl
 | Offline        | `vite-plugin-pwa` (Workbox service worker) |
 | State          | Zustand                                   |
 | Validation     | Zod                                       |
-| HTML sanitising | DOMPurify                                |
+| HTML sanitising | DOMPurify with style, class and image allowlists |
+| Rich text      | TipTap 3 (ProseMirror), highlight.js / lowlight |
 | Storage        | IndexedDB (own small wrapper)             |
 | Tests          | Vitest                                    |
 | Lint / format  | ESLint (typescript-eslint strict), Prettier |

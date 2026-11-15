@@ -167,6 +167,39 @@ export function PageSettings({ layout, onChange }: PageSettingsProps) {
         />
       </Field>
 
+      <Field label="Indent size (spaces)" htmlFor={`${id}-indent`} hint="For lists and indented paragraphs.">
+        <input
+          id={`${id}-indent`}
+          type="number"
+          inputMode="numeric"
+          className={controlClass}
+          min={LIMITS.indentCh.min}
+          max={LIMITS.indentCh.max}
+          step={1}
+          value={layout.indentCh}
+          onChange={(e) => {
+            const value = readNumber(e.target.value, LIMITS.indentCh);
+            if (value !== null) onChange({ indentCh: Math.round(value) });
+          }}
+        />
+      </Field>
+
+      <Field label="Nesting levels" htmlFor={`${id}-depth`} hint="How deep lists and indents may go.">
+        <select
+          id={`${id}-depth`}
+          className={controlClass}
+          value={layout.maxDepth === null ? 'unlimited' : String(layout.maxDepth)}
+          onChange={(e) => onChange({ maxDepth: e.target.value === 'unlimited' ? null : Number(e.target.value) })}
+        >
+          <option value="unlimited">Unlimited</option>
+          {Array.from({ length: 9 }, (_, i) => i + 1).map((n) => (
+            <option key={n} value={n}>
+              {n} {n === 1 ? 'level' : 'levels'}
+            </option>
+          ))}
+        </select>
+      </Field>
+
       <Field label="Accent colour" htmlFor={`${id}-accent`}>
         <input
           id={`${id}-accent`}

@@ -105,4 +105,18 @@ describe('migrateResume', () => {
   it('reports a gap in the migration chain', () => {
     expect(() => migrateResume({ schemaVersion: 1 }, {}, 2)).toThrow(/No upgrade path/);
   });
+
+  it('upgrades a format 1 resume to format 2 with default indent settings', () => {
+    const current = createBlankResume('Old');
+    const oldLayout: Record<string, unknown> = { ...current.layout };
+    delete oldLayout.indentCh;
+    delete oldLayout.maxDepth;
+    const v1 = { ...current, schemaVersion: 1, layout: oldLayout };
+    const result = parseResume(v1);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.resume.schemaVersion).toBe(2);
+      expect(result.resume.layout).toMatchObject({ indentCh: 4, maxDepth: null });
+    }
+  });
 });

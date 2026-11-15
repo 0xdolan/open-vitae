@@ -12,7 +12,8 @@ export const LIMITS = {
   sections: 50,
   itemsPerSection: 200,
   links: 20,
-  htmlLength: 100_000,
+  /** Rich text including small embedded images. */
+  htmlLength: 2_000_000,
   /** About 5 MB of base64 photo data. */
   photoDataUrlLength: 7_000_000,
   marginMm: { min: 0, max: 50 },
@@ -20,4 +21,10 @@ export const LIMITS = {
   lineHeight: { min: 1, max: 3 },
   styleFontSizePt: { min: 4, max: 96 },
   photoWidthMm: { min: 10, max: 80 },
+  /** Indent step for lists and indented paragraphs, in character widths ("spaces"). */
+  indentCh: { min: 1, max: 12 },
+  /** Optional limit on list nesting and paragraph indent levels. */
+  maxDepth: { min: 1, max: 20 },
 } as const;
+
+export const DEFAULT_INDENT_CH = 4;

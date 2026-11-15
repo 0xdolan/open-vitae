@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeItem, ResumeSection } from '@/schema/resume';
 import { toast, useResumeStore } from '@/stores';
 
-import { DescriptionField } from './DescriptionField';
+import { RichTextField } from '@/components/rich-text/RichTextField';
 import { PanelHeading } from './PanelHeading';
 
 interface SectionPanelProps {
@@ -33,6 +33,7 @@ interface SectionPanelProps {
 }
 
 function ItemCard({
+  doc,
   section,
   item,
   open,
@@ -40,6 +41,7 @@ function ItemCard({
   dragHandle,
   highlight,
 }: {
+  readonly doc: ResumeDocument;
   readonly section: ResumeSection;
   readonly item: ResumeItem;
   readonly open: boolean;
@@ -122,9 +124,13 @@ function ItemCard({
             onChange={(url) => set({ url: url.trim() }, 'url')}
           />
           <div className="sm:col-span-2">
-            <DescriptionField
+            <RichTextField
               label={labels.description}
               html={item.descriptionHtml}
+              language={doc.language}
+              accentColor={doc.layout.accentColor}
+              indentCh={doc.layout.indentCh}
+              maxDepth={doc.layout.maxDepth}
               onChange={(descriptionHtml) => set({ descriptionHtml }, 'description')}
             />
           </div>
@@ -234,6 +240,7 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
           className="flex flex-col gap-2"
           renderItem={(item, { handleProps, isDragging, isDropTarget }) => (
             <ItemCard
+              doc={doc}
               section={section}
               item={item}
               open={openItems.has(item.id)}

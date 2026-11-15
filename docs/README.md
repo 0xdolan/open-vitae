@@ -14,6 +14,7 @@
 | 6   | [Roadmap](06-roadmap.md)                  | The eleven build phases and their status            |
 | 7   | [Data and storage](07-data-and-storage.md) | Schema, validation, autosave, version history, backups, samples |
 | 8   | [The editor](08-editor.md)                | Navigator, drag and drop, editing, undo, shortcuts  |
+| 9   | [Rich text editor](09-rich-text-editor.md) | Formatting, lists, tables, images, code, find, safety |
 
 ## Conventions used in these pages
 
