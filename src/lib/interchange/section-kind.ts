@@ -28,7 +28,7 @@ const ALIASES: Readonly<Record<string, SectionKind>> = {
   honours: 'awards',
   'awards and honors': 'awards',
   achievements: 'awards',
-  'papers': 'publications',
+  papers: 'publications',
   research: 'publications',
   volunteer: 'volunteering',
   'volunteer experience': 'volunteering',

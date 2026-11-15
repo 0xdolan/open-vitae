@@ -12,7 +12,13 @@ export const persianSample: SampleDefinition = {
   input: {
     name: 'مهندس ارشد داده',
     language: 'fa',
-    layout: { direction: 'rtl', fontFamily: 'Sahel', accentColor: '#0e7490', baseFontSizePt: 10.5, lineHeight: 1.6 },
+    layout: {
+      direction: 'rtl',
+      fontFamily: 'Sahel',
+      accentColor: '#0e7490',
+      baseFontSizePt: 10.5,
+      lineHeight: 1.6,
+    },
     profile: {
       fullName: 'نگار رحیمی',
       headline: 'مهندس ارشد داده · Python، SQL و Apache Spark',
@@ -57,7 +63,9 @@ export const persianSample: SampleDefinition = {
             subtitle: 'شرکت رایان‌آمار',
             location: 'اصفهان',
             dateRange: '۱۳۹۵ – ۱۳۹۷',
-            descriptionHtml: bullets('تحلیل رفتار مشتریان با Python و pandas و تهیه‌ی گزارش‌های ماهانه.'),
+            descriptionHtml: bullets(
+              'تحلیل رفتار مشتریان با Python و pandas و تهیه‌ی گزارش‌های ماهانه.',
+            ),
           },
         ],
       },
@@ -80,8 +88,14 @@ export const persianSample: SampleDefinition = {
         kind: 'skills',
         items: [
           { title: 'زبان‌های برنامه‌نویسی', descriptionHtml: paragraph('Python، SQL، Scala') },
-          { title: 'ابزارها', descriptionHtml: paragraph('Apache Spark، Airflow، dbt، Kafka، Docker') },
-          { title: 'پایگاه‌های داده', descriptionHtml: paragraph('PostgreSQL، BigQuery، ClickHouse') },
+          {
+            title: 'ابزارها',
+            descriptionHtml: paragraph('Apache Spark، Airflow، dbt، Kafka، Docker'),
+          },
+          {
+            title: 'پایگاه‌های داده',
+            descriptionHtml: paragraph('PostgreSQL، BigQuery، ClickHouse'),
+          },
         ],
       },
       {

@@ -18,7 +18,15 @@ interface PopoverProps {
  * Small toolbar popover. Closes on Escape (returning focus to its button) and
  * on clicks outside. Opens towards the reading end, so it mirrors in RTL.
  */
-export function Popover({ trigger, label, open, onOpenChange, active, className, children }: PopoverProps) {
+export function Popover({
+  trigger,
+  label,
+  open,
+  onOpenChange,
+  active,
+  className,
+  children,
+}: PopoverProps) {
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
 

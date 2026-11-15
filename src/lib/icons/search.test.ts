@@ -4,7 +4,19 @@ import { ICON_SET_IDS, ICON_SETS, isIconSetId } from '@/config/icon-sets';
 
 import { iconLabel, iconWords, searchIcons } from './search';
 
-const LUCIDE = ['LuMail', 'LuMailOpen', 'LuMapPin', 'LuMapPinned', 'LuPhone', 'LuPhoneCall', 'LuGlobe', 'LuGithub', 'LuBriefcase', 'LuGraduationCap', 'LuSquareCode'];
+const LUCIDE = [
+  'LuMail',
+  'LuMailOpen',
+  'LuMapPin',
+  'LuMapPinned',
+  'LuPhone',
+  'LuPhoneCall',
+  'LuGlobe',
+  'LuGithub',
+  'LuBriefcase',
+  'LuGraduationCap',
+  'LuSquareCode',
+];
 
 describe('iconWords', () => {
   it('splits component names into words without the set prefix', () => {
@@ -35,7 +47,10 @@ describe('searchIcons', () => {
   });
 
   it('returns everything for an empty query, up to the limit, with the total', () => {
-    expect(searchIcons(LUCIDE, '  ', 'Lu', 3)).toEqual({ names: ['LuMail', 'LuMailOpen', 'LuMapPin'], total: LUCIDE.length });
+    expect(searchIcons(LUCIDE, '  ', 'Lu', 3)).toEqual({
+      names: ['LuMail', 'LuMailOpen', 'LuMapPin'],
+      total: LUCIDE.length,
+    });
   });
 
   it('returns nothing when a word does not match', () => {

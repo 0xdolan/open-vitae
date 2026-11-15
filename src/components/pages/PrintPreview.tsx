@@ -56,13 +56,24 @@ export function PrintPreview({ open, doc, pages, onClose }: PrintPreviewProps) {
               <Button variant="primary" onClick={() => window.print()} autoFocus>
                 <PrinterIcon /> Print or save as PDF
               </Button>
-              <Button variant="ghost" aria-label="Close print preview" title="Close (Esc)" onClick={onClose}>
+              <Button
+                variant="ghost"
+                aria-label="Close print preview"
+                title="Close (Esc)"
+                onClick={onClose}
+              >
                 <CloseIcon />
               </Button>
             </div>
           </header>
           <div className="min-h-0 flex-1 overflow-auto p-4">
-            <PageStack doc={doc} pages={pages} label="Print preview pages" maxFitZoom={1.25} className="mx-auto max-w-6xl" />
+            <PageStack
+              doc={doc}
+              pages={pages}
+              label="Print preview pages"
+              maxFitZoom={1.25}
+              className="mx-auto max-w-6xl"
+            />
           </div>
         </div>
       ) : null}

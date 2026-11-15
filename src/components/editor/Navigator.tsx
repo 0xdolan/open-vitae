@@ -54,14 +54,26 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
         Resume sections
       </h2>
 
-      <button type="button" className={entryClass(panel.kind === 'page')} aria-current={panel.kind === 'page' ? 'page' : undefined} onClick={() => onSelect({ kind: 'page' })}>
+      <button
+        type="button"
+        className={entryClass(panel.kind === 'page')}
+        aria-current={panel.kind === 'page' ? 'page' : undefined}
+        onClick={() => onSelect({ kind: 'page' })}
+      >
         Page setup
       </button>
-      <button type="button" className={entryClass(panel.kind === 'profile')} aria-current={panel.kind === 'profile' ? 'page' : undefined} onClick={() => onSelect({ kind: 'profile' })}>
+      <button
+        type="button"
+        className={entryClass(panel.kind === 'profile')}
+        aria-current={panel.kind === 'profile' ? 'page' : undefined}
+        onClick={() => onSelect({ kind: 'profile' })}
+      >
         Profile
       </button>
 
-      <p className="mt-3 mb-1 px-2.5 text-xs font-semibold tracking-wide text-stone-500 uppercase">Sections · drag to reorder</p>
+      <p className="mt-3 mb-1 px-2.5 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+        Sections · drag to reorder
+      </p>
 
       <SortableList
         label="Sections, in page order"
@@ -81,7 +93,11 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
                 isDropTarget && 'ring-1 ring-brand ring-dashed',
               )}
             >
-              <button type="button" className="rounded p-1.5 text-stone-400 hover:text-ink" {...handleProps}>
+              <button
+                type="button"
+                className="rounded p-1.5 text-stone-400 hover:text-ink"
+                {...handleProps}
+              >
                 <GripIcon />
               </button>
               <button
@@ -101,7 +117,9 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
                 aria-pressed={!section.visible}
                 aria-label={section.visible ? `Hide ${title}` : `Show ${title}`}
                 title={section.visible ? 'Hide on the page' : 'Show on the page'}
-                onClick={() => updateActive((d) => updateSection(d, section.id, { visible: !section.visible }))}
+                onClick={() =>
+                  updateActive((d) => updateSection(d, section.id, { visible: !section.visible }))
+                }
               >
                 {section.visible ? <EyeIcon /> : <EyeOffIcon />}
               </button>
@@ -119,10 +137,18 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
         >
           <PlusIcon /> Add section
         </summary>
-        <ul className="mt-1 grid grid-cols-2 gap-1 rounded-lg border border-stone-200 bg-white p-1.5 shadow-sm" aria-label="Section types">
+        <ul
+          className="mt-1 grid grid-cols-2 gap-1 rounded-lg border border-stone-200 bg-white p-1.5 shadow-sm"
+          aria-label="Section types"
+        >
           {SECTION_KINDS.map((kind) => (
             <li key={kind}>
-              <button type="button" className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100" onClick={() => add(kind)} dir="auto">
+              <button
+                type="button"
+                className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100"
+                onClick={() => add(kind)}
+                dir="auto"
+              >
                 {defaultSectionTitle(kind, doc.language)}
               </button>
             </li>
@@ -130,7 +156,12 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
         </ul>
       </details>
 
-      <button type="button" className={cn(entryClass(panel.kind === 'versions'), 'mt-3')} aria-current={panel.kind === 'versions' ? 'page' : undefined} onClick={() => onSelect({ kind: 'versions' })}>
+      <button
+        type="button"
+        className={cn(entryClass(panel.kind === 'versions'), 'mt-3')}
+        aria-current={panel.kind === 'versions' ? 'page' : undefined}
+        onClick={() => onSelect({ kind: 'versions' })}
+      >
         <span className="flex-1">Version history</span>
         <span className="text-xs text-stone-400">{versionCount}</span>
       </button>

@@ -45,8 +45,10 @@ function loadDataUrl(dataUrl: string): Promise<HTMLImageElement> {
 
 /** Read a picture file and keep a shrunk copy as the photo's source. */
 export async function readPhotoFile(file: File): Promise<PhotoSource> {
-  if (!file.type.startsWith('image/')) throw new ImageError('Choose a picture file, such as JPEG, PNG or WebP.');
-  if (file.size > PHOTO_MAX_FILE_BYTES) throw new ImageError('This file is larger than 25 MB. Choose a smaller picture.');
+  if (!file.type.startsWith('image/'))
+    throw new ImageError('Choose a picture file, such as JPEG, PNG or WebP.');
+  if (file.size > PHOTO_MAX_FILE_BYTES)
+    throw new ImageError('This file is larger than 25 MB. Choose a smaller picture.');
   const img = await loadImage(file);
   const { width, height } = fitWithin(img.naturalWidth, img.naturalHeight, PHOTO_SOURCE_MAX_SIDE);
   if (width === 0) throw new ImageError('This picture is empty.');
@@ -59,7 +61,10 @@ export async function readPhotoFile(file: File): Promise<PhotoSource> {
 }
 
 /** Draw an image turned by a quarter, half or three-quarter turn. */
-export function rotateImage(img: CanvasImageSource & { width: number; height: number }, rotation: Rotation): HTMLCanvasElement {
+export function rotateImage(
+  img: CanvasImageSource & { width: number; height: number },
+  rotation: Rotation,
+): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   const quarter = rotation === 90 || rotation === 270;
   canvas.width = quarter ? img.height : img.width;
@@ -72,7 +77,10 @@ export function rotateImage(img: CanvasImageSource & { width: number; height: nu
 }
 
 /** The source picture, rotated, ready to show in the crop dialog. */
-export async function loadRotatedSource(source: PhotoSource, rotation: Rotation): Promise<HTMLCanvasElement> {
+export async function loadRotatedSource(
+  source: PhotoSource,
+  rotation: Rotation,
+): Promise<HTMLCanvasElement> {
   const img = await loadDataUrl(source.dataUrl);
   return rotateImage(img, rotation);
 }

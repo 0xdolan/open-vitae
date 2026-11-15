@@ -28,13 +28,18 @@ describe('plain text conversion', () => {
 
   it('escapes and decodes special characters safely', () => {
     expect(plainToHtml('Tom & Jerry <script>')).toBe('<p>Tom &amp; Jerry &lt;script&gt;</p>');
-    expect(htmlToPlain('<p>ATT&amp;CK &lt;b&gt; &#39;x&#39; &#x2014;</p>')).toBe("ATT&CK <b> 'x' —");
+    expect(htmlToPlain('<p>ATT&amp;CK &lt;b&gt; &#39;x&#39; &#x2014;</p>')).toBe(
+      "ATT&CK <b> 'x' —",
+    );
   });
 
   it('round-trips every sample description without changes', () => {
     for (const id of SAMPLE_IDS) {
       const doc = createResumeFromSample(id);
-      const htmls = [doc.profile.summaryHtml, ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml))];
+      const htmls = [
+        doc.profile.summaryHtml,
+        ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml)),
+      ];
       for (const html of htmls.filter(Boolean)) {
         expect(isPlainCompatible(html)).toBe(true);
         expect(plainToHtml(htmlToPlain(html))).toBe(html);

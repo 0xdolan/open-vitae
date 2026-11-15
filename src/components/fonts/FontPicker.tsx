@@ -57,12 +57,33 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
   const groups = useMemo(() => {
     const google = [...GOOGLE_FONTS]
       .sort((a, b) => (preferArabic ? Number(Boolean(b.arabic)) - Number(Boolean(a.arabic)) : 0))
-      .map((g): Option => ({ family: g.family, note: g.arabic ? 'Arabic script' : g.hebrew ? 'Hebrew' : g.category }));
-    const recent = googleFamilies.filter((f) => !findGoogleFont(f)).map((family): Option => ({ family, note: 'Google' }));
+      .map(
+        (g): Option => ({
+          family: g.family,
+          note: g.arabic ? 'Arabic script' : g.hebrew ? 'Hebrew' : g.category,
+        }),
+      );
+    const recent = googleFamilies
+      .filter((f) => !findGoogleFont(f))
+      .map((family): Option => ({ family, note: 'Google' }));
     return [
-      { label: 'Bundled (work offline)', options: BUNDLED_FONTS.map((f): Option => ({ family: f.family, note: f.arabicScript ? 'Persian and Arabic' : undefined })) },
-      { label: 'Installed on your computer', options: SYSTEM_FONTS.map((f): Option => ({ family: f.family })) },
-      { label: 'Your fonts (this browser)', options: userFonts.map((f): Option => ({ family: f.family, note: f.fileName })) },
+      {
+        label: 'Bundled (work offline)',
+        options: BUNDLED_FONTS.map(
+          (f): Option => ({
+            family: f.family,
+            note: f.arabicScript ? 'Persian and Arabic' : undefined,
+          }),
+        ),
+      },
+      {
+        label: 'Installed on your computer',
+        options: SYSTEM_FONTS.map((f): Option => ({ family: f.family })),
+      },
+      {
+        label: 'Your fonts (this browser)',
+        options: userFonts.map((f): Option => ({ family: f.family, note: f.fileName })),
+      },
       { label: 'Google Fonts', options: [...recent, ...google] },
     ]
       .map((g) => ({ ...g, options: g.options.filter((o) => match(o.family)) }))
@@ -104,7 +125,9 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
         onClick={() => setOpen((v) => !v)}
       >
         <span className="truncate">{value}</span>
-        <span aria-hidden="true" className="text-stone-400">▾</span>
+        <span aria-hidden="true" className="text-stone-400">
+          ▾
+        </span>
       </button>
 
       {open ? (
@@ -146,7 +169,11 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
                         'flex w-full items-baseline justify-between gap-2 rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100 disabled:opacity-50',
                         option.family === value && 'bg-brand-soft',
                       )}
-                      style={!google || state === 'ready' ? { fontFamily: fontStack(option.family) } : undefined}
+                      style={
+                        !google || state === 'ready'
+                          ? { fontFamily: fontStack(option.family) }
+                          : undefined
+                      }
                       onClick={() => void choose(option.family, google)}
                     >
                       <span className="truncate">{option.family}</span>
@@ -161,15 +188,23 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
             {offerByName && typed ? (
               <div className="border-t border-stone-200 pt-2">
                 {googleConsent ? (
-                  <button type="button" className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100" onClick={() => void choose(typed, true)}>
+                  <button
+                    type="button"
+                    className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100"
+                    onClick={() => void choose(typed, true)}
+                  >
                     Load “{typed}” from Google Fonts
                   </button>
                 ) : (
-                  <p className="px-2 text-xs text-stone-500">Allow Google Fonts above to load “{typed}”.</p>
+                  <p className="px-2 text-xs text-stone-500">
+                    Allow Google Fonts above to load “{typed}”.
+                  </p>
                 )}
               </div>
             ) : null}
-            {groups.length === 0 && !offerByName ? <p className="px-2 py-3 text-sm text-stone-500">No fonts match.</p> : null}
+            {groups.length === 0 && !offerByName ? (
+              <p className="px-2 py-3 text-sm text-stone-500">No fonts match.</p>
+            ) : null}
           </div>
         </div>
       ) : null}

@@ -24,7 +24,12 @@ function allIds(doc: ReturnType<typeof createBlankResume>): string[] {
 describe('createBlankResume', () => {
   it('builds an A4, LTR, Manrope resume with three empty sections', () => {
     const doc = createBlankResume('Mine', 'ltr', NOW);
-    expect(doc.layout).toMatchObject({ pageSize: 'a4', direction: 'ltr', fontFamily: 'Manrope', pageBreaks: 'smart' });
+    expect(doc.layout).toMatchObject({
+      pageSize: 'a4',
+      direction: 'ltr',
+      fontFamily: 'Manrope',
+      pageBreaks: 'smart',
+    });
     expect(doc.language).toBe('en');
     expect(doc.sections.map((s) => s.kind)).toEqual(['experience', 'education', 'skills']);
     expect(doc.sections[0]?.title).toBe('Experience');
@@ -41,7 +46,10 @@ describe('createBlankResume', () => {
 
 describe('buildResume', () => {
   it('fills missing item fields with empty values', () => {
-    const doc = buildResume({ name: 'x', sections: [{ kind: 'custom', items: [{ title: 'Only a title' }] }] });
+    const doc = buildResume({
+      name: 'x',
+      sections: [{ kind: 'custom', items: [{ title: 'Only a title' }] }],
+    });
     expect(doc.sections[0]?.items[0]).toMatchObject({
       title: 'Only a title',
       subtitle: '',

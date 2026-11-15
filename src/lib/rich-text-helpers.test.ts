@@ -13,7 +13,9 @@ describe('filterStyle', () => {
     expect(filterStyle('font-size: 12pt; line-height: 1.5; text-align: center')).toBe(
       'font-size: 12pt; line-height: 1.5; text-align: center',
     );
-    expect(filterStyle('font-family: "Times New Roman", Tinos, serif')).toBe('font-family: "Times New Roman", Tinos, serif');
+    expect(filterStyle('font-family: "Times New Roman", Tinos, serif')).toBe(
+      'font-family: "Times New Roman", Tinos, serif',
+    );
     expect(filterStyle('--ov-level: 3')).toBe('--ov-level: 3');
     expect(filterStyle('width: 50%; min-width: 25px')).toBe('width: 50%; min-width: 25px');
   });
@@ -36,7 +38,9 @@ describe('filterStyle', () => {
 
 describe('filterClasses', () => {
   it('keeps highlighting, language and layout classes only', () => {
-    expect(filterClasses('hljs hljs-keyword language-ts ov-img-center')).toBe('hljs hljs-keyword language-ts ov-img-center');
+    expect(filterClasses('hljs hljs-keyword language-ts ov-img-center')).toBe(
+      'hljs hljs-keyword language-ts ov-img-center',
+    );
     expect(filterClasses('fixed inset-0 z-50 hljs-string')).toBe('hljs-string');
     expect(filterClasses('ov-table-borderless ov-anything')).toBe('ov-table-borderless');
   });
@@ -68,14 +72,18 @@ describe('findMatches', () => {
 
   it('respects case and whole words', () => {
     expect(findMatches(chunks, 'React', { caseSensitive: true })).toHaveLength(2);
-    expect(findMatches([{ text: 'cat category cat.', from: 0 }], 'cat', { wholeWord: true })).toEqual([
+    expect(
+      findMatches([{ text: 'cat category cat.', from: 0 }], 'cat', { wholeWord: true }),
+    ).toEqual([
       { from: 0, to: 3 },
       { from: 13, to: 16 },
     ]);
   });
 
   it('works for Persian words and treats regex characters literally', () => {
-    expect(findMatches([{ text: 'مهندس نرم‌افزار، مهندس', from: 0 }], 'مهندس', { wholeWord: true })).toHaveLength(2);
+    expect(
+      findMatches([{ text: 'مهندس نرم‌افزار، مهندس', from: 0 }], 'مهندس', { wholeWord: true }),
+    ).toHaveLength(2);
     expect(findMatches([{ text: 'C++ and C#', from: 0 }], 'C++')).toEqual([{ from: 0, to: 3 }]);
     expect(findMatches(chunks, '')).toEqual([]);
   });

@@ -67,7 +67,8 @@ function toSet(id: IconSetId, module: Record<string, unknown>): LoadedIconSet {
   const { prefix } = ICON_SETS[id];
   const components = new Map<string, IconComponent>();
   for (const [name, value] of Object.entries(module)) {
-    if (typeof value === 'function' && name.startsWith(prefix)) components.set(name, value as IconComponent);
+    if (typeof value === 'function' && name.startsWith(prefix))
+      components.set(name, value as IconComponent);
   }
   const names = [...components.keys()].sort((a, b) => a.localeCompare(b));
   return { id, names, get: (name) => components.get(name) };

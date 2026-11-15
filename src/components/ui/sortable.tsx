@@ -105,7 +105,11 @@ export function SortableList<T>({
         onMove(state.from, state.over);
         setAnnouncement(`${name} dropped at ${position(state.over)}.`);
       } else {
-        setAnnouncement(commit ? `${name} dropped in its original place.` : `Move cancelled. ${name} is back at ${position(state.from)}.`);
+        setAnnouncement(
+          commit
+            ? `${name} dropped in its original place.`
+            : `Move cancelled. ${name} is back at ${position(state.from)}.`,
+        );
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- position depends only on items.length
@@ -161,14 +165,21 @@ export function SortableList<T>({
     };
   }, [pointerDragging, finish]);
 
-  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, id: string, index: number, name: string) => {
+  const onKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    id: string,
+    index: number,
+    name: string,
+  ) => {
     const picked = drag?.mode === 'keyboard' && drag.id === id ? drag : null;
 
     if (!picked) {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
         setDrag({ id, from: index, over: index, mode: 'keyboard' });
-        setAnnouncement(`Picked up ${name}, ${position(index)}. Use the arrow keys to move, Space to drop, Escape to cancel.`);
+        setAnnouncement(
+          `Picked up ${name}, ${position(index)}. Use the arrow keys to move, Space to drop, Escape to cancel.`,
+        );
       }
       return;
     }
@@ -246,9 +257,13 @@ export function SortableList<T>({
                   onPointerDown: (e) => onPointerDown(e, id, originalIndex),
                   onKeyDown: (e) => onKeyDown(e, id, originalIndex, name),
                   onBlur: () => {
-                    if (drag?.mode === 'keyboard' && drag.id === id && !refocusId.current) finish(drag, false);
+                    if (drag?.mode === 'keyboard' && drag.id === id && !refocusId.current)
+                      finish(drag, false);
                   },
-                  style: { touchAction: 'none', cursor: drag?.mode === 'pointer' ? 'grabbing' : 'grab' },
+                  style: {
+                    touchAction: 'none',
+                    cursor: drag?.mode === 'pointer' ? 'grabbing' : 'grab',
+                  },
                 },
               })}
             </li>
@@ -256,7 +271,8 @@ export function SortableList<T>({
         })}
       </ul>
       <p id={instructionsId} className="sr-only">
-        Drag with a mouse or finger, or press Space or Enter to pick up, use the arrow keys to move, then Space or Enter to drop. Press Escape to cancel.
+        Drag with a mouse or finger, or press Space or Enter to pick up, use the arrow keys to move,
+        then Space or Enter to drop. Press Escape to cancel.
       </p>
       <p aria-live="assertive" className="sr-only">
         {announcement}

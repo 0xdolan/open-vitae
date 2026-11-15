@@ -20,7 +20,11 @@ export const ORIENTATIONS = ['portrait', 'landscape'] as const;
 
 export type Orientation = (typeof ORIENTATIONS)[number];
 
-export const PAGE_SIZE_GROUPS = ['International (ISO)', 'North American', 'Japanese (JIS)'] as const;
+export const PAGE_SIZE_GROUPS = [
+  'International (ISO)',
+  'North American',
+  'Japanese (JIS)',
+] as const;
 
 export type PageSizeGroup = (typeof PAGE_SIZE_GROUPS)[number];
 
@@ -49,11 +53,32 @@ export const PAGE_SIZES: readonly PageSize[] = [
   { id: 'b5', label: 'B5', group: ISO, widthMm: 176, heightMm: 250, unit: 'mm' },
   { id: 'letter', label: 'Letter', group: US, widthMm: 215.9, heightMm: 279.4, unit: 'in' },
   { id: 'legal', label: 'Legal', group: US, widthMm: 215.9, heightMm: 355.6, unit: 'in' },
-  { id: 'tabloid', label: 'Tabloid (Ledger)', group: US, widthMm: 279.4, heightMm: 431.8, unit: 'in' },
+  {
+    id: 'tabloid',
+    label: 'Tabloid (Ledger)',
+    group: US,
+    widthMm: 279.4,
+    heightMm: 431.8,
+    unit: 'in',
+  },
   { id: 'executive', label: 'Executive', group: US, widthMm: 184.15, heightMm: 266.7, unit: 'in' },
-  { id: 'statement', label: 'Statement (Half Letter)', group: US, widthMm: 139.7, heightMm: 215.9, unit: 'in' },
+  {
+    id: 'statement',
+    label: 'Statement (Half Letter)',
+    group: US,
+    widthMm: 139.7,
+    heightMm: 215.9,
+    unit: 'in',
+  },
   { id: 'folio', label: 'Folio', group: US, widthMm: 215.9, heightMm: 330.2, unit: 'in' },
-  { id: 'jis-b5', label: 'B5 (JIS)', group: 'Japanese (JIS)', widthMm: 182, heightMm: 257, unit: 'mm' },
+  {
+    id: 'jis-b5',
+    label: 'B5 (JIS)',
+    group: 'Japanese (JIS)',
+    widthMm: 182,
+    heightMm: 257,
+    unit: 'mm',
+  },
 ];
 
 export const DEFAULT_PAGE_SIZE: PageSizeId = 'a4';

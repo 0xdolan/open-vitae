@@ -19,11 +19,13 @@ describe('xlsx', () => {
     ];
     const { bytes, truncated } = await writeXlsx(rows, { widths: [10, 30, 60], rightToLeft: true });
     expect(truncated).toBe(0);
-    expect(await readXlsx(bytes)).toEqual(rows.map((r) => {
-      const copy = [...r];
-      while (copy.length > 0 && copy[copy.length - 1] === '') copy.pop();
-      return copy;
-    }));
+    expect(await readXlsx(bytes)).toEqual(
+      rows.map((r) => {
+        const copy = [...r];
+        while (copy.length > 0 && copy[copy.length - 1] === '') copy.pop();
+        return copy;
+      }),
+    );
 
     const zip = await JSZip.loadAsync(bytes);
     const sheet = (await zip.file('xl/worksheets/sheet1.xml')?.async('string')) ?? '';
@@ -40,7 +42,10 @@ describe('xlsx', () => {
 
   it('reads shared strings, rich text and gaps as written by Excel', async () => {
     const zip = new JSZip();
-    zip.file('xl/sharedStrings.xml', '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t>Type</t></si><si><r><t>Ti</t></r><r><t>tle</t></r></si><si><t>entry</t></si></sst>');
+    zip.file(
+      'xl/sharedStrings.xml',
+      '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t>Type</t></si><si><r><t>Ti</t></r><r><t>tle</t></r></si><si><t>entry</t></si></sst>',
+    );
     zip.file(
       'xl/worksheets/sheet1.xml',
       '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' +

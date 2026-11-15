@@ -25,13 +25,23 @@ interface PageStackProps {
   readonly onSectionClick?: (id: string) => void;
 }
 
-function PageNote({ slice, mode }: { readonly slice: PageSlice; readonly mode: 'smart' | 'manual' }) {
+function PageNote({
+  slice,
+  mode,
+}: {
+  readonly slice: PageSlice;
+  readonly mode: 'smart' | 'manual';
+}) {
   const notes: string[] = [];
   if (slice.tooTall) {
-    notes.push('Part of this page is cut off: one block is taller than a page. Shorten it, or use smaller text or margins.');
+    notes.push(
+      'Part of this page is cut off: one block is taller than a page. Shorten it, or use smaller text or margins.',
+    );
   }
   if (slice.continued && mode === 'manual') {
-    notes.push('The previous page was full, so the content continued here. Add a page break where you want the page to end.');
+    notes.push(
+      'The previous page was full, so the content continued here. Add a page break where you want the page to end.',
+    );
   }
   if (notes.length === 0) return null;
   return (
@@ -66,7 +76,8 @@ export function PageStack({
   useEffect(() => {
     const frame = frameRef.current;
     if (!frame) return;
-    const update = () => setFitZoom(Math.max(MIN_ZOOM, Math.min(maxFitZoom, frame.clientWidth / sheetWidth)));
+    const update = () =>
+      setFitZoom(Math.max(MIN_ZOOM, Math.min(maxFitZoom, frame.clientWidth / sheetWidth)));
     update();
     const observer = new ResizeObserver(update);
     observer.observe(frame);
@@ -79,7 +90,11 @@ export function PageStack({
 
   return (
     <div className={cn('flex min-h-0 flex-col gap-3', className)}>
-      <div role="toolbar" aria-label={`${label} zoom`} className="flex flex-wrap items-center gap-1.5 text-xs text-stone-600">
+      <div
+        role="toolbar"
+        aria-label={`${label} zoom`}
+        className="flex flex-wrap items-center gap-1.5 text-xs text-stone-600"
+      >
         <Button
           variant="ghost"
           size="sm"
@@ -100,7 +115,8 @@ export function PageStack({
           onChange={(e) => setZoom(e.target.value === 'fit' ? 'fit' : Number(e.target.value))}
         >
           <option value="fit">Fit width ({formatZoom(fitZoom)})</option>
-          {ZOOM_STEPS.includes(effective as (typeof ZOOM_STEPS)[number]) || zoom === 'fit' ? null : (
+          {ZOOM_STEPS.includes(effective as (typeof ZOOM_STEPS)[number]) ||
+          zoom === 'fit' ? null : (
             <option value={String(effective)}>{formatZoom(effective)}</option>
           )}
           {ZOOM_STEPS.map((step) => (
@@ -120,14 +136,20 @@ export function PageStack({
           <ZoomInIcon />
         </Button>
         <span className="ms-1" aria-live="polite">
-          {total === 1 ? '1 page' : `${total} pages`} · {size.label} {doc.layout.orientation === 'landscape' ? 'landscape' : ''}
+          {total === 1 ? '1 page' : `${total} pages`} · {size.label}{' '}
+          {doc.layout.orientation === 'landscape' ? 'landscape' : ''}
           {doc.layout.pageBreaks === 'manual' ? ' · manual breaks' : ''}
         </span>
         {actions ? <span className="ms-auto flex items-center gap-1.5">{actions}</span> : null}
       </div>
 
       <div ref={frameRef} className="min-w-0 overflow-x-auto">
-        <div role="region" aria-label={label} className="flex w-max min-w-full flex-col items-center gap-2" style={{ zoom: effective }}>
+        <div
+          role="region"
+          aria-label={label}
+          className="flex w-max min-w-full flex-col items-center gap-2"
+          style={{ zoom: effective }}
+        >
           {(pages ?? []).map((slice, index) => (
             <div key={index} className="flex flex-col items-center gap-1.5 pb-2">
               <PageSheet

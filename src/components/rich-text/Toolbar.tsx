@@ -83,7 +83,11 @@ function ToolButton({ label, shortcut, active, disabled, onClick, children }: To
 
 function Group({ label, children }: { readonly label: string; readonly children: ReactNode }) {
   return (
-    <div role="group" aria-label={label} className="flex items-center gap-0.5 border-e border-stone-200 pe-1 last:border-e-0">
+    <div
+      role="group"
+      aria-label={label}
+      className="flex items-center gap-0.5 border-e border-stone-200 pe-1 last:border-e-0"
+    >
       {children}
     </div>
   );
@@ -127,8 +131,17 @@ interface ToolbarProps {
  * The rich text toolbar. Groups wrap on narrow screens. Every control has a
  * label (and shortcut where one exists) for screen readers and tooltips.
  */
-export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, findOpen, onToggleFind }: ToolbarProps) {
-  const [popover, setPopover] = useState<null | 'color' | 'highlight' | 'link' | 'table' | 'emoji' | 'image'>(null);
+export function Toolbar({
+  editor,
+  accentColor,
+  spellcheck,
+  onToggleSpellcheck,
+  findOpen,
+  onToggleFind,
+}: ToolbarProps) {
+  const [popover, setPopover] = useState<
+    null | 'color' | 'highlight' | 'link' | 'table' | 'emoji' | 'image'
+  >(null);
   const [linkUrl, setLinkUrl] = useState('');
   const [emojiQuery, setEmojiQuery] = useState('');
   const [painter, setPainter] = useState<PaintedFormat | null>(null);
@@ -168,8 +181,14 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
       imageWidth: (e.getAttributes('image').width as string | undefined) ?? '',
       codeBlock: e.isActive('codeBlock'),
       codeLanguage: (e.getAttributes('codeBlock').language as string | undefined) ?? 'plaintext',
-      align: (['left', 'center', 'right', 'justify'] as const).find((a) => e.isActive({ textAlign: a })) ?? null,
-      dir: (e.getAttributes('paragraph').dir as string | undefined) ?? (e.getAttributes('heading').dir as string | undefined) ?? null,
+      align:
+        (['left', 'center', 'right', 'justify'] as const).find((a) =>
+          e.isActive({ textAlign: a }),
+        ) ?? null,
+      dir:
+        (e.getAttributes('paragraph').dir as string | undefined) ??
+        (e.getAttributes('heading').dir as string | undefined) ??
+        null,
       fontFamily: (e.getAttributes('textStyle').fontFamily as string | undefined) ?? '',
       fontSize: (e.getAttributes('textStyle').fontSize as string | undefined) ?? '',
       lineHeight: (e.getAttributes('textStyle').lineHeight as string | undefined) ?? '',
@@ -200,7 +219,9 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
       setPainter(null);
       return;
     }
-    const marks = editor.state.selection.$from.marks().map((m) => ({ type: m.type.name, attrs: { ...m.attrs } }));
+    const marks = editor.state.selection.$from
+      .marks()
+      .map((m) => ({ type: m.type.name, attrs: { ...m.attrs } }));
     const textAlign = (editor.getAttributes('paragraph').textAlign as string | undefined) ?? null;
     const captured: PaintedFormat = { marks, textAlign };
     setPainter(captured);
@@ -236,7 +257,9 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
       chain().extendMarkRange('link').unsetLink().run();
     } else if (!urlError(href)) {
       if (editor.state.selection.empty && !state.link) {
-        chain().insertContent({ type: 'text', text: href, marks: [{ type: 'link', attrs: { href } }] }).run();
+        chain()
+          .insertContent({ type: 'text', text: href, marks: [{ type: 'link', attrs: { href } }] })
+          .run();
       } else {
         chain().extendMarkRange('link').setLink({ href }).run();
       }
@@ -250,9 +273,14 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
     if (!file) return;
     try {
       const src = await imageFileToDataUrl(file);
-      chain().setImage({ src, alt: file.name.replace(/\.[^.]+$/, '') }).run();
+      chain()
+        .setImage({ src, alt: file.name.replace(/\.[^.]+$/, '') })
+        .run();
     } catch (error) {
-      toast.error('Image not added', error instanceof ImageError ? error.message : 'The image could not be read.');
+      toast.error(
+        'Image not added',
+        error instanceof ImageError ? error.message : 'The image could not be read.',
+      );
     }
   };
 
@@ -267,25 +295,47 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
       const text = await navigator.clipboard.readText();
       chain().insertContent(plainToHtml(text)).run();
     } catch {
-      toast.info('Use the keyboard to paste', `The browser did not allow reading the clipboard. Press ${MOD}+V instead.`);
+      toast.info(
+        'Use the keyboard to paste',
+        `The browser did not allow reading the clipboard. Press ${MOD}+V instead.`,
+      );
     }
   };
 
   const emojis = emojiQuery ? searchEmoji(emojiQuery) : null;
 
   return (
-    <div role="group" aria-label="Formatting" className="flex flex-wrap items-center gap-1 border-b border-stone-200 bg-stone-50 p-1.5">
+    <div
+      role="group"
+      aria-label="Formatting"
+      className="flex flex-wrap items-center gap-1 border-b border-stone-200 bg-stone-50 p-1.5"
+    >
       <Group label="History">
-        <ToolButton label="Undo" shortcut={`${MOD}+Z`} disabled={!state.canUndo} onClick={() => chain().undo().run()}>
+        <ToolButton
+          label="Undo"
+          shortcut={`${MOD}+Z`}
+          disabled={!state.canUndo}
+          onClick={() => chain().undo().run()}
+        >
           <UndoIcon />
         </ToolButton>
-        <ToolButton label="Redo" shortcut={`${MOD}+Shift+Z`} disabled={!state.canRedo} onClick={() => chain().redo().run()}>
+        <ToolButton
+          label="Redo"
+          shortcut={`${MOD}+Shift+Z`}
+          disabled={!state.canRedo}
+          onClick={() => chain().redo().run()}
+        >
           <RedoIcon />
         </ToolButton>
       </Group>
 
       <Group label="Text style">
-        <select aria-label="Paragraph style" className={selectClass} value={state.block} onChange={(e) => applyBlock(editor, e.target.value as BlockStyleId)}>
+        <select
+          aria-label="Paragraph style"
+          className={selectClass}
+          value={state.block}
+          onChange={(e) => applyBlock(editor, e.target.value as BlockStyleId)}
+        >
           {BLOCK_STYLES.map((s) => (
             <option key={s.id} value={s.id}>
               {s.label}
@@ -296,7 +346,11 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
           aria-label="Font"
           className={cn(selectClass, 'max-w-32')}
           value={state.fontFamily}
-          onChange={(e) => (e.target.value ? chain().setFontFamily(e.target.value).run() : chain().unsetFontFamily().run())}
+          onChange={(e) =>
+            e.target.value
+              ? chain().setFontFamily(e.target.value).run()
+              : chain().unsetFontFamily().run()
+          }
         >
           <option value="">Default font</option>
           {fontChoices.map((family) => (
@@ -309,7 +363,11 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
           aria-label="Font size"
           className={selectClass}
           value={state.fontSize}
-          onChange={(e) => (e.target.value ? chain().setFontSize(e.target.value).run() : chain().unsetFontSize().run())}
+          onChange={(e) =>
+            e.target.value
+              ? chain().setFontSize(e.target.value).run()
+              : chain().unsetFontSize().run()
+          }
         >
           <option value="">Size</option>
           {FONT_SIZES_PT.map((size) => (
@@ -322,7 +380,11 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
           aria-label="Line height"
           className={selectClass}
           value={state.lineHeight}
-          onChange={(e) => (e.target.value ? chain().setLineHeight(e.target.value).run() : chain().unsetLineHeight().run())}
+          onChange={(e) =>
+            e.target.value
+              ? chain().setLineHeight(e.target.value).run()
+              : chain().unsetLineHeight().run()
+          }
         >
           <option value="">Spacing</option>
           {LINE_HEIGHTS.map((value) => (
@@ -334,29 +396,64 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
       </Group>
 
       <Group label="Character formatting">
-        <ToolButton label="Bold" shortcut={`${MOD}+B`} active={state.bold} onClick={() => chain().toggleBold().run()}>
+        <ToolButton
+          label="Bold"
+          shortcut={`${MOD}+B`}
+          active={state.bold}
+          onClick={() => chain().toggleBold().run()}
+        >
           <strong>B</strong>
         </ToolButton>
-        <ToolButton label="Italic" shortcut={`${MOD}+I`} active={state.italic} onClick={() => chain().toggleItalic().run()}>
+        <ToolButton
+          label="Italic"
+          shortcut={`${MOD}+I`}
+          active={state.italic}
+          onClick={() => chain().toggleItalic().run()}
+        >
           <em className="font-serif">I</em>
         </ToolButton>
-        <ToolButton label="Underline" shortcut={`${MOD}+U`} active={state.underline} onClick={() => chain().toggleUnderline().run()}>
+        <ToolButton
+          label="Underline"
+          shortcut={`${MOD}+U`}
+          active={state.underline}
+          onClick={() => chain().toggleUnderline().run()}
+        >
           <span className="underline">U</span>
         </ToolButton>
-        <ToolButton label="Strikethrough" shortcut={`${MOD}+Shift+S`} active={state.strike} onClick={() => chain().toggleStrike().run()}>
+        <ToolButton
+          label="Strikethrough"
+          shortcut={`${MOD}+Shift+S`}
+          active={state.strike}
+          onClick={() => chain().toggleStrike().run()}
+        >
           <span className="line-through">S</span>
         </ToolButton>
-        <ToolButton label="Subscript" shortcut={`${MOD}+,`} active={state.sub} onClick={() => chain().toggleSubscript().run()}>
+        <ToolButton
+          label="Subscript"
+          shortcut={`${MOD}+,`}
+          active={state.sub}
+          onClick={() => chain().toggleSubscript().run()}
+        >
           <span>
             x<sub>2</sub>
           </span>
         </ToolButton>
-        <ToolButton label="Superscript" shortcut={`${MOD}+.`} active={state.sup} onClick={() => chain().toggleSuperscript().run()}>
+        <ToolButton
+          label="Superscript"
+          shortcut={`${MOD}+.`}
+          active={state.sup}
+          onClick={() => chain().toggleSuperscript().run()}
+        >
           <span>
             x<sup>2</sup>
           </span>
         </ToolButton>
-        <ToolButton label="Inline code" shortcut={`${MOD}+E`} active={state.code} onClick={() => chain().toggleCode().run()}>
+        <ToolButton
+          label="Inline code"
+          shortcut={`${MOD}+E`}
+          active={state.code}
+          onClick={() => chain().toggleCode().run()}
+        >
           <CodeIcon />
         </ToolButton>
       </Group>
@@ -390,7 +487,14 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
           label="Highlight colour"
           open={popover === 'highlight'}
           onOpenChange={(o) => setPopover(o ? 'highlight' : null)}
-          trigger={<span className="rounded px-1 text-sm font-bold" style={{ background: state.background || '#fef08a' }}>H</span>}
+          trigger={
+            <span
+              className="rounded px-1 text-sm font-bold"
+              style={{ background: state.background || '#fef08a' }}
+            >
+              H
+            </span>
+          }
         >
           <ColorChoices
             swatches={HIGHLIGHT_SWATCHES}
@@ -405,7 +509,12 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
             }}
           />
         </Popover>
-        <select aria-label="Text presets" className={selectClass} value="" onChange={(e) => applyPreset(e.target.value as TextPresetId)}>
+        <select
+          aria-label="Text presets"
+          className={selectClass}
+          value=""
+          onChange={(e) => applyPreset(e.target.value as TextPresetId)}
+        >
           <option value="">Presets</option>
           {TEXT_PRESETS.map((p) => (
             <option key={p.id} value={p.id}>
@@ -413,49 +522,106 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
             </option>
           ))}
         </select>
-        <ToolButton label="Copy formatting (format painter)" active={painter !== null} onClick={togglePainter}>
+        <ToolButton
+          label="Copy formatting (format painter)"
+          active={painter !== null}
+          onClick={togglePainter}
+        >
           <BrushIcon />
         </ToolButton>
-        <ToolButton label="Clear formatting" onClick={() => chain().unsetAllMarks().clearNodes().run()}>
+        <ToolButton
+          label="Clear formatting"
+          onClick={() => chain().unsetAllMarks().clearNodes().run()}
+        >
           <EraserIcon />
         </ToolButton>
       </Group>
 
       <Group label="Paragraph">
-        <ToolButton label="Align left" active={state.align === 'left'} onClick={() => chain().setTextAlign('left').run()}>
+        <ToolButton
+          label="Align left"
+          active={state.align === 'left'}
+          onClick={() => chain().setTextAlign('left').run()}
+        >
           <AlignLeftIcon />
         </ToolButton>
-        <ToolButton label="Centre" active={state.align === 'center'} onClick={() => chain().setTextAlign('center').run()}>
+        <ToolButton
+          label="Centre"
+          active={state.align === 'center'}
+          onClick={() => chain().setTextAlign('center').run()}
+        >
           <AlignCenterIcon />
         </ToolButton>
-        <ToolButton label="Align right" active={state.align === 'right'} onClick={() => chain().setTextAlign('right').run()}>
+        <ToolButton
+          label="Align right"
+          active={state.align === 'right'}
+          onClick={() => chain().setTextAlign('right').run()}
+        >
           <AlignRightIcon />
         </ToolButton>
-        <ToolButton label="Justify" active={state.align === 'justify'} onClick={() => chain().setTextAlign('justify').run()}>
+        <ToolButton
+          label="Justify"
+          active={state.align === 'justify'}
+          onClick={() => chain().setTextAlign('justify').run()}
+        >
           <AlignJustifyIcon />
         </ToolButton>
-        <ToolButton label="Left-to-right paragraph" active={state.dir === 'ltr'} onClick={() => chain().setBlockDirection(state.dir === 'ltr' ? null : 'ltr').run()}>
+        <ToolButton
+          label="Left-to-right paragraph"
+          active={state.dir === 'ltr'}
+          onClick={() =>
+            chain()
+              .setBlockDirection(state.dir === 'ltr' ? null : 'ltr')
+              .run()
+          }
+        >
           <span className="text-[10px] font-bold">LTR</span>
         </ToolButton>
-        <ToolButton label="Right-to-left paragraph" active={state.dir === 'rtl'} onClick={() => chain().setBlockDirection(state.dir === 'rtl' ? null : 'rtl').run()}>
+        <ToolButton
+          label="Right-to-left paragraph"
+          active={state.dir === 'rtl'}
+          onClick={() =>
+            chain()
+              .setBlockDirection(state.dir === 'rtl' ? null : 'rtl')
+              .run()
+          }
+        >
           <span className="text-[10px] font-bold">RTL</span>
         </ToolButton>
       </Group>
 
       <Group label="Lists and indent">
-        <ToolButton label="Bulleted list" shortcut={`${MOD}+Shift+8`} active={state.bullet} onClick={() => chain().toggleBulletList().run()}>
+        <ToolButton
+          label="Bulleted list"
+          shortcut={`${MOD}+Shift+8`}
+          active={state.bullet}
+          onClick={() => chain().toggleBulletList().run()}
+        >
           <ListIcon />
         </ToolButton>
-        <ToolButton label="Numbered list" shortcut={`${MOD}+Shift+7`} active={state.ordered} onClick={() => chain().toggleOrderedList().run()}>
+        <ToolButton
+          label="Numbered list"
+          shortcut={`${MOD}+Shift+7`}
+          active={state.ordered}
+          onClick={() => chain().toggleOrderedList().run()}
+        >
           <ListOrderedIcon />
         </ToolButton>
-        <ToolButton label="Decrease indent" shortcut="Shift+Tab" onClick={() => chain().outdent().run()}>
+        <ToolButton
+          label="Decrease indent"
+          shortcut="Shift+Tab"
+          onClick={() => chain().outdent().run()}
+        >
           <OutdentIcon className="rtl:-scale-x-100" />
         </ToolButton>
         <ToolButton label="Increase indent" shortcut="Tab" onClick={() => chain().indent().run()}>
           <IndentIcon className="rtl:-scale-x-100" />
         </ToolButton>
-        <ToolButton label="Quote" active={state.block === 'blockquote'} onClick={() => chain().toggleBlockquote().run()}>
+        <ToolButton
+          label="Quote"
+          active={state.block === 'blockquote'}
+          onClick={() => chain().toggleBlockquote().run()}
+        >
           <QuoteIcon />
         </ToolButton>
         <ToolButton label="Horizontal line" onClick={() => chain().setHorizontalRule().run()}>
@@ -494,24 +660,39 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
             />
-            {linkUrl && urlError(linkUrl.trim()) ? <p className="text-xs text-red-700">{urlError(linkUrl.trim())}</p> : null}
+            {linkUrl && urlError(linkUrl.trim()) ? (
+              <p className="text-xs text-red-700">{urlError(linkUrl.trim())}</p>
+            ) : null}
             <div className="flex justify-end gap-2">
               {state.link ? (
-                <button type="button" className="rounded-md px-2 py-1 text-red-700 hover:bg-red-50" onClick={() => {
-                  chain().extendMarkRange('link').unsetLink().run();
-                  close();
-                }}>
+                <button
+                  type="button"
+                  className="rounded-md px-2 py-1 text-red-700 hover:bg-red-50"
+                  onClick={() => {
+                    chain().extendMarkRange('link').unsetLink().run();
+                    close();
+                  }}
+                >
                   Remove link
                 </button>
               ) : null}
-              <button type="submit" className="bg-brand rounded-md px-3 py-1 font-medium text-white">
+              <button
+                type="submit"
+                className="bg-brand rounded-md px-3 py-1 font-medium text-white"
+              >
                 Apply
               </button>
             </div>
           </form>
         </Popover>
 
-        <Popover label="Table" active={state.table} open={popover === 'table'} onOpenChange={(o) => setPopover(o ? 'table' : null)} trigger={<TableIcon />}>
+        <Popover
+          label="Table"
+          active={state.table}
+          open={popover === 'table'}
+          onOpenChange={(o) => setPopover(o ? 'table' : null)}
+          trigger={<TableIcon />}
+        >
           {state.table ? (
             <div className="grid grid-cols-2 gap-1">
               {(
@@ -525,17 +706,32 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
                   ['Merge cells', () => chain().mergeCells().run()],
                   ['Split cell', () => chain().splitCell().run()],
                   ['Header row', () => chain().toggleHeaderRow().run()],
-                  [state.tableBorderless ? 'Show borders' : 'Hide borders', () => chain().updateAttributes('table', { borderless: !state.tableBorderless }).run()],
+                  [
+                    state.tableBorderless ? 'Show borders' : 'Hide borders',
+                    () =>
+                      chain()
+                        .updateAttributes('table', { borderless: !state.tableBorderless })
+                        .run(),
+                  ],
                 ] as const
               ).map(([label, action]) => (
-                <button key={label} type="button" className="rounded px-2 py-1.5 text-start hover:bg-stone-100" onClick={action}>
+                <button
+                  key={label}
+                  type="button"
+                  className="rounded px-2 py-1.5 text-start hover:bg-stone-100"
+                  onClick={action}
+                >
                   {label}
                 </button>
               ))}
-              <button type="button" className="col-span-2 rounded px-2 py-1.5 text-start text-red-700 hover:bg-red-50" onClick={() => {
-                chain().deleteTable().run();
-                close();
-              }}>
+              <button
+                type="button"
+                className="col-span-2 rounded px-2 py-1.5 text-start text-red-700 hover:bg-red-50"
+                onClick={() => {
+                  chain().deleteTable().run();
+                  close();
+                }}
+              >
                 Delete table
               </button>
             </div>
@@ -544,46 +740,107 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
               className="flex flex-col gap-2"
               onSubmit={(e) => {
                 e.preventDefault();
-                chain().insertTable({ rows: tableSize.rows, cols: tableSize.cols, withHeaderRow: true }).run();
+                chain()
+                  .insertTable({ rows: tableSize.rows, cols: tableSize.cols, withHeaderRow: true })
+                  .run();
                 close();
               }}
             >
               <div className="flex gap-2">
                 <label className="flex flex-1 flex-col text-xs font-semibold">
                   Rows
-                  <input type="number" min={1} max={20} className="h-8 rounded-md border border-stone-300 px-2" value={tableSize.rows} onChange={(e) => setTableSize((s) => ({ ...s, rows: Math.max(1, Math.min(20, Number(e.target.value) || 1)) }))} />
+                  <input
+                    type="number"
+                    min={1}
+                    max={20}
+                    className="h-8 rounded-md border border-stone-300 px-2"
+                    value={tableSize.rows}
+                    onChange={(e) =>
+                      setTableSize((s) => ({
+                        ...s,
+                        rows: Math.max(1, Math.min(20, Number(e.target.value) || 1)),
+                      }))
+                    }
+                  />
                 </label>
                 <label className="flex flex-1 flex-col text-xs font-semibold">
                   Columns
-                  <input type="number" min={1} max={10} className="h-8 rounded-md border border-stone-300 px-2" value={tableSize.cols} onChange={(e) => setTableSize((s) => ({ ...s, cols: Math.max(1, Math.min(10, Number(e.target.value) || 1)) }))} />
+                  <input
+                    type="number"
+                    min={1}
+                    max={10}
+                    className="h-8 rounded-md border border-stone-300 px-2"
+                    value={tableSize.cols}
+                    onChange={(e) =>
+                      setTableSize((s) => ({
+                        ...s,
+                        cols: Math.max(1, Math.min(10, Number(e.target.value) || 1)),
+                      }))
+                    }
+                  />
                 </label>
               </div>
-              <button type="submit" className="bg-brand rounded-md px-3 py-1.5 font-medium text-white">
+              <button
+                type="submit"
+                className="bg-brand rounded-md px-3 py-1.5 font-medium text-white"
+              >
                 Insert table
               </button>
             </form>
           )}
         </Popover>
 
-        <Popover label="Image" active={state.image} open={popover === 'image'} onOpenChange={(o) => setPopover(o ? 'image' : null)} trigger={<ImageIcon />}>
+        <Popover
+          label="Image"
+          active={state.image}
+          open={popover === 'image'}
+          onOpenChange={(o) => setPopover(o ? 'image' : null)}
+          trigger={<ImageIcon />}
+        >
           <div className="flex flex-col gap-2">
-            <button type="button" className="bg-brand rounded-md px-3 py-1.5 font-medium text-white" onClick={() => fileInput.current?.click()}>
+            <button
+              type="button"
+              className="bg-brand rounded-md px-3 py-1.5 font-medium text-white"
+              onClick={() => fileInput.current?.click()}
+            >
               Choose an image…
             </button>
-            <p className="text-xs text-stone-500">PNG, JPEG, WebP or GIF. Large images are shrunk; the file stays on this device.</p>
+            <p className="text-xs text-stone-500">
+              PNG, JPEG, WebP or GIF. Large images are shrunk; the file stays on this device.
+            </p>
             {state.image ? (
               <>
                 <p className="text-xs font-semibold">Selected image</p>
                 <div className="flex gap-1">
                   {(['start', 'center', 'end'] as const).map((align) => (
-                    <button key={align} type="button" className={cn('flex-1 rounded border px-2 py-1 text-xs', state.imageAlign === align ? 'border-brand bg-brand-soft' : 'border-stone-200')} onClick={() => chain().updateAttributes('image', { align }).run()}>
+                    <button
+                      key={align}
+                      type="button"
+                      className={cn(
+                        'flex-1 rounded border px-2 py-1 text-xs',
+                        state.imageAlign === align
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-stone-200',
+                      )}
+                      onClick={() => chain().updateAttributes('image', { align }).run()}
+                    >
                       {align === 'start' ? 'Start' : align === 'center' ? 'Centre' : 'End'}
                     </button>
                   ))}
                 </div>
                 <div className="flex gap-1">
                   {['25%', '50%', '75%', '100%'].map((width) => (
-                    <button key={width} type="button" className={cn('flex-1 rounded border px-2 py-1 text-xs', state.imageWidth === width ? 'border-brand bg-brand-soft' : 'border-stone-200')} onClick={() => chain().updateAttributes('image', { width }).run()}>
+                    <button
+                      key={width}
+                      type="button"
+                      className={cn(
+                        'flex-1 rounded border px-2 py-1 text-xs',
+                        state.imageWidth === width
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-stone-200',
+                      )}
+                      onClick={() => chain().updateAttributes('image', { width }).run()}
+                    >
                       {width}
                     </button>
                   ))}
@@ -606,7 +863,13 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
           }}
         />
 
-        <Popover label="Emoji" open={popover === 'emoji'} onOpenChange={(o) => setPopover(o ? 'emoji' : null)} trigger={<SmileIcon />} className="w-80">
+        <Popover
+          label="Emoji"
+          open={popover === 'emoji'}
+          onOpenChange={(o) => setPopover(o ? 'emoji' : null)}
+          trigger={<SmileIcon />}
+          className="w-80"
+        >
           <input
             type="search"
             aria-label="Search emoji"
@@ -617,12 +880,22 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
             onChange={(e) => setEmojiQuery(e.target.value)}
           />
           <div className="max-h-60 overflow-auto">
-            {(emojis ? [{ id: 'results', label: `${emojis.length} found`, emojis }] : EMOJI_GROUPS).map((group) => (
+            {(emojis
+              ? [{ id: 'results', label: `${emojis.length} found`, emojis }]
+              : EMOJI_GROUPS
+            ).map((group) => (
               <div key={group.id} className="mb-2">
                 <p className="mb-1 text-xs font-semibold text-stone-500">{group.label}</p>
                 <div className="grid grid-cols-8 gap-0.5">
                   {group.emojis.map((emoji) => (
-                    <button key={emoji.char} type="button" className="rounded p-1 text-lg hover:bg-stone-100" aria-label={emoji.name} title={emoji.name} onClick={() => chain().insertContent(emoji.char).run()}>
+                    <button
+                      key={emoji.char}
+                      type="button"
+                      className="rounded p-1 text-lg hover:bg-stone-100"
+                      aria-label={emoji.name}
+                      title={emoji.name}
+                      onClick={() => chain().insertContent(emoji.char).run()}
+                    >
                       {emoji.char}
                     </button>
                   ))}
@@ -630,10 +903,17 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
               </div>
             ))}
           </div>
-          <p className="mt-1 text-xs text-stone-500">More emoji: {isMac ? 'Ctrl+⌘+Space' : 'Win+.'}</p>
+          <p className="mt-1 text-xs text-stone-500">
+            More emoji: {isMac ? 'Ctrl+⌘+Space' : 'Win+.'}
+          </p>
         </Popover>
 
-        <ToolButton label="Code block" shortcut={`${MOD}+Alt+C`} active={state.codeBlock} onClick={() => chain().toggleCodeBlock().run()}>
+        <ToolButton
+          label="Code block"
+          shortcut={`${MOD}+Alt+C`}
+          active={state.codeBlock}
+          onClick={() => chain().toggleCodeBlock().run()}
+        >
           <CodeBlockIcon />
         </ToolButton>
         {state.codeBlock ? (
@@ -641,7 +921,9 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
             aria-label="Code language"
             className={selectClass}
             value={state.codeLanguage}
-            onChange={(e) => chain().updateAttributes('codeBlock', { language: e.target.value }).run()}
+            onChange={(e) =>
+              chain().updateAttributes('codeBlock', { language: e.target.value }).run()
+            }
           >
             {CODE_LANGUAGES.map((l) => (
               <option key={l.id} value={l.id}>
@@ -659,13 +941,22 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
         <ToolButton label="Copy" shortcut={`${MOD}+C`} onClick={() => void clipboard('copy')}>
           <CopyIcon />
         </ToolButton>
-        <ToolButton label="Paste as plain text" shortcut={`${MOD}+Shift+V`} onClick={() => void clipboard('paste')}>
+        <ToolButton
+          label="Paste as plain text"
+          shortcut={`${MOD}+Shift+V`}
+          onClick={() => void clipboard('paste')}
+        >
           <ClipboardIcon />
         </ToolButton>
       </Group>
 
       <Group label="Tools">
-        <ToolButton label="Find and replace" shortcut={`${MOD}+F`} active={findOpen} onClick={onToggleFind}>
+        <ToolButton
+          label="Find and replace"
+          shortcut={`${MOD}+F`}
+          active={findOpen}
+          onClick={onToggleFind}
+        >
           <SearchIcon />
         </ToolButton>
         <ToolButton label="Spell check" active={spellcheck} onClick={onToggleSpellcheck}>
@@ -696,7 +987,10 @@ function ColorChoices({
             type="button"
             aria-label={`Colour ${color}`}
             title={color}
-            className={cn('size-7 rounded border', value === color ? 'ring-brand ring-2' : 'border-stone-300')}
+            className={cn(
+              'size-7 rounded border',
+              value === color ? 'ring-brand ring-2' : 'border-stone-300',
+            )}
             style={{ background: color }}
             onClick={() => onPick(color)}
           />
@@ -705,9 +999,18 @@ function ColorChoices({
       <div className="flex items-center gap-2">
         <label className="flex items-center gap-2 text-xs font-semibold">
           Custom
-          <input type="color" className="h-8 w-12 cursor-pointer rounded border border-stone-300" value={/^#[0-9a-f]{6}$/i.test(value) ? value : '#000000'} onChange={(e) => onPick(e.target.value)} />
+          <input
+            type="color"
+            className="h-8 w-12 cursor-pointer rounded border border-stone-300"
+            value={/^#[0-9a-f]{6}$/i.test(value) ? value : '#000000'}
+            onChange={(e) => onPick(e.target.value)}
+          />
         </label>
-        <button type="button" className="ms-auto rounded px-2 py-1 text-xs hover:bg-stone-100" onClick={onClear}>
+        <button
+          type="button"
+          className="ms-auto rounded px-2 py-1 text-xs hover:bg-stone-100"
+          onClick={onClear}
+        >
           Remove colour
         </button>
       </div>

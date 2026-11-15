@@ -65,8 +65,13 @@ export function moveSection(doc: ResumeDocument, from: number, to: number): Resu
   return { ...doc, sections: arrayMove(doc.sections, from, to) };
 }
 
-export function insertSection(doc: ResumeDocument, section: ResumeSection, index: number): ResumeDocument {
-  if (doc.sections.some((s) => s.id === section.id) || doc.sections.length >= LIMITS.sections) return doc;
+export function insertSection(
+  doc: ResumeDocument,
+  section: ResumeSection,
+  index: number,
+): ResumeDocument {
+  if (doc.sections.some((s) => s.id === section.id) || doc.sections.length >= LIMITS.sections)
+    return doc;
   const sections = [...doc.sections];
   sections.splice(Math.max(0, Math.min(index, sections.length)), 0, section);
   return { ...doc, sections };
@@ -139,7 +144,10 @@ export function updateItem(
 }
 
 export function removeItem(doc: ResumeDocument, sectionId: string, itemId: string): ResumeDocument {
-  return mapSection(doc, sectionId, (s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) }));
+  return mapSection(doc, sectionId, (s) => ({
+    ...s,
+    items: s.items.filter((i) => i.id !== itemId),
+  }));
 }
 
 export function duplicateItem(
@@ -159,20 +167,31 @@ export function duplicateItem(
   return { doc: mapSection(doc, sectionId, (s) => ({ ...s, items })), itemId: copy.id };
 }
 
-export function moveItem(doc: ResumeDocument, sectionId: string, from: number, to: number): ResumeDocument {
+export function moveItem(
+  doc: ResumeDocument,
+  sectionId: string,
+  from: number,
+  to: number,
+): ResumeDocument {
   return mapSection(doc, sectionId, (s) => ({ ...s, items: arrayMove(s.items, from, to) }));
 }
 
 // ---------------------------------------------------------------- profile
 
-export function updateProfile(doc: ResumeDocument, patch: Partial<Omit<Profile, 'links'>>): ResumeDocument {
+export function updateProfile(
+  doc: ResumeDocument,
+  patch: Partial<Omit<Profile, 'links'>>,
+): ResumeDocument {
   return { ...doc, profile: { ...doc.profile, ...patch } };
 }
 
 export function addLink(doc: ResumeDocument): { doc: ResumeDocument; linkId: string | null } {
   if (doc.profile.links.length >= LIMITS.links) return { doc, linkId: null };
   const link: ProfileLink = { id: createId(), label: '', url: '' };
-  return { doc: { ...doc, profile: { ...doc.profile, links: [...doc.profile.links, link] } }, linkId: link.id };
+  return {
+    doc: { ...doc, profile: { ...doc.profile, links: [...doc.profile.links, link] } },
+    linkId: link.id,
+  };
 }
 
 export function updateLink(

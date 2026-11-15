@@ -2,7 +2,13 @@ import { useEffect, useId, useRef, useState, type DragEvent } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CropIcon, TrashIcon, UploadIcon } from '@/components/ui/icons';
-import { LIMITS, PHOTO_RADIUS, PHOTO_SHAPES, type HorizontalAlign, type PhotoShape } from '@/config/layout';
+import {
+  LIMITS,
+  PHOTO_RADIUS,
+  PHOTO_SHAPES,
+  type HorizontalAlign,
+  type PhotoShape,
+} from '@/config/layout';
 import { removePhoto, setPhoto, updatePhoto } from '@/lib/document-ops';
 import { ImageError } from '@/lib/image';
 import { readPhotoFile, type PhotoSource } from '@/lib/photo-canvas';
@@ -13,7 +19,11 @@ import { toast, useResumeStore } from '@/stores';
 import { PhotoCropDialog } from './PhotoCropDialog';
 import { PhotoSizeGuide } from './PhotoSizeGuide';
 
-const SHAPE_LABELS: Readonly<Record<PhotoShape, string>> = { square: 'Square', rounded: 'Rounded', circle: 'Circle' };
+const SHAPE_LABELS: Readonly<Record<PhotoShape, string>> = {
+  square: 'Square',
+  rounded: 'Rounded',
+  circle: 'Circle',
+};
 
 function alignLabels(rtl: boolean): Readonly<Record<HorizontalAlign, string>> {
   return {
@@ -67,7 +77,10 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
     try {
       setPending({ source: await readPhotoFile(file) });
     } catch (error) {
-      toast.error('Photo not added', error instanceof ImageError ? error.message : 'This picture could not be read.');
+      toast.error(
+        'Photo not added',
+        error instanceof ImageError ? error.message : 'This picture could not be read.',
+      );
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -125,8 +138,9 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
             <UploadIcon /> {busy ? 'Reading…' : 'Add a photo'}
           </Button>
           <p className="text-xs text-stone-500">
-            Or drag a picture here. JPEG, PNG or WebP, at least 600 × 600 pixels for a sharp print. It stays in this
-            browser and is never uploaded. Many employers prefer no photo; leave it out if you are unsure.
+            Or drag a picture here. JPEG, PNG or WebP, at least 600 × 600 pixels for a sharp print.
+            It stays in this browser and is never uploaded. Many employers prefer no photo; leave it
+            out if you are unsure.
           </p>
         </div>
       ) : (
@@ -169,7 +183,9 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
                     aria-checked={photo.shape === shape}
                     className={cn(
                       'flex-1 rounded-md border px-2 py-1.5 text-xs',
-                      photo.shape === shape ? 'border-brand bg-brand/10 text-brand' : 'border-stone-300 hover:bg-stone-100',
+                      photo.shape === shape
+                        ? 'border-brand bg-brand/10 text-brand'
+                        : 'border-stone-300 hover:bg-stone-100',
                     )}
                     onClick={() => updateActive((d) => updatePhoto(d, { shape }))}
                   >
@@ -192,7 +208,9 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
                 step={1}
                 value={photo.widthMm}
                 onChange={(e) =>
-                  updateActive((d) => updatePhoto(d, { widthMm: Number(e.target.value) }), { group: 'photo.width' })
+                  updateActive((d) => updatePhoto(d, { widthMm: Number(e.target.value) }), {
+                    group: 'photo.width',
+                  })
                 }
               />
             </div>
@@ -205,7 +223,9 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
                 id={`${id}-align`}
                 className="h-9 rounded-md border border-stone-300 bg-white px-2 text-sm"
                 value={photo.align}
-                onChange={(e) => updateActive((d) => updatePhoto(d, { align: e.target.value as HorizontalAlign }))}
+                onChange={(e) =>
+                  updateActive((d) => updatePhoto(d, { align: e.target.value as HorizontalAlign }))
+                }
               >
                 {Object.entries(alignLabels(rtl)).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -229,7 +249,9 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
         onCancel={() => setPending(null)}
         onApply={({ dataUrl, crop }) => {
           const source = pending?.source;
-          updateActive((d) => setPhoto(d, source ? { dataUrl, source: { ...source, crop } } : { dataUrl }));
+          updateActive((d) =>
+            setPhoto(d, source ? { dataUrl, source: { ...source, crop } } : { dataUrl }),
+          );
           setPending(null);
           toast.success('Photo updated', 'It is saved in this browser only.');
         }}

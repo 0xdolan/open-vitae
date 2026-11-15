@@ -37,7 +37,9 @@ export function createIndexedDbStore(dbName = 'open-vitae', storeName = 'resumes
       };
       req.onerror = () => reject(req.error ?? new Error('Could not open local storage.'));
       req.onblocked = () =>
-        reject(new Error('Local storage is blocked by another Open Vitae tab. Close it and reload.'));
+        reject(
+          new Error('Local storage is blocked by another Open Vitae tab. Close it and reload.'),
+        );
     }).catch((error: unknown) => {
       connection = undefined;
       throw error;

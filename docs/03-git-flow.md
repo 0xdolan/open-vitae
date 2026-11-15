@@ -12,16 +12,16 @@ Previous: [Architecture](02-architecture.md) · Next: [Release process](04-relea
 
 ## Branches
 
-| Branch        | Created from | Merges into          | Purpose                                 |
-| ------------- | ------------ | -------------------- | --------------------------------------- |
-| `main`        | —            | —                    | Released code only. Default, protected. Every commit is deployable |
-| `develop`     | `main`       | —                    | Integration branch for the next release. Protected |
-| `feature/*`   | `develop`    | `develop`            | New functionality                       |
-| `bugfix/*`    | `develop`    | `develop`            | Fix for something not yet released      |
-| `release/*`   | `develop`    | `main` and `develop` | Stabilise and version a release         |
-| `hotfix/*`    | `main`       | `main` and `develop` | Urgent fix for released code            |
-| `docs/*`      | `develop`    | `develop`            | Documentation only                      |
-| `chore/*`     | `develop`    | `develop`            | Tooling, dependencies, CI               |
+| Branch      | Created from | Merges into          | Purpose                                                            |
+| ----------- | ------------ | -------------------- | ------------------------------------------------------------------ |
+| `main`      | —            | —                    | Released code only. Default, protected. Every commit is deployable |
+| `develop`   | `main`       | —                    | Integration branch for the next release. Protected                 |
+| `feature/*` | `develop`    | `develop`            | New functionality                                                  |
+| `bugfix/*`  | `develop`    | `develop`            | Fix for something not yet released                                 |
+| `release/*` | `develop`    | `main` and `develop` | Stabilise and version a release                                    |
+| `hotfix/*`  | `main`       | `main` and `develop` | Urgent fix for released code                                       |
+| `docs/*`    | `develop`    | `develop`            | Documentation only                                                 |
+| `chore/*`   | `develop`    | `develop`            | Tooling, dependencies, CI                                          |
 
 The repository never uses `master`. `scripts/init-git-flow.sh` renames it to `main` if it exists.
 
@@ -74,12 +74,12 @@ The script requires zero approvals by default because a solo maintainer cannot a
 
 [Conventional Commits](https://www.conventionalcommits.org/). The type decides the version bump:
 
-| Type                         | Bump  |
-| ---------------------------- | ----- |
-| `fix`, `perf`                | patch |
-| `feat`                       | minor |
-| any type with `!` or a `BREAKING CHANGE:` footer | major |
-| `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore` | none |
+| Type                                                        | Bump  |
+| ----------------------------------------------------------- | ----- |
+| `fix`, `perf`                                               | patch |
+| `feat`                                                      | minor |
+| any type with `!` or a `BREAKING CHANGE:` footer            | major |
+| `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore` | none  |
 
 ---
 

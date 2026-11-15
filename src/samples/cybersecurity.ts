@@ -65,7 +65,11 @@ export const cybersecuritySample: SampleDefinition = {
         items: [
           { title: 'OSCP', subtitle: 'Offensive Security', dateRange: '2017' },
           { title: 'CISSP', subtitle: 'ISC2', dateRange: '2020' },
-          { title: 'AWS Certified Security – Specialty', subtitle: 'Amazon Web Services', dateRange: '2022' },
+          {
+            title: 'AWS Certified Security – Specialty',
+            subtitle: 'Amazon Web Services',
+            dateRange: '2022',
+          },
         ],
       },
       {

@@ -40,31 +40,51 @@ const COLUMN_WIDTHS: Readonly<Record<(typeof TABLE_COLUMNS)[number], number>> = 
 };
 
 function hasImages(doc: ResumeDocument): boolean {
-  return [doc.profile.summaryHtml, ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml))].some((html) =>
-    html.includes('<img'),
-  );
+  return [
+    doc.profile.summaryHtml,
+    ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml)),
+  ].some((html) => html.includes('<img'));
 }
 
 /** What a sheet cannot hold, said once. */
 function sheetWarnings(doc: ResumeDocument): string[] {
-  const warnings = ['Text colours, fonts and the photo are not part of this format; use JSON for a full backup.'];
+  const warnings = [
+    'Text colours, fonts and the photo are not part of this format; use JSON for a full backup.',
+  ];
   if (hasImages(doc)) warnings.push('Images inside the text were left out.');
   return warnings;
 }
 
-export async function buildDataFile(doc: ResumeDocument, format: DataFormat, context: ExportContext): Promise<BuiltFile> {
+export async function buildDataFile(
+  doc: ResumeDocument,
+  format: DataFormat,
+  context: ExportContext,
+): Promise<BuiltFile> {
   const savedAt = context.version ? new Date(context.version.savedAt) : context.now;
   const name = (extension: string) =>
-    exportFileName(doc.profile.fullName || doc.name, context.version?.number ?? null, savedAt, extension);
+    exportFileName(
+      doc.profile.fullName || doc.name,
+      context.version?.number ?? null,
+      savedAt,
+      extension,
+    );
 
   switch (format) {
     case 'json': {
       const file = createJsonExport(doc, context.version, context.appVersion, context.now);
-      return { fileName: file.fileName, blob: new Blob([file.content], { type: file.mimeType }), warnings: [] };
+      return {
+        fileName: file.fileName,
+        blob: new Blob([file.content], { type: file.mimeType }),
+        warnings: [],
+      };
     }
     case 'csv': {
       const csv = toCsv(resumeToTable(doc, MARKDOWN_CODEC));
-      return { fileName: name('csv'), blob: new Blob([csv], { type: 'text/csv;charset=utf-8' }), warnings: sheetWarnings(doc) };
+      return {
+        fileName: name('csv'),
+        blob: new Blob([csv], { type: 'text/csv;charset=utf-8' }),
+        warnings: sheetWarnings(doc),
+      };
     }
     case 'xlsx': {
       const { bytes, truncated } = await writeXlsx(resumeToTable(doc, MARKDOWN_CODEC), {
@@ -74,8 +94,15 @@ export async function buildDataFile(doc: ResumeDocument, format: DataFormat, con
         rightToLeft: doc.layout.direction === 'rtl',
       });
       const warnings = sheetWarnings(doc);
-      if (truncated > 0) warnings.push(`${truncated} very long ${truncated === 1 ? 'cell was' : 'cells were'} shortened to Excel's limit.`);
-      return { fileName: name('xlsx'), blob: new Blob([bytes as BlobPart], { type: XLSX_MIME }), warnings };
+      if (truncated > 0)
+        warnings.push(
+          `${truncated} very long ${truncated === 1 ? 'cell was' : 'cells were'} shortened to Excel's limit.`,
+        );
+      return {
+        fileName: name('xlsx'),
+        blob: new Blob([bytes as BlobPart], { type: XLSX_MIME }),
+        warnings,
+      };
     }
     case 'markdown':
       return {

@@ -38,7 +38,9 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       <div className="min-w-0">
         <p className="font-semibold text-ink">{toast.title}</p>
         {toast.description ? (
-          <p className="mt-0.5 text-sm break-words text-stone-600" dir="auto">{toast.description}</p>
+          <p className="mt-0.5 text-sm break-words text-stone-600" dir="auto">
+            {toast.description}
+          </p>
         ) : null}
         {toast.action ? (
           <button
@@ -67,7 +69,11 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
         aria-hidden="true"
         className={cn(
           'ov-toast-progress absolute inset-x-0 bottom-0 h-1 origin-[left]',
-          toast.tone === 'success' ? 'bg-emerald-500' : toast.tone === 'error' ? 'bg-red-500' : 'bg-stone-400',
+          toast.tone === 'success'
+            ? 'bg-emerald-500'
+            : toast.tone === 'error'
+              ? 'bg-red-500'
+              : 'bg-stone-400',
         )}
         style={{ animationDuration: `${toast.durationMs}ms` }}
         onAnimationEnd={() => dismiss(toast.id)}

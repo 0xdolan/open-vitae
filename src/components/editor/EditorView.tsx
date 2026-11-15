@@ -40,7 +40,8 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
   useEditorShortcuts();
 
   // If the selected section disappears (deleted, undo, another tab), fall back to the profile.
-  const section = panel.kind === 'section' ? doc.sections.find((s) => s.id === panel.id) : undefined;
+  const section =
+    panel.kind === 'section' ? doc.sections.find((s) => s.id === panel.id) : undefined;
   useEffect(() => {
     if (panel.kind === 'section' && !section) setPanel({ kind: 'profile' });
   }, [panel, section]);
@@ -57,21 +58,33 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
     <div className="flex flex-col gap-4">
       <EditorHeader doc={doc} onExport={() => setExporting(true)} />
       <ExportDialog open={exporting} pages={pages} onClose={closeExport} />
-      <PrintPreview open={printPreview} doc={doc} pages={pages} onClose={() => setPrintPreview(false)} />
+      <PrintPreview
+        open={printPreview}
+        doc={doc}
+        pages={pages}
+        onClose={() => setPrintPreview(false)}
+      />
       <PrintLayer doc={doc} pages={pages} />
       {/* Measures pages even while the preview tab is hidden on small screens. */}
       <FlowMeasure doc={doc} onPages={setPages} />
 
       <FontStatusNotice doc={doc} onOpenFonts={() => select({ kind: 'page' })} />
 
-      <div role="tablist" aria-label="Editor view" className="flex gap-1 rounded-lg bg-stone-200/70 p-1 xl:hidden">
+      <div
+        role="tablist"
+        aria-label="Editor view"
+        className="flex gap-1 rounded-lg bg-stone-200/70 p-1 xl:hidden"
+      >
         {(['edit', 'preview'] as const).map((tab) => (
           <button
             key={tab}
             type="button"
             role="tab"
             aria-selected={mobileTab === tab}
-            className={cn('flex-1 rounded-md py-1.5 text-sm font-medium', mobileTab === tab ? 'bg-white shadow-sm' : 'text-stone-600')}
+            className={cn(
+              'flex-1 rounded-md py-1.5 text-sm font-medium',
+              mobileTab === tab ? 'bg-white shadow-sm' : 'text-stone-600',
+            )}
             onClick={() => setMobileTab(tab)}
           >
             {tab === 'edit' ? 'Edit' : 'Preview'}
@@ -80,7 +93,12 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_minmax(0,1.1fr)]">
-        <aside className={cn('lg:sticky lg:top-4 lg:self-start', mobileTab === 'preview' && 'hidden xl:block')}>
+        <aside
+          className={cn(
+            'lg:sticky lg:top-4 lg:self-start',
+            mobileTab === 'preview' && 'hidden xl:block',
+          )}
+        >
           <Navigator doc={doc} panel={panel} onSelect={select} />
         </aside>
 
@@ -96,7 +114,11 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
           ) : null}
           {panel.kind === 'page' ? (
             <section aria-labelledby="page-heading" className="flex flex-col gap-5">
-              <PanelHeading id="page-heading" title="Page setup" description="Paper size, direction, fonts and spacing." />
+              <PanelHeading
+                id="page-heading"
+                title="Page setup"
+                description="Paper size, direction, fonts and spacing."
+              />
               <PageSettings
                 layout={doc.layout}
                 onChange={updateLayout}
@@ -129,7 +151,9 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
               }
             />
           </div>
-          <p className="mt-2 text-center text-xs text-stone-500">Click a section on the page to edit it.</p>
+          <p className="mt-2 text-center text-xs text-stone-500">
+            Click a section on the page to edit it.
+          </p>
         </div>
       </div>
     </div>

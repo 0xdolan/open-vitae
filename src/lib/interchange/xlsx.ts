@@ -69,7 +69,9 @@ export interface XlsxResult {
 
 /** Write rows as a one-sheet workbook. The first row is the header: bold, frozen and filterable. */
 export async function writeXlsx(rows: Table, options: SheetOptions = {}): Promise<XlsxResult> {
-  const sheetName = escapeXml((options.sheetName ?? 'Resume').slice(0, 31).replace(/[[\]:*?/\\]/g, ' '));
+  const sheetName = escapeXml(
+    (options.sheetName ?? 'Resume').slice(0, 31).replace(/[[\]:*?/\\]/g, ' '),
+  );
   let truncated = 0;
   const width = Math.max(1, ...rows.map((r) => r.length));
   const lastCell = `${columnName(width - 1)}${Math.max(1, rows.length)}`;
@@ -93,7 +95,10 @@ export async function writeXlsx(rows: Table, options: SheetOptions = {}): Promis
     .join('');
 
   const cols = (options.widths ?? [])
-    .map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${Math.max(4, Math.min(120, w))}" customWidth="1"/>`)
+    .map(
+      (w, i) =>
+        `<col min="${i + 1}" max="${i + 1}" width="${Math.max(4, Math.min(120, w))}" customWidth="1"/>`,
+    )
     .join('');
 
   const sheet =
@@ -152,7 +157,9 @@ export async function writeXlsx(rows: Table, options: SheetOptions = {}): Promis
     `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
       `<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">` +
       `<sheets><sheet name="${sheetName}" sheetId="1" r:id="rId1"/></sheets>` +
-      (rows.length > 1 ? `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">'${sheetName.replace(/'/g, "''")}'!$A$1:$${columnName(width - 1)}$${rows.length}</definedName></definedNames>` : '') +
+      (rows.length > 1
+        ? `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">'${sheetName.replace(/'/g, "''")}'!$A$1:$${columnName(width - 1)}$${rows.length}</definedName></definedNames>`
+        : '') +
       `</workbook>`,
   );
   zip.file(
@@ -166,7 +173,11 @@ export async function writeXlsx(rows: Table, options: SheetOptions = {}): Promis
   zip.file('xl/styles.xml', styles);
   zip.file('xl/worksheets/sheet1.xml', sheet);
 
-  const bytes = await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE', mimeType: XLSX_MIME });
+  const bytes = await zip.generateAsync({
+    type: 'uint8array',
+    compression: 'DEFLATE',
+    mimeType: XLSX_MIME,
+  });
   return { bytes, truncated };
 }
 
@@ -174,7 +185,8 @@ export const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsh
 
 function parseXml(text: string): Document {
   const xml = new DOMParser().parseFromString(text, 'application/xml');
-  if (xml.getElementsByTagName('parsererror').length > 0) throw new XlsxError('The workbook contains broken XML.');
+  if (xml.getElementsByTagName('parsererror').length > 0)
+    throw new XlsxError('The workbook contains broken XML.');
   return xml;
 }
 
@@ -207,12 +219,15 @@ export async function readXlsx(data: ArrayBuffer | Uint8Array): Promise<Table> {
 
   // Guard against zip bombs before unpacking anything.
   const entries = Object.values(zip.files);
-  if (entries.length > MAX_ENTRIES) throw new XlsxError('This workbook has too many parts to read safely.');
+  if (entries.length > MAX_ENTRIES)
+    throw new XlsxError('This workbook has too many parts to read safely.');
   const unpacked = entries.reduce((sum, entry) => {
-    const size = (entry as unknown as { _data?: { uncompressedSize?: number } })._data?.uncompressedSize ?? 0;
+    const size =
+      (entry as unknown as { _data?: { uncompressedSize?: number } })._data?.uncompressedSize ?? 0;
     return sum + size;
   }, 0);
-  if (unpacked > MAX_UNPACKED_BYTES) throw new XlsxError('This workbook is too large to read safely.');
+  if (unpacked > MAX_UNPACKED_BYTES)
+    throw new XlsxError('This workbook is too large to read safely.');
 
   // Find the first sheet through the workbook and its relationships.
   let sheetPath = 'xl/worksheets/sheet1.xml';
@@ -221,10 +236,15 @@ export async function readXlsx(data: ArrayBuffer | Uint8Array): Promise<Table> {
   if (workbook && rels) {
     const firstSheet = byName(parseXml(workbook), 'sheet')[0];
     const relId =
-      firstSheet?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id') ??
-      firstSheet?.getAttribute('r:id');
-    const target = byName(parseXml(rels), 'Relationship').find((r) => r.getAttribute('Id') === relId)?.getAttribute('Target');
-    if (target) sheetPath = target.startsWith('/') ? target.slice(1) : `xl/${target.replace(/^\.\//, '')}`;
+      firstSheet?.getAttributeNS(
+        'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+        'id',
+      ) ?? firstSheet?.getAttribute('r:id');
+    const target = byName(parseXml(rels), 'Relationship')
+      .find((r) => r.getAttribute('Id') === relId)
+      ?.getAttribute('Target');
+    if (target)
+      sheetPath = target.startsWith('/') ? target.slice(1) : `xl/${target.replace(/^\.\//, '')}`;
   }
   const sheetXml = await readEntry(zip, sheetPath);
   if (!sheetXml) throw new XlsxError('The workbook has no sheet to read.');
@@ -245,7 +265,8 @@ export async function readXlsx(data: ArrayBuffer | Uint8Array): Promise<Table> {
       const valueElement = byName(cell, 'v')[0];
       let value = '';
       if (type === 's') value = shared[Number(valueElement?.textContent)] ?? '';
-      else if (type === 'inlineStr') value = byName(cell, 'is')[0] ? stringItemText(byName(cell, 'is')[0] as Element) : '';
+      else if (type === 'inlineStr')
+        value = byName(cell, 'is')[0] ? stringItemText(byName(cell, 'is')[0] as Element) : '';
       else if (type === 'b') value = valueElement?.textContent === '1' ? 'TRUE' : 'FALSE';
       else value = valueElement?.textContent ?? '';
       while (cells.length < column) cells.push('');

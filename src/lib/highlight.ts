@@ -50,8 +50,27 @@ export type CodeLanguage = (typeof CODE_LANGUAGES)[number]['id'];
 
 /** highlight.js grammars by name; also registered with lowlight in the editor. */
 export const GRAMMARS = {
-  bash, c, cpp, csharp, css, go, java, javascript, json, kotlin, markdown,
-  php, plaintext, python, ruby, rust, sql, swift, typescript, xml, yaml,
+  bash,
+  c,
+  cpp,
+  csharp,
+  css,
+  go,
+  java,
+  javascript,
+  json,
+  kotlin,
+  markdown,
+  php,
+  plaintext,
+  python,
+  ruby,
+  rust,
+  sql,
+  swift,
+  typescript,
+  xml,
+  yaml,
 } as const;
 
 let registered = false;
@@ -88,7 +107,10 @@ export function highlightCodeBlocks(html: string): string {
   for (const code of doc.querySelectorAll('pre > code')) {
     const language = languageOf(code);
     if (!language || language === 'plaintext' || !highlighter.getLanguage(language)) continue;
-    const result = highlighter.highlight(code.textContent ?? '', { language, ignoreIllegals: true });
+    const result = highlighter.highlight(code.textContent ?? '', {
+      language,
+      ignoreIllegals: true,
+    });
     code.innerHTML = result.value;
     code.classList.add('hljs');
     changed = true;

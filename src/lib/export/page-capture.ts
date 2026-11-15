@@ -29,14 +29,23 @@ export interface TextRun extends Box {
 }
 
 /** The scale for a resolution, lowered if the picture would be too large to draw. */
-export function pixelRatioFor(dpi: number, widthPx: number, heightPx: number): { ratio: number; limited: boolean } {
+export function pixelRatioFor(
+  dpi: number,
+  widthPx: number,
+  heightPx: number,
+): { ratio: number; limited: boolean } {
   const wanted = dpi / CSS_DPI;
   const max = Math.sqrt(MAX_CANVAS_PIXELS / Math.max(1, widthPx * heightPx));
   return wanted > max ? { ratio: max, limited: true } : { ratio: wanted, limited: false };
 }
 
 function relative(rect: DOMRect, origin: DOMRect): Box {
-  return { x: rect.left - origin.left, y: rect.top - origin.top, width: rect.width, height: rect.height };
+  return {
+    x: rect.left - origin.left,
+    y: rect.top - origin.top,
+    width: rect.width,
+    height: rect.height,
+  };
 }
 
 const SAFE_LINK = /^(https?:|mailto:|tel:)/i;
@@ -95,7 +104,12 @@ export function collectTextRuns(page: HTMLElement): TextRun[] {
         // Keep reading order: right-to-left text grows leftwards.
         current = {
           text: current.text + char,
-          box: { x: left, y: Math.min(current.box.y, box.y), width: right - left, height: Math.max(current.box.height, box.height) },
+          box: {
+            x: left,
+            y: Math.min(current.box.y, box.y),
+            width: right - left,
+            height: Math.max(current.box.height, box.height),
+          },
         };
       } else {
         flush();
@@ -123,7 +137,10 @@ const common = (options: RenderOptions) => ({
 });
 
 /** Draw a page onto a canvas at the given scale. */
-export function renderPageCanvas(page: HTMLElement, options: RenderOptions): Promise<HTMLCanvasElement> {
+export function renderPageCanvas(
+  page: HTMLElement,
+  options: RenderOptions,
+): Promise<HTMLCanvasElement> {
   return toCanvas(page, common(options));
 }
 
@@ -134,8 +151,16 @@ export async function renderPageSvg(page: HTMLElement, fontEmbedCSS: string): Pr
   return decodeURIComponent(dataUrl.slice(comma + 1));
 }
 
-export function canvasToBlob(canvas: HTMLCanvasElement, type: 'image/png' | 'image/jpeg', quality?: number): Promise<Blob> {
+export function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: 'image/png' | 'image/jpeg',
+  quality?: number,
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('The page could not be drawn.'))), type, quality);
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('The page could not be drawn.'))),
+      type,
+      quality,
+    );
   });
 }

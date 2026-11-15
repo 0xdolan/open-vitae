@@ -2,10 +2,10 @@
 
 This folder holds the fonts that ship with Open Vitae and work offline:
 
-| Family  | Use                                   | Licence  | Source                                      |
-| ------- | ------------------------------------- | -------- | ------------------------------------------- |
+| Family  | Use                                                                      | Licence     | Source                                    |
+| ------- | ------------------------------------------------------------------------ | ----------- | ----------------------------------------- |
 | Sahel   | Default for right-to-left resumes and fallback for Arabic-script letters | SIL OFL 1.1 | https://github.com/rastikerdar/sahel-font |
-| Estedad | Alternative Persian and Arabic font   | SIL OFL 1.1 | https://github.com/aminabedi68/Estedad   |
+| Estedad | Alternative Persian and Arabic font                                      | SIL OFL 1.1 | https://github.com/aminabedi68/Estedad    |
 
 Manrope, the default left-to-right font, comes from the `@fontsource-variable/manrope` npm package and is not stored here.
 

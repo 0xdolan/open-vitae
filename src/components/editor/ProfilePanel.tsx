@@ -15,7 +15,13 @@ import { PanelHeading } from './PanelHeading';
 
 type ProfileTextField = 'fullName' | 'headline' | 'email' | 'phone' | 'location' | 'website';
 
-const FIELDS: readonly { key: ProfileTextField; label: string; type?: string; autoComplete?: string; wide?: boolean }[] = [
+const FIELDS: readonly {
+  key: ProfileTextField;
+  label: string;
+  type?: string;
+  autoComplete?: string;
+  wide?: boolean;
+}[] = [
   { key: 'fullName', label: 'Full name', autoComplete: 'name', wide: true },
   { key: 'headline', label: 'Headline', wide: true },
   { key: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
@@ -33,7 +39,11 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
 
   return (
     <section aria-labelledby="profile-heading" className="flex flex-col gap-5">
-      <PanelHeading id="profile-heading" title="Profile" description="Your name, contact details and a short summary." />
+      <PanelHeading
+        id="profile-heading"
+        title="Profile"
+        description="Your name, contact details and a short summary."
+      />
 
       <div className="grid gap-3 sm:grid-cols-2">
         {FIELDS.map((field) => (
@@ -44,7 +54,13 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
             autoComplete={field.autoComplete}
             className={field.wide ? 'sm:col-span-2' : undefined}
             value={profile[field.key]}
-            error={field.key === 'email' ? emailError(profile.email) : field.key === 'website' ? urlError(profile.website) : null}
+            error={
+              field.key === 'email'
+                ? emailError(profile.email)
+                : field.key === 'website'
+                  ? urlError(profile.website)
+                  : null
+            }
             placeholder={field.key === 'website' ? 'https://' : undefined}
             onChange={(value) => setField(field.key, value)}
           />
@@ -56,7 +72,9 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-1 text-xs font-semibold text-stone-700">Links</legend>
         {profile.links.length === 0 ? (
-          <p className="text-sm text-stone-500">Add LinkedIn, GitHub, a portfolio or anything else.</p>
+          <p className="text-sm text-stone-500">
+            Add LinkedIn, GitHub, a portfolio or anything else.
+          </p>
         ) : null}
         <SortableList
           label="Profile links"
@@ -69,7 +87,11 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
             <div
               className={`flex items-start gap-2 rounded-lg border bg-white p-2 ${isDragging ? 'border-brand shadow-lg' : isDropTarget ? 'border-brand border-dashed' : 'border-stone-200'}`}
             >
-              <button type="button" className="mt-6 rounded p-1 text-stone-400 hover:text-ink" {...handleProps}>
+              <button
+                type="button"
+                className="mt-6 rounded p-1 text-stone-400 hover:text-ink"
+                {...handleProps}
+              >
                 <GripIcon />
               </button>
               <TextField
@@ -78,7 +100,11 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
                 value={link.label}
                 maxLength={80}
                 placeholder="GitHub"
-                onChange={(label) => updateActive((d) => updateLink(d, link.id, { label }), { group: `link.${link.id}.label` })}
+                onChange={(label) =>
+                  updateActive((d) => updateLink(d, link.id, { label }), {
+                    group: `link.${link.id}.label`,
+                  })
+                }
               />
               <TextField
                 label="URL"
@@ -87,7 +113,11 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
                 value={link.url}
                 placeholder="https://"
                 error={urlError(link.url)}
-                onChange={(url) => updateActive((d) => updateLink(d, link.id, { url: url.trim() }), { group: `link.${link.id}.url` })}
+                onChange={(url) =>
+                  updateActive((d) => updateLink(d, link.id, { url: url.trim() }), {
+                    group: `link.${link.id}.url`,
+                  })
+                }
               />
               <IconPicker
                 className="mt-5 shrink-0"
@@ -125,7 +155,9 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
         accentColor={doc.layout.accentColor}
         indentCh={doc.layout.indentCh}
         maxDepth={doc.layout.maxDepth}
-        onChange={(summaryHtml) => updateActive((d) => updateProfile(d, { summaryHtml }), { group: 'profile.summary' })}
+        onChange={(summaryHtml) =>
+          updateActive((d) => updateProfile(d, { summaryHtml }), { group: 'profile.summary' })
+        }
       />
     </section>
   );

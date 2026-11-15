@@ -26,8 +26,15 @@ function tidy(html: string): string {
   template.innerHTML = html;
   const walk = (node: Node) => {
     for (const child of Array.from(node.childNodes)) {
-      if (child.nodeType === Node.TEXT_NODE && (child.textContent ?? '').trim() === '' && node.nodeName !== 'PRE' && node.nodeName !== 'CODE') {
-        const parentIsBlock = node === template.content || /^(UL|OL|LI|TABLE|THEAD|TBODY|TR|BLOCKQUOTE|DIV)$/.test(node.nodeName);
+      if (
+        child.nodeType === Node.TEXT_NODE &&
+        (child.textContent ?? '').trim() === '' &&
+        node.nodeName !== 'PRE' &&
+        node.nodeName !== 'CODE'
+      ) {
+        const parentIsBlock =
+          node === template.content ||
+          /^(UL|OL|LI|TABLE|THEAD|TBODY|TR|BLOCKQUOTE|DIV)$/.test(node.nodeName);
         if (parentIsBlock) child.remove();
       } else if (child.nodeName !== 'PRE') {
         walk(child);
@@ -49,13 +56,20 @@ function escapeText(text: string): string {
 }
 
 function escapeLineStart(line: string): string {
-  return line.replace(/^(\s*)(#{1,6}\s|[-+]\s|\d+[.)]\s|>)/, (_m, space: string, marker: string) => `${space}\\${marker}`);
+  return line.replace(
+    /^(\s*)(#{1,6}\s|[-+]\s|\d+[.)]\s|>)/,
+    (_m, space: string, marker: string) => `${space}\\${marker}`,
+  );
 }
 
 function inline(node: Node, options: ToMarkdownOptions): string {
-  if (node.nodeType === Node.TEXT_NODE) return escapeText((node.textContent ?? '').replace(/\s+/g, ' '));
+  if (node.nodeType === Node.TEXT_NODE)
+    return escapeText((node.textContent ?? '').replace(/\s+/g, ' '));
   if (!(node instanceof Element)) return '';
-  const inner = () => Array.from(node.childNodes).map((child) => inline(child, options)).join('');
+  const inner = () =>
+    Array.from(node.childNodes)
+      .map((child) => inline(child, options))
+      .join('');
   const wrap = (marker: string) => {
     const text = inner();
     const trimmed = text.trim();
@@ -117,7 +131,11 @@ function list(element: Element, depth: number, options: ToMarkdownOptions): stri
         if (child instanceof Element && (child.tagName === 'UL' || child.tagName === 'OL')) {
           nested.push(list(child, depth + 1, options));
         } else if (child instanceof Element && child.tagName === 'P') {
-          own.push(Array.from(child.childNodes).map((n) => inline(n, options)).join(''));
+          own.push(
+            Array.from(child.childNodes)
+              .map((n) => inline(n, options))
+              .join(''),
+          );
         } else {
           own.push(inline(child, options));
         }
@@ -133,7 +151,13 @@ function table(element: Element, options: ToMarkdownOptions): string {
   const rows = Array.from(element.querySelectorAll('tr')).map((tr) =>
     Array.from(tr.children).map((cell) =>
       Array.from(cell.childNodes)
-        .map((n) => (n instanceof Element && n.tagName === 'P' ? Array.from(n.childNodes).map((c) => inline(c, options)).join('') : inline(n, options)))
+        .map((n) =>
+          n instanceof Element && n.tagName === 'P'
+            ? Array.from(n.childNodes)
+                .map((c) => inline(c, options))
+                .join('')
+            : inline(n, options),
+        )
         .join(' ')
         .replace(/\s+/g, ' ')
         .trim(),

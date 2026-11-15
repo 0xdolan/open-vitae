@@ -135,7 +135,11 @@ export function createBlankResume(
 }
 
 /** Deep copy with new ids for the document and everything inside it. */
-export function cloneResume(doc: ResumeDocument, name: string, now: Date = new Date()): ResumeDocument {
+export function cloneResume(
+  doc: ResumeDocument,
+  name: string,
+  now: Date = new Date(),
+): ResumeDocument {
   const copy = structuredClone(doc);
   const timestamp = now.toISOString();
   return {

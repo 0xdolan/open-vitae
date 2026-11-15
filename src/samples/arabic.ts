@@ -12,7 +12,13 @@ export const arabicSample: SampleDefinition = {
   input: {
     name: 'مديرة التسويق الرقمي',
     language: 'ar',
-    layout: { direction: 'rtl', fontFamily: 'Sahel', accentColor: '#9f1239', baseFontSizePt: 10.5, lineHeight: 1.6 },
+    layout: {
+      direction: 'rtl',
+      fontFamily: 'Sahel',
+      accentColor: '#9f1239',
+      baseFontSizePt: 10.5,
+      lineHeight: 1.6,
+    },
     profile: {
       fullName: 'ليلى حداد',
       headline: 'مديرة التسويق الرقمي · SEO وGoogle Ads',
@@ -72,13 +78,23 @@ export const arabicSample: SampleDefinition = {
       {
         kind: 'skills',
         items: [
-          { title: 'التسويق الرقمي', descriptionHtml: paragraph('SEO، SEM، التسويق بالمحتوى، التسويق عبر البريد الإلكتروني') },
-          { title: 'الأدوات', descriptionHtml: paragraph('Google Analytics 4، HubSpot، Meta Ads Manager، Looker Studio') },
+          {
+            title: 'التسويق الرقمي',
+            descriptionHtml: paragraph('SEO، SEM، التسويق بالمحتوى، التسويق عبر البريد الإلكتروني'),
+          },
+          {
+            title: 'الأدوات',
+            descriptionHtml: paragraph(
+              'Google Analytics 4، HubSpot، Meta Ads Manager، Looker Studio',
+            ),
+          },
         ],
       },
       {
         kind: 'certifications',
-        items: [{ title: 'Google Ads Search Certification', subtitle: 'Google', dateRange: '٢٠٢٤' }],
+        items: [
+          { title: 'Google Ads Search Certification', subtitle: 'Google', dateRange: '٢٠٢٤' },
+        ],
       },
       {
         kind: 'languages',

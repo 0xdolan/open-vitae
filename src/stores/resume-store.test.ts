@@ -63,7 +63,9 @@ describe('resume store', () => {
 
   it('restores the last active resume', async () => {
     const { store, repository, preferences } = setup();
-    const a = await repository.save(createBlankResume('a', 'ltr', new Date('2026-01-01T00:00:00Z')));
+    const a = await repository.save(
+      createBlankResume('a', 'ltr', new Date('2026-01-01T00:00:00Z')),
+    );
     await repository.save(createBlankResume('b', 'ltr', new Date('2026-02-01T00:00:00Z')));
     preferences.setActiveId(a.id);
     await store.getState().init();
@@ -98,7 +100,10 @@ describe('resume store', () => {
     }));
     await store.getState().flush();
     expect(store.getState().saveState).toBe('saved');
-    expect((await repository.get(doc?.id ?? ''))?.profile).toMatchObject({ email: 'maya@', website: 'https://exa' });
+    expect((await repository.get(doc?.id ?? ''))?.profile).toMatchObject({
+      email: 'maya@',
+      website: 'https://exa',
+    });
   });
 
   it('keeps edits in memory until flushed, then writes them', async () => {
@@ -128,14 +133,20 @@ describe('resume store', () => {
     const { store, repository } = setup();
     await store.getState().init();
     const doc = await store.getState().createBlank();
-    store.getState().updateActive((d) => ({ ...d, layout: { ...d.layout, accentColor: 'not-a-colour' } }));
+    store
+      .getState()
+      .updateActive((d) => ({ ...d, layout: { ...d.layout, accentColor: 'not-a-colour' } }));
     await store.getState().flush();
 
     expect(store.getState().saveState).toBe('error');
     expect(store.getState().message).toMatch(/Not saved/);
     expect((await repository.get(doc?.id ?? ''))?.layout.accentColor).toBe('#14532d');
 
-    store.getState().updateActive((d) => ({ ...d, name: 'Fixed', layout: { ...d.layout, accentColor: '#123456' } }));
+    store.getState().updateActive((d) => ({
+      ...d,
+      name: 'Fixed',
+      layout: { ...d.layout, accentColor: '#123456' },
+    }));
     await store.getState().flush();
     expect(store.getState().saveState).toBe('saved');
     expect((await repository.get(doc?.id ?? ''))?.name).toBe('Fixed');
@@ -155,7 +166,9 @@ describe('resume store', () => {
     const { store } = setup();
     await store.getState().init();
     const existing = await store.getState().createFromSample('finance');
-    const imported = await store.getState().importDocument(createResumeFromSample('finance', existing?.name ?? ''));
+    const imported = await store
+      .getState()
+      .importDocument(createResumeFromSample('finance', existing?.name ?? ''));
     expect(imported?.name).toBe(`${existing?.name ?? ''} (2)`);
     expect(store.getState().activeId).toBe(imported?.id);
     expect(store.getState().versions[0]?.reason).toBe('import');
@@ -257,7 +270,11 @@ describe('resume store', () => {
       const first = store.getState().versions.at(-1);
       const restored = await store.getState().restoreVersion(first?.id ?? '');
 
-      expect(restored).toMatchObject({ number: 3, reason: 'restore', note: 'Restored from version 1' });
+      expect(restored).toMatchObject({
+        number: 3,
+        reason: 'restore',
+        note: 'Restored from version 1',
+      });
       expect(store.getState().resumes[doc?.id ?? '']?.name).toBe('Untitled resume');
       expect((await repository.get(doc?.id ?? ''))?.name).toBe('Untitled resume');
       expect(store.getState().versions.map((v) => v.number)).toEqual([3, 2, 1]);
@@ -301,8 +318,13 @@ describe('resume store', () => {
 
       expect(result?.version?.number).toBe(2);
       expect(downloads).toHaveLength(1);
-      expect(downloads[0]?.fileName).toMatch(/^maya-okafor-v2-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.json$/);
-      const body = JSON.parse(downloads[0]?.content ?? '{}') as { app: string; resume: { name: string } };
+      expect(downloads[0]?.fileName).toMatch(
+        /^maya-okafor-v2-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.json$/,
+      );
+      const body = JSON.parse(downloads[0]?.content ?? '{}') as {
+        app: string;
+        resume: { name: string };
+      };
       expect(body.app).toBe('Open Vitae 9.9.9');
       expect(body.resume.name).toBe('Edited before export');
       expect(store.getState().versions[0]?.exportedAt).not.toBeNull();
@@ -317,7 +339,10 @@ describe('resume store', () => {
       const first = store.getState().versions.at(-1);
 
       await store.getState().exportJson(first?.id);
-      const body = JSON.parse(downloads[0]?.content ?? '{}') as { resume: { name: string }; version: { number: number } };
+      const body = JSON.parse(downloads[0]?.content ?? '{}') as {
+        resume: { name: string };
+        version: { number: number };
+      };
       expect(body.version.number).toBe(1);
       expect(body.resume.name).toBe('Untitled resume');
     });
@@ -326,7 +351,9 @@ describe('resume store', () => {
       const { store, downloads } = setup();
       await store.getState().init();
       await store.getState().createBlank();
-      store.getState().updateActive((d) => ({ ...d, layout: { ...d.layout, accentColor: 'not-a-colour' } }));
+      store
+        .getState()
+        .updateActive((d) => ({ ...d, layout: { ...d.layout, accentColor: 'not-a-colour' } }));
       expect(await store.getState().exportJson()).toBeNull();
       expect(downloads).toHaveLength(0);
       expect(store.getState().message).toMatch(/accentColor/);
@@ -380,7 +407,9 @@ describe('resume store', () => {
       store.getState().undo();
       expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Maya');
       store.getState().undo();
-      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Untitled resume');
+      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe(
+        'Untitled resume',
+      );
       expect(store.getState().canUndo).toBe(false);
     });
 
@@ -395,7 +424,9 @@ describe('resume store', () => {
 
       store.getState().updateActive((d) => d);
       store.getState().undo();
-      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Untitled resume');
+      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe(
+        'Untitled resume',
+      );
     });
 
     it('starts a fresh history when another resume is opened', async () => {

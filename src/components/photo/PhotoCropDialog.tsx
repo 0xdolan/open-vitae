@@ -41,7 +41,9 @@ function aspectFor(crop: PhotoCrop | undefined, width: number, height: number): 
   const fallback = PHOTO_ASPECTS[0] as PhotoAspect;
   if (!crop) return fallback;
   const ratio = crop.width / crop.height;
-  return PHOTO_ASPECTS.find((a) => Math.abs(resolveRatio(a, width, height) - ratio) < 0.01) ?? fallback;
+  return (
+    PHOTO_ASPECTS.find((a) => Math.abs(resolveRatio(a, width, height) - ratio) < 0.01) ?? fallback
+  );
 }
 
 /**
@@ -49,7 +51,15 @@ function aspectFor(crop: PhotoCrop | undefined, width: number, height: number): 
  * + and − keys, turn it a quarter at a time, and pick a shape. The frame shows
  * the shape it will have on the page. The size guide says how sharp it will print.
  */
-export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCancel, onApply }: PhotoCropDialogProps) {
+export function PhotoCropDialog({
+  open,
+  source,
+  initial,
+  shape,
+  widthMm,
+  onCancel,
+  onApply,
+}: PhotoCropDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const viewRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -102,7 +112,9 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
         } else {
           usedInitial.current = true;
           setCrop((current) => {
-            const ratio = current ? current.width / current.height : resolveRatio(aspect, canvas.width, canvas.height);
+            const ratio = current
+              ? current.width / current.height
+              : resolveRatio(aspect, canvas.width, canvas.height);
             return initialCrop(canvas.width, canvas.height, ratio, rotation);
           });
         }
@@ -137,7 +149,10 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
   const imageWidth = rotated?.width ?? 1;
   const imageHeight = rotated?.height ?? 1;
   const ratio = crop ? crop.width / crop.height : 1;
-  const frameWidth = Math.max(40, Math.min(viewWidth - FRAME_PADDING * 2, (VIEW_HEIGHT - FRAME_PADDING * 2) * ratio));
+  const frameWidth = Math.max(
+    40,
+    Math.min(viewWidth - FRAME_PADDING * 2, (VIEW_HEIGHT - FRAME_PADDING * 2) * ratio),
+  );
   const frameHeight = frameWidth / ratio;
   const scale = crop ? frameWidth / crop.width : 1;
   const frameLeft = (viewWidth - frameWidth) / 2;
@@ -145,7 +160,8 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
 
   const zoom = crop ? cropZoom(crop, imageWidth, imageHeight) : 1;
   const zoomLimit = crop ? maxZoom(crop, imageWidth, imageHeight) : 1;
-  const setZoom = (value: number) => crop && setCrop(zoomCrop(crop, value, imageWidth, imageHeight));
+  const setZoom = (value: number) =>
+    crop && setCrop(zoomCrop(crop, value, imageWidth, imageHeight));
 
   // Wheel zoom needs a non-passive listener to stop the page scrolling.
   useEffect(() => {
@@ -156,7 +172,12 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
       setCrop((current) => {
         if (!current) return current;
         const factor = event.deltaY < 0 ? 1.08 : 1 / 1.08;
-        return zoomCrop(current, cropZoom(current, imageWidth, imageHeight) * factor, imageWidth, imageHeight);
+        return zoomCrop(
+          current,
+          cropZoom(current, imageWidth, imageHeight) * factor,
+          imageWidth,
+          imageHeight,
+        );
       });
     };
     view.addEventListener('wheel', onWheel, { passive: false });
@@ -202,7 +223,9 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
 
   const chooseAspect = (next: PhotoAspect) => {
     setAspect(next);
-    setCrop(initialCrop(imageWidth, imageHeight, resolveRatio(next, imageWidth, imageHeight), rotation));
+    setCrop(
+      initialCrop(imageWidth, imageHeight, resolveRatio(next, imageWidth, imageHeight), rotation),
+    );
   };
 
   const apply = () => {
@@ -272,8 +295,8 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
             />
           </div>
           <p id={helpId} className="-mt-2 text-xs text-stone-500">
-            Drag to move. Zoom with the slider, the mouse wheel, or + and −. With the keyboard, use the arrow keys
-            (hold Shift for bigger steps).
+            Drag to move. Zoom with the slider, the mouse wheel, or + and −. With the keyboard, use
+            the arrow keys (hold Shift for bigger steps).
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -290,10 +313,20 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
             />
-            <Button size="sm" aria-label="Turn left" title="Turn left" onClick={() => setRotation(nextRotation(rotation, -1))}>
+            <Button
+              size="sm"
+              aria-label="Turn left"
+              title="Turn left"
+              onClick={() => setRotation(nextRotation(rotation, -1))}
+            >
               <RotateLeftIcon />
             </Button>
-            <Button size="sm" aria-label="Turn right" title="Turn right" onClick={() => setRotation(nextRotation(rotation, 1))}>
+            <Button
+              size="sm"
+              aria-label="Turn right"
+              title="Turn right"
+              onClick={() => setRotation(nextRotation(rotation, 1))}
+            >
               <RotateRightIcon />
             </Button>
           </div>
@@ -307,7 +340,9 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
                 aria-pressed={option.id === aspect.id}
                 className={cn(
                   'rounded-md border px-2.5 py-1 text-xs',
-                  option.id === aspect.id ? 'border-brand bg-brand/10 text-brand' : 'border-stone-300 hover:bg-stone-100',
+                  option.id === aspect.id
+                    ? 'border-brand bg-brand/10 text-brand'
+                    : 'border-stone-300 hover:bg-stone-100',
                 )}
                 onClick={() => chooseAspect(option)}
               >

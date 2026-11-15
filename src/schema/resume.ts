@@ -112,7 +112,10 @@ export const profileSchema = z.object({
 const imageDataUrlSchema = z
   .string()
   .max(LIMITS.photoDataUrlLength)
-  .regex(/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/, 'Photo must be a PNG, JPEG or WebP image');
+  .regex(
+    /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/,
+    'Photo must be a PNG, JPEG or WebP image',
+  );
 
 /** A crop of the source picture, in source pixels after rotation. */
 export const photoCropSchema = z.object({

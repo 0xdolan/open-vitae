@@ -17,11 +17,11 @@ Previous: [Fonts and right-to-left text](10-fonts.md) · Next: [Photos and icons
 
 Choose the size in **Page setup → Page size**. The default is A4. Every size works in portrait or landscape.
 
-| Group               | Sizes                                                                                   |
-| ------------------- | --------------------------------------------------------------------------------------- |
-| International (ISO) | A3, A4, A5, A6, B4, B5                                                                  |
-| North American      | Letter, Legal, Tabloid (Ledger), Executive, Statement (Half Letter), Folio              |
-| Japanese (JIS)      | B5 (JIS)                                                                                |
+| Group               | Sizes                                                                      |
+| ------------------- | -------------------------------------------------------------------------- |
+| International (ISO) | A3, A4, A5, A6, B4, B5                                                     |
+| North American      | Letter, Legal, Tabloid (Ledger), Executive, Statement (Half Letter), Folio |
+| Japanese (JIS)      | B5 (JIS)                                                                   |
 
 Margins apply to all four sides. On small paper, margins are reduced automatically so at least 20 mm is left for content.
 
@@ -77,18 +77,18 @@ If one block is taller than a whole page (a very long paragraph or a large table
 
 ## Code map
 
-| File                                          | Purpose                                              |
-| --------------------------------------------- | ---------------------------------------------------- |
-| `src/config/page-sizes.ts`                    | Paper sizes, groups, mm to pixel conversion          |
-| `src/config/preview.ts`                       | Zoom steps                                           |
-| `src/lib/page-geometry.ts`                    | Page and content box sizes, safe margins             |
-| `src/lib/pagination.ts`                       | Block kinds, keep and break rules, page splitting    |
-| `src/lib/rich-blocks.ts`                      | Split rich text into page blocks and join them again |
-| `src/components/pages/FlowMeasure.tsx`        | Invisible layout and measuring                       |
-| `src/components/pages/PageSheet.tsx`          | One page at true size                                |
-| `src/components/pages/PageStack.tsx`          | The stacked pages with zoom and notes                |
-| `src/components/pages/PrintPreview.tsx`       | Full-screen print preview                            |
-| `src/components/pages/PrintLayer.tsx`         | What the browser prints, and the @page size          |
+| File                                    | Purpose                                              |
+| --------------------------------------- | ---------------------------------------------------- |
+| `src/config/page-sizes.ts`              | Paper sizes, groups, mm to pixel conversion          |
+| `src/config/preview.ts`                 | Zoom steps                                           |
+| `src/lib/page-geometry.ts`              | Page and content box sizes, safe margins             |
+| `src/lib/pagination.ts`                 | Block kinds, keep and break rules, page splitting    |
+| `src/lib/rich-blocks.ts`                | Split rich text into page blocks and join them again |
+| `src/components/pages/FlowMeasure.tsx`  | Invisible layout and measuring                       |
+| `src/components/pages/PageSheet.tsx`    | One page at true size                                |
+| `src/components/pages/PageStack.tsx`    | The stacked pages with zoom and notes                |
+| `src/components/pages/PrintPreview.tsx` | Full-screen print preview                            |
+| `src/components/pages/PrintLayer.tsx`   | What the browser prints, and the @page size          |
 
 ---
 

@@ -21,10 +21,12 @@ export function PhotoSizeGuide({ photoWidthPx, widthMm }: PhotoSizeGuideProps) {
   const needed = pixelsForPrint(widthMm);
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs text-stone-600" role="status">
-      <span className={cn('rounded-full px-2 py-0.5 font-medium ring-1', quality.className)}>{quality.label}</span>
+      <span className={cn('rounded-full px-2 py-0.5 font-medium ring-1', quality.className)}>
+        {quality.label}
+      </span>
       <span>
-        {photoWidthPx} px wide at {widthMm} mm prints at about {dpi} DPI. For a crisp print at {PRINT_DPI} DPI it needs
-        at least {needed} px.
+        {photoWidthPx} px wide at {widthMm} mm prints at about {dpi} DPI. For a crisp print at{' '}
+        {PRINT_DPI} DPI it needs at least {needed} px.
       </span>
     </div>
   );

@@ -11,10 +11,21 @@ const VARIANTS = [':ital,wght@0,400;0,700;1,400;1,700', ':wght@400;700', ''] as 
 
 export function googleFontCssUrls(family: string): string[] {
   const name = family.trim().replace(/\s+/g, '+');
-  return VARIANTS.map((variant) => `${CSS_HOST}?family=${encodeURIComponent(name).replace(/%2B/g, '+')}${variant}&display=swap`);
+  return VARIANTS.map(
+    (variant) =>
+      `${CSS_HOST}?family=${encodeURIComponent(name).replace(/%2B/g, '+')}${variant}&display=swap`,
+  );
 }
 
-const ALLOWED_DESCRIPTORS = new Set(['font-family', 'font-style', 'font-weight', 'font-stretch', 'font-display', 'src', 'unicode-range']);
+const ALLOWED_DESCRIPTORS = new Set([
+  'font-family',
+  'font-style',
+  'font-weight',
+  'font-stretch',
+  'font-display',
+  'src',
+  'unicode-range',
+]);
 
 /**
  * True only for a stylesheet made of @font-face blocks whose descriptors are
@@ -50,7 +61,10 @@ export class GoogleFontError extends Error {
 }
 
 /** Fetch the stylesheet for a family, trying simpler variants if Google rejects one. */
-export async function fetchGoogleFontCss(family: string, fetchFn: typeof fetch = fetch): Promise<string> {
+export async function fetchGoogleFontCss(
+  family: string,
+  fetchFn: typeof fetch = fetch,
+): Promise<string> {
   let notFound = false;
   for (const url of googleFontCssUrls(family)) {
     let response: Response;
@@ -61,10 +75,15 @@ export async function fetchGoogleFontCss(family: string, fetchFn: typeof fetch =
     }
     if (response.ok) {
       const css = await response.text();
-      if (!isSafeGoogleFontCss(css)) throw new GoogleFontError('Google Fonts sent an unexpected response, so it was not used.');
+      if (!isSafeGoogleFontCss(css))
+        throw new GoogleFontError('Google Fonts sent an unexpected response, so it was not used.');
       return css;
     }
     notFound = response.status === 400 || response.status === 404;
   }
-  throw new GoogleFontError(notFound ? `“${family}” is not a Google font. Check the exact name on fonts.google.com.` : 'Google Fonts did not respond.');
+  throw new GoogleFontError(
+    notFound
+      ? `“${family}” is not a Google font. Check the exact name on fonts.google.com.`
+      : 'Google Fonts did not respond.',
+  );
 }

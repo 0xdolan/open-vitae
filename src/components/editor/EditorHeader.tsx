@@ -24,7 +24,10 @@ export function EditorHeader({ doc, onExport }: EditorHeaderProps) {
   return (
     <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-stone-200 pb-3">
       <a href="#/" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'shrink-0')}>
-        <span aria-hidden="true" className="rtl:-scale-x-100">←</span> My resumes
+        <span aria-hidden="true" className="rtl:-scale-x-100">
+          ←
+        </span>{' '}
+        My resumes
       </a>
       <label className="sr-only" htmlFor="resume-name">
         Resume name
@@ -40,10 +43,24 @@ export function EditorHeader({ doc, onExport }: EditorHeaderProps) {
       />
       <SaveIndicator state={saveState} latest={latest} />
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" onClick={undo} disabled={!canUndo} aria-label="Undo" title={`Undo (${mod}+Z)`}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={undo}
+          disabled={!canUndo}
+          aria-label="Undo"
+          title={`Undo (${mod}+Z)`}
+        >
           <UndoIcon />
         </Button>
-        <Button variant="ghost" size="sm" onClick={redo} disabled={!canRedo} aria-label="Redo" title={`Redo (${mod}+Shift+Z)`}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={redo}
+          disabled={!canRedo}
+          aria-label="Redo"
+          title={`Redo (${mod}+Shift+Z)`}
+        >
           <RedoIcon />
         </Button>
         <Button variant="primary" size="sm" onClick={onExport}>

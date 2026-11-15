@@ -20,7 +20,18 @@ import { parseSectionKind } from './section-kind';
  *   Hidden   "yes" for sections and entries hidden on the page
  */
 
-export const TABLE_COLUMNS = ['Type', 'Section', 'Kind', 'Title', 'Subtitle', 'Dates', 'Location', 'URL', 'Details', 'Hidden'] as const;
+export const TABLE_COLUMNS = [
+  'Type',
+  'Section',
+  'Kind',
+  'Title',
+  'Subtitle',
+  'Dates',
+  'Location',
+  'URL',
+  'Details',
+  'Hidden',
+] as const;
 type Column = (typeof TABLE_COLUMNS)[number];
 
 /** Converts rich text to and from the text kept in a cell (Markdown). */
@@ -39,7 +50,15 @@ const PROFILE_FIELDS = [
   ['summaryHtml', 'Summary'],
 ] as const;
 
-const SETTINGS = ['Name', 'Language', 'Direction', 'Page size', 'Orientation', 'Font', 'Accent colour'] as const;
+const SETTINGS = [
+  'Name',
+  'Language',
+  'Direction',
+  'Page size',
+  'Orientation',
+  'Font',
+  'Accent colour',
+] as const;
 
 const key = (text: string) => text.toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -60,12 +79,14 @@ export function resumeToTable(doc: ResumeDocument, codec: TextCodec): Table {
     Font: layout.fontFamily,
     'Accent colour': layout.accentColor,
   };
-  for (const name of SETTINGS) rows.push(row({ Type: 'setting', Title: name, Details: settings[name] }));
+  for (const name of SETTINGS)
+    rows.push(row({ Type: 'setting', Title: name, Details: settings[name] }));
   for (const [field, label] of PROFILE_FIELDS) {
     const value = field === 'summaryHtml' ? codec.toText(profile.summaryHtml) : profile[field];
     rows.push(row({ Type: 'profile', Title: label, Details: value }));
   }
-  for (const link of profile.links) rows.push(row({ Type: 'link', Title: link.label, URL: link.url }));
+  for (const link of profile.links)
+    rows.push(row({ Type: 'link', Title: link.label, URL: link.url }));
   for (const section of doc.sections) {
     const hidden = section.visible ? '' : 'yes';
     rows.push(row({ Type: 'section', Section: section.title, Kind: section.kind, Hidden: hidden }));
@@ -115,7 +136,8 @@ export function tableToResume(table: Table, codec: TextCodec, fallbackName: stri
   const warnings: string[] = [];
   const first = table[0] ?? [];
   const headerKeys = first.map(key);
-  const hasHeader = headerKeys.includes('type') || headerKeys.includes('title') || headerKeys.includes('section');
+  const hasHeader =
+    headerKeys.includes('type') || headerKeys.includes('title') || headerKeys.includes('section');
   const columns: Readonly<Record<string, number>> = Object.fromEntries(
     (hasHeader ? headerKeys : TABLE_COLUMNS.map(key)).map((name, index) => [name, index]),
   );
@@ -129,7 +151,10 @@ export function tableToResume(table: Table, codec: TextCodec, fallbackName: stri
   const layout: Partial<ResumeLayout> = {};
   const profile: Record<string, string> = {};
   const links: { label: string; url: string }[] = [];
-  const sections = new Map<string, { kind: SectionKind; title: string; visible: boolean; items: ItemInput[] }>();
+  const sections = new Map<
+    string,
+    { kind: SectionKind; title: string; visible: boolean; items: ItemInput[] }
+  >();
 
   const sectionFor = (title: string, kindText: string) => {
     const kind = parseSectionKind(kindText, title);
@@ -151,7 +176,9 @@ export function tableToResume(table: Table, codec: TextCodec, fallbackName: stri
         case 'pagesize':
           return isPageSizeId(value) ? { pageSize: value } : null;
         case 'orientation':
-          return (ORIENTATIONS as readonly string[]).includes(value) ? { orientation: value } : null;
+          return (ORIENTATIONS as readonly string[]).includes(value)
+            ? { orientation: value }
+            : null;
         case 'font':
           return { fontFamily: value };
         case 'accentcolour':
@@ -165,10 +192,15 @@ export function tableToResume(table: Table, codec: TextCodec, fallbackName: stri
       warnings.push(`Row ${line}: unknown setting “${setting}” was skipped.`);
       return;
     }
-    const [field, fieldValue] = candidate ? Object.entries(candidate)[0] ?? [] : [];
-    const shape = layoutSchema.shape as Record<string, { safeParse(v: unknown): { success: boolean } }>;
+    const [field, fieldValue] = candidate ? (Object.entries(candidate)[0] ?? []) : [];
+    const shape = layoutSchema.shape as Record<
+      string,
+      { safeParse(v: unknown): { success: boolean } }
+    >;
     if (!field || !shape[field]?.safeParse(fieldValue).success) {
-      warnings.push(`Row ${line}: “${value}” is not a valid ${setting.toLowerCase()} and was skipped.`);
+      warnings.push(
+        `Row ${line}: “${value}” is not a valid ${setting.toLowerCase()} and was skipped.`,
+      );
       return;
     }
     Object.assign(layout, { [field]: fieldValue });
@@ -186,7 +218,8 @@ export function tableToResume(table: Table, codec: TextCodec, fallbackName: stri
       case 'setting': {
         const settingKey = key(title);
         if (settingKey === 'name') name = details || name;
-        else if (settingKey === 'language') language = /^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(details) ? details : language;
+        else if (settingKey === 'language')
+          language = /^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(details) ? details : language;
         else if (details) setLayout(title, details, line);
         break;
       }

@@ -38,9 +38,18 @@ Cleaned survey data.
 
 describe('splitDateRange', () => {
   it('finds date ranges in many forms', () => {
-    expect(splitDateRange('Austin · Jan 2021 - Present')).toEqual({ dateRange: 'Jan 2021 - Present', rest: 'Austin' });
-    expect(splitDateRange('Intern at Contoso (2019 – 2020)')).toEqual({ dateRange: '2019 – 2020', rest: 'Intern at Contoso' });
-    expect(splitDateRange('BSc Statistics, State University, 2019')).toEqual({ dateRange: '2019', rest: 'BSc Statistics, State University' });
+    expect(splitDateRange('Austin · Jan 2021 - Present')).toEqual({
+      dateRange: 'Jan 2021 - Present',
+      rest: 'Austin',
+    });
+    expect(splitDateRange('Intern at Contoso (2019 – 2020)')).toEqual({
+      dateRange: '2019 – 2020',
+      rest: 'Intern at Contoso',
+    });
+    expect(splitDateRange('BSc Statistics, State University, 2019')).toEqual({
+      dateRange: '2019',
+      rest: 'BSc Statistics, State University',
+    });
     expect(splitDateRange('بانکی ئاسۆی نوێ · ٢٠٢١ – ئێستا').dateRange).toBe('٢٠٢١ – ئێستا');
     expect(splitDateRange('No dates here')).toEqual({ dateRange: '', rest: 'No dates here' });
   });
@@ -59,7 +68,9 @@ describe('markdownToResume', () => {
       website: 'https://samrivera.dev',
       summaryHtml: '<p>I turn messy data into decisions.</p>',
     });
-    expect(doc.profile.links.map((l) => [l.label, l.url])).toEqual([['GitHub', 'https://github.com/samr']]);
+    expect(doc.profile.links.map((l) => [l.label, l.url])).toEqual([
+      ['GitHub', 'https://github.com/samr'],
+    ]);
 
     expect(doc.sections.map((s) => [s.kind, s.title])).toEqual([
       ['experience', 'Work Experience'],
@@ -67,14 +78,29 @@ describe('markdownToResume', () => {
       ['education', 'Education'],
     ]);
     const [northwind, contoso] = doc.sections[0]?.items ?? [];
-    expect(northwind).toMatchObject({ title: 'Data Analyst', subtitle: 'Northwind', location: 'Austin', dateRange: 'Jan 2021 - Present' });
-    expect(northwind?.descriptionHtml).toBe('<ul><li>Built the weekly revenue dashboard</li><li>Cut report time by <strong>60%</strong></li></ul>');
-    expect(contoso).toMatchObject({ title: 'Intern', subtitle: 'Contoso', dateRange: '2019 – 2020', descriptionHtml: '<p>Cleaned survey data.</p>' });
+    expect(northwind).toMatchObject({
+      title: 'Data Analyst',
+      subtitle: 'Northwind',
+      location: 'Austin',
+      dateRange: 'Jan 2021 - Present',
+    });
+    expect(northwind?.descriptionHtml).toBe(
+      '<ul><li>Built the weekly revenue dashboard</li><li>Cut report time by <strong>60%</strong></li></ul>',
+    );
+    expect(contoso).toMatchObject({
+      title: 'Intern',
+      subtitle: 'Contoso',
+      dateRange: '2019 – 2020',
+      descriptionHtml: '<p>Cleaned survey data.</p>',
+    });
     expect(doc.sections[1]?.items.map((i) => [i.title, i.descriptionHtml])).toEqual([
       ['Languages', '<p>SQL, Python, R</p>'],
       ['Tools', '<p>Tableau, dbt</p>'],
     ]);
-    expect(doc.sections[2]?.items[0]).toMatchObject({ title: 'BSc Statistics, State University', dateRange: '2019' });
+    expect(doc.sections[2]?.items[0]).toMatchObject({
+      title: 'BSc Statistics, State University',
+      dateRange: '2019',
+    });
   });
 
   it('round-trips a sample through Markdown', () => {
@@ -102,6 +128,9 @@ describe('markdownToResume', () => {
     const back = buildResume(markdownToResume(resumeToMarkdown(sample), 'x'));
     expect(back.profile.fullName).toBe('ئاوات کەریم');
     expect(back.sections[0]?.kind).toBe('experience');
-    expect(back.sections[0]?.items[0]).toMatchObject({ title: 'ئەندازیاری باڵای ئاسایشی سایبەری', dateRange: '٢٠٢١ – ئێستا' });
+    expect(back.sections[0]?.items[0]).toMatchObject({
+      title: 'ئەندازیاری باڵای ئاسایشی سایبەری',
+      dateRange: '٢٠٢١ – ئێستا',
+    });
   });
 });

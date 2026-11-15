@@ -34,12 +34,16 @@ export const PRINT_DPI = 300;
 
 const MM_PER_INCH = 25.4;
 
-export function rotatedSize(width: number, height: number, rotation: Rotation): { width: number; height: number } {
+export function rotatedSize(
+  width: number,
+  height: number,
+  rotation: Rotation,
+): { width: number; height: number } {
   return rotation === 90 || rotation === 270 ? { width: height, height: width } : { width, height };
 }
 
 export function nextRotation(rotation: Rotation, direction: 1 | -1): Rotation {
-  return (((rotation + direction * 90) % 360) + 360) % 360 as Rotation;
+  return ((((rotation + direction * 90) % 360) + 360) % 360) as Rotation;
 }
 
 /** The aspect ratio to use: a preset, or the picture's own shape. */
@@ -51,7 +55,12 @@ export function resolveRatio(aspect: PhotoAspect, imageWidth: number, imageHeigh
  * The largest crop of the given ratio, centred across. When the picture is
  * taller than the crop, the crop sits a little above centre, where faces are.
  */
-export function initialCrop(imageWidth: number, imageHeight: number, ratio: number, rotation: Rotation = 0): PhotoCrop {
+export function initialCrop(
+  imageWidth: number,
+  imageHeight: number,
+  ratio: number,
+  rotation: Rotation = 0,
+): PhotoCrop {
   let width = imageWidth;
   let height = width / ratio;
   if (height > imageHeight) {
@@ -99,7 +108,13 @@ export function clampCrop(crop: PhotoCrop, imageWidth: number, imageHeight: numb
 }
 
 /** Move the crop by a number of source pixels. */
-export function panCrop(crop: PhotoCrop, dx: number, dy: number, imageWidth: number, imageHeight: number): PhotoCrop {
+export function panCrop(
+  crop: PhotoCrop,
+  dx: number,
+  dy: number,
+  imageWidth: number,
+  imageHeight: number,
+): PhotoCrop {
   return clampCrop({ ...crop, x: crop.x + dx, y: crop.y + dy }, imageWidth, imageHeight);
 }
 
@@ -107,14 +122,23 @@ export function panCrop(crop: PhotoCrop, dx: number, dy: number, imageWidth: num
  * Zoom relative to the largest possible crop: 1 shows as much as fits, 2 shows
  * half the width. Zooms around the centre of the current crop.
  */
-export function zoomCrop(crop: PhotoCrop, zoom: number, imageWidth: number, imageHeight: number): PhotoCrop {
+export function zoomCrop(
+  crop: PhotoCrop,
+  zoom: number,
+  imageWidth: number,
+  imageHeight: number,
+): PhotoCrop {
   const ratio = crop.width / crop.height;
   const full = initialCrop(imageWidth, imageHeight, ratio, crop.rotation);
   const width = full.width / Math.max(1, zoom);
   const height = width / ratio;
   const centreX = crop.x + crop.width / 2;
   const centreY = crop.y + crop.height / 2;
-  return clampCrop({ ...crop, x: centreX - width / 2, y: centreY - height / 2, width, height }, imageWidth, imageHeight);
+  return clampCrop(
+    { ...crop, x: centreX - width / 2, y: centreY - height / 2, width, height },
+    imageWidth,
+    imageHeight,
+  );
 }
 
 /** The current zoom of a crop, as zoomCrop understands it. */
@@ -131,9 +155,15 @@ export function maxZoom(crop: PhotoCrop, imageWidth: number, imageHeight: number
 }
 
 /** Pixel size of the finished photo: the crop, scaled down to the output limit, never up. */
-export function outputSize(crop: PhotoCrop, maxSide = PHOTO_OUTPUT_MAX_SIDE): { width: number; height: number } {
+export function outputSize(
+  crop: PhotoCrop,
+  maxSide = PHOTO_OUTPUT_MAX_SIDE,
+): { width: number; height: number } {
   const scale = Math.min(1, maxSide / Math.max(crop.width, crop.height));
-  return { width: Math.max(1, Math.round(crop.width * scale)), height: Math.max(1, Math.round(crop.height * scale)) };
+  return {
+    width: Math.max(1, Math.round(crop.width * scale)),
+    height: Math.max(1, Math.round(crop.height * scale)),
+  };
 }
 
 /** Pixels needed across `widthMm` to print at `dpi`. */

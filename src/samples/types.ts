@@ -1,6 +1,15 @@
 import type { ResumeInput } from '@/lib/resume-factory';
 
-export const SAMPLE_IDS = ['tech', 'finance', 'cybersecurity', 'cloud', 'marketing', 'persian', 'arabic', 'kurdish'] as const;
+export const SAMPLE_IDS = [
+  'tech',
+  'finance',
+  'cybersecurity',
+  'cloud',
+  'marketing',
+  'persian',
+  'arabic',
+  'kurdish',
+] as const;
 
 export type SampleId = (typeof SAMPLE_IDS)[number];
 

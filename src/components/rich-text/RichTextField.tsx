@@ -54,7 +54,10 @@ export function RichTextField({
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  const extensions = useMemo(() => buildExtensions({ placeholder, maxDepth }), [placeholder, maxDepth]);
+  const extensions = useMemo(
+    () => buildExtensions({ placeholder, maxDepth }),
+    [placeholder, maxDepth],
+  );
 
   const editor = useEditor(
     {
@@ -111,7 +114,10 @@ export function RichTextField({
     editor,
     selector: ({ editor: e }) =>
       e
-        ? { words: e.storage.characterCount.words() as number, characters: e.storage.characterCount.characters() as number }
+        ? {
+            words: e.storage.characterCount.words() as number,
+            characters: e.storage.characterCount.characters() as number,
+          }
         : { words: 0, characters: 0 },
   });
 
@@ -142,12 +148,19 @@ export function RichTextField({
         ) : null}
         <EditorContent editor={editor} />
       </div>
-      <p className={cn('flex flex-wrap justify-between gap-2 text-xs', nearLimit ? 'font-medium text-amber-800' : 'text-stone-500')}>
+      <p
+        className={cn(
+          'flex flex-wrap justify-between gap-2 text-xs',
+          nearLimit ? 'font-medium text-amber-800' : 'text-stone-500',
+        )}
+      >
         <span>
           {counts?.words ?? 0} words · {counts?.characters ?? 0} characters
         </span>
         <span>
-          {nearLimit ? `Getting large: ${formatBytes(size)} of ${formatBytes(LIMITS.htmlLength)}. Use smaller images.` : 'Tab indents · Esc then Tab leaves the editor'}
+          {nearLimit
+            ? `Getting large: ${formatBytes(size)} of ${formatBytes(LIMITS.htmlLength)}. Use smaller images.`
+            : 'Tab indents · Esc then Tab leaves the editor'}
         </span>
       </p>
     </div>

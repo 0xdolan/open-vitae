@@ -16,7 +16,8 @@ export function createTemplateResume(now: Date = new Date()): ResumeDocument {
         phone: '+1 555 0100',
         location: 'City, Country',
         website: 'https://example.com',
-        summaryHtml: '<p>Two or three sentences about what you do, what you are good at and what you are looking for.</p>',
+        summaryHtml:
+          '<p>Two or three sentences about what you do, what you are good at and what you are looking for.</p>',
         links: [{ label: 'LinkedIn', url: 'https://example.com/your-profile' }],
       },
       sections: [
@@ -35,7 +36,13 @@ export function createTemplateResume(now: Date = new Date()): ResumeDocument {
         },
         {
           kind: 'education',
-          items: [{ title: 'Degree or course', subtitle: 'School or university', dateRange: '2018 – 2022' }],
+          items: [
+            {
+              title: 'Degree or course',
+              subtitle: 'School or university',
+              dateRange: '2018 – 2022',
+            },
+          ],
         },
         {
           kind: 'skills',

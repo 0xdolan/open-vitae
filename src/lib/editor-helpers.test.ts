@@ -59,7 +59,10 @@ describe('field validation', () => {
 
 describe('item field labels', () => {
   it('match what each section holds', () => {
-    expect(itemFieldLabels('experience')).toMatchObject({ title: 'Job title', subtitle: 'Company or organisation' });
+    expect(itemFieldLabels('experience')).toMatchObject({
+      title: 'Job title',
+      subtitle: 'Company or organisation',
+    });
     expect(itemFieldLabels('languages')).toMatchObject({ title: 'Language', description: 'Level' });
     expect(itemFieldLabels('custom')).toMatchObject({ title: 'Title', description: 'Description' });
   });

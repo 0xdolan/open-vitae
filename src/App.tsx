@@ -17,7 +17,10 @@ function Messages() {
   return (
     <>
       {message ? (
-        <div role="alert" className="flex items-start justify-between gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
+        <div
+          role="alert"
+          className="flex items-start justify-between gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900"
+        >
           <p>{message}</p>
           <Button variant="ghost" size="sm" onClick={dismissMessage}>
             Dismiss
@@ -26,8 +29,8 @@ function Messages() {
       ) : null}
       {invalidCount > 0 ? (
         <p role="status" className="rounded-lg border border-stone-300 bg-white px-4 py-3 text-sm">
-          {invalidCount === 1 ? 'One saved resume' : `${invalidCount} saved resumes`} could not be read and{' '}
-          {invalidCount === 1 ? 'was' : 'were'} left untouched.
+          {invalidCount === 1 ? 'One saved resume' : `${invalidCount} saved resumes`} could not be
+          read and {invalidCount === 1 ? 'was' : 'were'} left untouched.
         </p>
       ) : null}
     </>
@@ -42,7 +45,9 @@ function LibraryView() {
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-brand text-3xl font-bold tracking-tight">Open Vitae</h1>
-        <p className="text-stone-600">A private resume builder that runs entirely in your browser.</p>
+        <p className="text-stone-600">
+          A private resume builder that runs entirely in your browser.
+        </p>
       </header>
       <StorageNotice />
       <Messages />
@@ -73,7 +78,9 @@ function NotFound() {
   return (
     <div className="mx-auto max-w-md py-16 text-center">
       <h1 className="text-xl font-bold">This resume is not in this browser</h1>
-      <p className="mt-2 text-stone-600">It may have been deleted, or it was saved in another browser or device.</p>
+      <p className="mt-2 text-stone-600">
+        It may have been deleted, or it was saved in another browser or device.
+      </p>
       <a href="#/" className="text-brand mt-4 inline-block font-semibold underline">
         Back to my resumes
       </a>

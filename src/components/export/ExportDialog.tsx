@@ -23,26 +23,76 @@ const GROUPS: readonly { readonly title: string; readonly formats: readonly Form
   {
     title: 'Documents',
     formats: [
-      { id: 'pdf', label: 'PDF', extension: '.pdf', description: 'Looks exactly like the preview, with clickable links. Best for sending.' },
-      { id: 'docx', label: 'Word', extension: '.docx', description: 'An editable document for Microsoft Word, LibreOffice or Google Docs.' },
-      { id: 'icml', label: 'InDesign', extension: '.icml', description: 'A styled text story to place in an Adobe InDesign layout.' },
+      {
+        id: 'pdf',
+        label: 'PDF',
+        extension: '.pdf',
+        description: 'Looks exactly like the preview, with clickable links. Best for sending.',
+      },
+      {
+        id: 'docx',
+        label: 'Word',
+        extension: '.docx',
+        description: 'An editable document for Microsoft Word, LibreOffice or Google Docs.',
+      },
+      {
+        id: 'icml',
+        label: 'InDesign',
+        extension: '.icml',
+        description: 'A styled text story to place in an Adobe InDesign layout.',
+      },
     ],
   },
   {
     title: 'Images',
     formats: [
-      { id: 'png', label: 'PNG', extension: '.png', description: 'Sharp picture of each page, with no quality loss.' },
-      { id: 'jpg', label: 'JPG', extension: '.jpg', description: 'Smaller picture of each page, for sharing online.' },
-      { id: 'svg', label: 'SVG', extension: '.svg', description: 'Scalable picture of each page, for the web.' },
+      {
+        id: 'png',
+        label: 'PNG',
+        extension: '.png',
+        description: 'Sharp picture of each page, with no quality loss.',
+      },
+      {
+        id: 'jpg',
+        label: 'JPG',
+        extension: '.jpg',
+        description: 'Smaller picture of each page, for sharing online.',
+      },
+      {
+        id: 'svg',
+        label: 'SVG',
+        extension: '.svg',
+        description: 'Scalable picture of each page, for the web.',
+      },
     ],
   },
   {
     title: 'Data (can be imported again)',
     formats: [
-      { id: 'json', label: 'JSON', extension: '.json', description: 'A complete backup with every setting and the photo.' },
-      { id: 'xlsx', label: 'Excel', extension: '.xlsx', description: 'One row per entry, to edit in a spreadsheet.' },
-      { id: 'csv', label: 'CSV', extension: '.csv', description: 'The same table as plain text, for any app.' },
-      { id: 'markdown', label: 'Markdown', extension: '.md', description: 'Plain text with headings and lists.' },
+      {
+        id: 'json',
+        label: 'JSON',
+        extension: '.json',
+        description: 'A complete backup with every setting and the photo.',
+      },
+      {
+        id: 'xlsx',
+        label: 'Excel',
+        extension: '.xlsx',
+        description: 'One row per entry, to edit in a spreadsheet.',
+      },
+      {
+        id: 'csv',
+        label: 'CSV',
+        extension: '.csv',
+        description: 'The same table as plain text, for any app.',
+      },
+      {
+        id: 'markdown',
+        label: 'Markdown',
+        extension: '.md',
+        description: 'Plain text with headings and lists.',
+      },
     ],
   },
 ];
@@ -70,7 +120,11 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
   const [dpi, setDpi] = useState<number>(DEFAULT_DPI);
   const [jpegQuality, setJpegQuality] = useState(0.9);
   const [pageChoice, setPageChoice] = useState<'all' | number>('all');
-  const [job, setJob] = useState<{ options: ExportOptions; doc: ResumeDocument; version: Awaited<ReturnType<typeof prepareExport>> } | null>(null);
+  const [job, setJob] = useState<{
+    options: ExportOptions;
+    doc: ResumeDocument;
+    version: Awaited<ReturnType<typeof prepareExport>>;
+  } | null>(null);
   const [progress, setProgress] = useState('');
   const [error, setError] = useState<string | null>(null);
   const pageCount = pages?.length ?? 0;
@@ -96,7 +150,9 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
     const run = async () => {
       // Two frames: React has committed the stage and the browser has laid it out.
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      const pageElements = Array.from(stageRef.current?.querySelectorAll<HTMLElement>('.ov-page') ?? []);
+      const pageElements = Array.from(
+        stageRef.current?.querySelectorAll<HTMLElement>('.ov-page') ?? [],
+      );
       const prepared = job.version;
       // The exporters (and their libraries) load only when someone exports.
       const { runExport } = await import('@/lib/export/run-export');
@@ -141,7 +197,11 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
       setError('The resume could not be prepared for export.');
       return;
     }
-    setJob({ options: { format, dpi, jpegQuality, pages: pageChoice }, doc: prepared.doc, version: prepared });
+    setJob({
+      options: { format, dpi, jpegQuality, pages: pageChoice },
+      doc: prepared.doc,
+      version: prepared,
+    });
   };
 
   const busy = job !== null || progress !== '';
@@ -162,21 +222,32 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
             <h2 id={titleId} className="text-lg font-semibold">
               Export
             </h2>
-            <Button variant="ghost" size="sm" className="ms-auto" aria-label="Close" disabled={busy} onClick={onClose}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ms-auto"
+              aria-label="Close"
+              disabled={busy}
+              onClick={onClose}
+            >
               <CloseIcon />
             </Button>
           </div>
 
           {GROUPS.map((group) => (
             <fieldset key={group.title} className="flex flex-col gap-2">
-              <legend className="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">{group.title}</legend>
+              <legend className="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                {group.title}
+              </legend>
               <div className="grid gap-2 sm:grid-cols-3">
                 {group.formats.map((option) => (
                   <label
                     key={option.id}
                     className={cn(
                       'flex cursor-pointer flex-col gap-0.5 rounded-lg border p-3 text-sm has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand',
-                      format === option.id ? 'border-brand bg-brand/5' : 'border-stone-200 hover:border-stone-300',
+                      format === option.id
+                        ? 'border-brand bg-brand/5'
+                        : 'border-stone-200 hover:border-stone-300',
                     )}
                   >
                     <span className="flex items-center gap-2 font-medium">
@@ -202,10 +273,21 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
               {format !== 'svg' ? (
                 <label className="flex flex-col gap-1">
                   <span className="text-xs font-medium text-stone-700">Resolution</span>
-                  <select className="h-9 rounded-md border border-stone-300 bg-white px-2" value={dpi} onChange={(e) => setDpi(Number(e.target.value))}>
+                  <select
+                    className="h-9 rounded-md border border-stone-300 bg-white px-2"
+                    value={dpi}
+                    onChange={(e) => setDpi(Number(e.target.value))}
+                  >
                     {DPI_OPTIONS.map((value) => (
                       <option key={value} value={value}>
-                        {value} DPI{value === 72 ? ' (screen)' : value === 150 ? ' (draft)' : value === 300 ? ' (print, default)' : ' (high-quality print)'}
+                        {value} DPI
+                        {value === 72
+                          ? ' (screen)'
+                          : value === 150
+                            ? ' (draft)'
+                            : value === 300
+                              ? ' (print, default)'
+                              : ' (high-quality print)'}
                       </option>
                     ))}
                   </select>
@@ -213,8 +295,18 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
               ) : null}
               {format === 'jpg' ? (
                 <label className="flex flex-col gap-1">
-                  <span className="text-xs font-medium text-stone-700">Quality: {Math.round(jpegQuality * 100)}%</span>
-                  <input type="range" className="accent-brand" min={0.5} max={1} step={0.05} value={jpegQuality} onChange={(e) => setJpegQuality(Number(e.target.value))} />
+                  <span className="text-xs font-medium text-stone-700">
+                    Quality: {Math.round(jpegQuality * 100)}%
+                  </span>
+                  <input
+                    type="range"
+                    className="accent-brand"
+                    min={0.5}
+                    max={1}
+                    step={0.05}
+                    value={jpegQuality}
+                    onChange={(e) => setJpegQuality(Number(e.target.value))}
+                  />
                 </label>
               ) : null}
               {format !== 'pdf' && pageCount > 1 ? (
@@ -223,7 +315,9 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
                   <select
                     className="h-9 rounded-md border border-stone-300 bg-white px-2"
                     value={String(pageChoice)}
-                    onChange={(e) => setPageChoice(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    onChange={(e) =>
+                      setPageChoice(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                    }
                   >
                     <option value="all">All {pageCount} pages (zip)</option>
                     {Array.from({ length: pageCount }, (_, i) => (
@@ -250,7 +344,11 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
             <Button disabled={busy} onClick={onClose}>
               Cancel
             </Button>
-            <Button variant="primary" disabled={busy || (isPicture && pageCount === 0)} onClick={() => void start()}>
+            <Button
+              variant="primary"
+              disabled={busy || (isPicture && pageCount === 0)}
+              onClick={() => void start()}
+            >
               <DownloadIcon /> {busy ? 'Exporting…' : `Export ${info.label}`}
             </Button>
           </div>
@@ -259,9 +357,20 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
 
       {job && pages
         ? createPortal(
-            <div ref={stageRef} aria-hidden="true" className="pointer-events-none fixed top-0" style={{ left: -100_000 }}>
+            <div
+              ref={stageRef}
+              aria-hidden="true"
+              className="pointer-events-none fixed top-0"
+              style={{ left: -100_000 }}
+            >
               {pages.map((slice, index) => (
-                <PageSheet key={index} doc={job.doc} slice={slice} number={index + 1} total={pages.length} />
+                <PageSheet
+                  key={index}
+                  doc={job.doc}
+                  slice={slice}
+                  number={index + 1}
+                  total={pages.length}
+                />
               ))}
             </div>,
             document.body,

@@ -18,7 +18,15 @@ interface PageSheetProps {
  * One sheet of paper at its true size, showing only the blocks pagination put
  * on it. Anything taller than the page is clipped, exactly as it would print.
  */
-export function PageSheet({ doc, slice, number, total, className, selectedSectionId, onSectionClick }: PageSheetProps) {
+export function PageSheet({
+  doc,
+  slice,
+  number,
+  total,
+  className,
+  selectedSectionId,
+  onSectionClick,
+}: PageSheetProps) {
   const { widthMm, heightMm } = pageBoxMm(doc.layout);
   const { marginMm } = contentBoxMm(doc.layout);
 

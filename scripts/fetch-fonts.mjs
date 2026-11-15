@@ -15,7 +15,17 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -39,9 +49,24 @@ const FONTS = [
     repo: 'aminabedi68/Estedad',
     files: [
       // Prefer the variable font (all weights in one file), else regular and bold.
-      { weight: '100 900', optionalGroup: 'variable', patterns: [/Estedad[^/]*\[[^/]*wght[^/]*\]\.woff2$/i, /Estedad[^/]*-?(VF|Variable)[^/]*\.woff2$/i] },
-      { weight: '400', optionalGroup: 'static', patterns: [/(^|\/)Estedad-(Regular|FD-Regular)\.woff2$/i, /(^|\/)Estedad\.woff2$/i] },
-      { weight: '700', optionalGroup: 'static', patterns: [/(^|\/)Estedad-(Bold|FD-Bold)\.woff2$/i] },
+      {
+        weight: '100 900',
+        optionalGroup: 'variable',
+        patterns: [
+          /Estedad[^/]*\[[^/]*wght[^/]*\]\.woff2$/i,
+          /Estedad[^/]*-?(VF|Variable)[^/]*\.woff2$/i,
+        ],
+      },
+      {
+        weight: '400',
+        optionalGroup: 'static',
+        patterns: [/(^|\/)Estedad-(Regular|FD-Regular)\.woff2$/i, /(^|\/)Estedad\.woff2$/i],
+      },
+      {
+        weight: '700',
+        optionalGroup: 'static',
+        patterns: [/(^|\/)Estedad-(Bold|FD-Bold)\.woff2$/i],
+      },
     ],
   },
 ];
@@ -74,7 +99,10 @@ async function github(path) {
 }
 
 async function download(url, to) {
-  const response = await fetch(url, { headers: { 'User-Agent': 'open-vitae-fetch-fonts' }, redirect: 'follow' });
+  const response = await fetch(url, {
+    headers: { 'User-Agent': 'open-vitae-fetch-fonts' },
+    redirect: 'follow',
+  });
   if (!response.ok) throw new Error(`Download failed (${response.status}): ${url}`);
   writeFileSync(to, Buffer.from(await response.arrayBuffer()));
 }
@@ -102,7 +130,10 @@ async function installFont(font, work) {
   const tag = release?.tag_name ?? (await github(font.repo)).default_branch;
   const archive = join(work, `${font.family}.tar.gz`);
   console.log(`• ${font.family}: downloading ${font.repo} @ ${tag}`);
-  await download(`https://codeload.github.com/${font.repo}/tar.gz/${release ? 'refs/tags/' : 'refs/heads/'}${tag}`, archive);
+  await download(
+    `https://codeload.github.com/${font.repo}/tar.gz/${release ? 'refs/tags/' : 'refs/heads/'}${tag}`,
+    archive,
+  );
 
   const extractDir = join(work, font.family);
   mkdirSync(extractDir);
@@ -119,9 +150,15 @@ async function installFont(font, work) {
   };
 
   const chosen = [];
-  const variable = font.files.filter((f) => f.optionalGroup === 'variable').map((f) => ({ ...f, path: pick(f.patterns) }));
-  const rest = font.files.filter((f) => !f.optionalGroup).map((f) => ({ ...f, path: pick(f.patterns) }));
-  const statics = font.files.filter((f) => f.optionalGroup === 'static').map((f) => ({ ...f, path: pick(f.patterns) }));
+  const variable = font.files
+    .filter((f) => f.optionalGroup === 'variable')
+    .map((f) => ({ ...f, path: pick(f.patterns) }));
+  const rest = font.files
+    .filter((f) => !f.optionalGroup)
+    .map((f) => ({ ...f, path: pick(f.patterns) }));
+  const statics = font.files
+    .filter((f) => f.optionalGroup === 'static')
+    .map((f) => ({ ...f, path: pick(f.patterns) }));
   chosen.push(...rest);
   if (variable.length && variable.every((f) => f.path)) chosen.push(...variable);
   else chosen.push(...statics);
@@ -129,9 +166,15 @@ async function installFont(font, work) {
   const missing = chosen.filter((f) => !f.path);
   if (chosen.length === 0 || missing.length > 0) {
     const woff2 = all.filter((p) => p.toLowerCase().endsWith('.woff2'));
-    console.error(`  ✗ Could not find the expected ${font.family} files. WOFF2 files in the release:`);
+    console.error(
+      `  ✗ Could not find the expected ${font.family} files. WOFF2 files in the release:`,
+    );
     for (const p of woff2.slice(0, 40)) console.error(`    ${p}`);
-    console.error('  Copy the regular and bold files into public/fonts/' + font.family.toLowerCase() + '/ and add them to');
+    console.error(
+      '  Copy the regular and bold files into public/fonts/' +
+        font.family.toLowerCase() +
+        '/ and add them to',
+    );
     console.error('  public/fonts/manifest.json by hand (see public/fonts/README.md).');
     return null;
   }
@@ -150,21 +193,34 @@ async function installFont(font, work) {
       .replace(/-+$/, '')
       .concat('.woff2');
     copyFileSync(source, join(dest, name));
-    files.push({ file: `${font.family.toLowerCase()}/${name}`, weight: f.weight, sha256: sha256(join(dest, name)) });
+    files.push({
+      file: `${font.family.toLowerCase()}/${name}`,
+      weight: f.weight,
+      sha256: sha256(join(dest, name)),
+    });
     console.log(`  ✓ ${name} (${f.weight})`);
   }
 
-  const license = all.find((p) => /(^|\/)(OFL|LICENSE)(\.txt|\.md)?$/i.test(p) && p.split('/').length <= 3);
+  const license = all.find(
+    (p) => /(^|\/)(OFL|LICENSE)(\.txt|\.md)?$/i.test(p) && p.split('/').length <= 3,
+  );
   if (license) copyFileSync(join(extractDir, license), join(dest, 'LICENSE.txt'));
   else console.warn(`  ! No licence file found for ${font.family}; add it before distributing.`);
 
-  return { family: font.family, license: 'OFL-1.1', source: `https://github.com/${font.repo} (${tag})`, files };
+  return {
+    family: font.family,
+    license: 'OFL-1.1',
+    source: `https://github.com/${font.repo} (${tag})`,
+    files,
+  };
 }
 
 async function main() {
   if (args.has('--check')) return check();
   if (existsSync(MANIFEST) && !args.has('--force')) {
-    console.log('Fonts are already installed (public/fonts/manifest.json). Use --force to reinstall, --check to verify.');
+    console.log(
+      'Fonts are already installed (public/fonts/manifest.json). Use --force to reinstall, --check to verify.',
+    );
     return;
   }
   mkdirSync(OUT, { recursive: true });
@@ -187,7 +243,9 @@ async function main() {
     process.exit(1);
   }
   writeFileSync(MANIFEST, `${JSON.stringify({ fonts }, null, 2)}\n`);
-  console.log(`\nWrote public/fonts/manifest.json (${fonts.map((f) => f.family).join(', ')}). Commit public/fonts.`);
+  console.log(
+    `\nWrote public/fonts/manifest.json (${fonts.map((f) => f.family).join(', ')}). Commit public/fonts.`,
+  );
 }
 
 await main();

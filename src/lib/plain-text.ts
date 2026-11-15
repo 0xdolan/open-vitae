@@ -17,7 +17,8 @@ const ENTITIES: Readonly<Record<string, string>> = {
 
 function decodeEntities(text: string): string {
   return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code: string) => {
-    if (code.startsWith('#x') || code.startsWith('#X')) return String.fromCodePoint(parseInt(code.slice(2), 16));
+    if (code.startsWith('#x') || code.startsWith('#X'))
+      return String.fromCodePoint(parseInt(code.slice(2), 16));
     if (code.startsWith('#')) return String.fromCodePoint(parseInt(code.slice(1), 10));
     return ENTITIES[code.toLowerCase()] ?? match;
   });
@@ -69,7 +70,8 @@ export function plainToHtml(text: string): string {
     paragraph = [];
   };
   const closeList = () => {
-    if (list.length > 0) blocks.push(`<ul>${list.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`);
+    if (list.length > 0)
+      blocks.push(`<ul>${list.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`);
     list = [];
   };
 

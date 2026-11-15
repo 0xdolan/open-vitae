@@ -35,11 +35,20 @@ export function ImportAndTemplates() {
       const saved = await importDocument(doc);
       if (saved) {
         navigate({ name: 'editor', id: saved.id });
-        const note = warnings.length > 0 ? ` ${warnings.length} row(s) skipped: ${warnings.slice(0, 2).join(' ')}` : '';
-        toast.success('Resume imported', `“${saved.name}” was read from ${FORMAT_LABELS[detected]}.${note}`);
+        const note =
+          warnings.length > 0
+            ? ` ${warnings.length} row(s) skipped: ${warnings.slice(0, 2).join(' ')}`
+            : '';
+        toast.success(
+          'Resume imported',
+          `“${saved.name}” was read from ${FORMAT_LABELS[detected]}.${note}`,
+        );
       }
     } catch (error) {
-      const message = error instanceof Error && error.name === 'ImportError' ? error.message : 'This file could not be read.';
+      const message =
+        error instanceof Error && error.name === 'ImportError'
+          ? error.message
+          : 'This file could not be read.';
       toast.error('Nothing imported', message);
     } finally {
       setBusy(false);
@@ -52,30 +61,46 @@ export function ImportAndTemplates() {
       import('@/lib/export/data-formats'),
       import('@/lib/interchange/template'),
     ]);
-    const doc = source === 'template' ? createTemplateResume() : createResumeFromSample(source, 'Sample');
-    const file = await buildDataFile(doc, format, { version: null, appVersion: __APP_VERSION__, now: new Date() });
+    const doc =
+      source === 'template' ? createTemplateResume() : createResumeFromSample(source, 'Sample');
+    const file = await buildDataFile(doc, format, {
+      version: null,
+      appVersion: __APP_VERSION__,
+      now: new Date(),
+    });
     downloadFile(file.fileName, file.blob, file.blob.type);
-    toast.success('Template downloaded', `${file.fileName} is in your downloads. Fill it in, then import it here.`);
+    toast.success(
+      'Template downloaded',
+      `${file.fileName} is in your downloads. Fill it in, then import it here.`,
+    );
     setTemplateOpen(false);
   };
 
   return (
     <div className="relative flex flex-wrap gap-2">
-        <input
-          ref={inputRef}
-          type="file"
-          accept={IMPORT_ACCEPT}
-          className="sr-only"
-          tabIndex={-1}
-          aria-hidden="true"
-          onChange={(e) => void onFile(e.target.files?.[0])}
-        />
-        <Button disabled={busy} onClick={() => inputRef.current?.click()} title="JSON, CSV, Excel or Markdown">
-          <UploadIcon /> {busy ? 'Importing…' : 'Import'}
-        </Button>
-        <Button aria-expanded={templateOpen} aria-controls={`${id}-templates`} onClick={() => setTemplateOpen((o) => !o)}>
-          <DownloadIcon /> Templates
-        </Button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={IMPORT_ACCEPT}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(e) => void onFile(e.target.files?.[0])}
+      />
+      <Button
+        disabled={busy}
+        onClick={() => inputRef.current?.click()}
+        title="JSON, CSV, Excel or Markdown"
+      >
+        <UploadIcon /> {busy ? 'Importing…' : 'Import'}
+      </Button>
+      <Button
+        aria-expanded={templateOpen}
+        aria-controls={`${id}-templates`}
+        onClick={() => setTemplateOpen((o) => !o)}
+      >
+        <DownloadIcon /> Templates
+      </Button>
 
       {templateOpen ? (
         <div
@@ -120,8 +145,8 @@ export function ImportAndTemplates() {
             Download
           </Button>
           <p className="basis-full text-xs text-stone-500">
-            Fill it in with any spreadsheet app or text editor, then use Import. Rich text in sheet cells is written in
-            Markdown: start lines with “- ” for bullet points.
+            Fill it in with any spreadsheet app or text editor, then use Import. Rich text in sheet
+            cells is written in Markdown: start lines with “- ” for bullet points.
           </p>
         </div>
       ) : null}

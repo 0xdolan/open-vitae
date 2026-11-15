@@ -66,16 +66,33 @@ async function toWordImage(dataUrl: string): Promise<WordImage | null> {
   const binary = atob(out.slice(out.indexOf(',') + 1));
   const data = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i += 1) data[i] = binary.charCodeAt(i);
-  return { data, type: keepPng ? 'png' : 'jpg', width: img.naturalWidth, height: img.naturalHeight };
+  return {
+    data,
+    type: keepPng ? 'png' : 'jpg',
+    width: img.naturalWidth,
+    height: img.naturalHeight,
+  };
 }
 
 const hex = (color: string | undefined) => {
   if (!color) return undefined;
   const value = color.trim();
   if (/^#[0-9a-f]{6}$/i.test(value)) return value.slice(1).toUpperCase();
-  if (/^#[0-9a-f]{3}$/i.test(value)) return value.slice(1).split('').map((c) => c + c).join('').toUpperCase();
+  if (/^#[0-9a-f]{3}$/i.test(value))
+    return value
+      .slice(1)
+      .split('')
+      .map((c) => c + c)
+      .join('')
+      .toUpperCase();
   const rgb = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/i.exec(value);
-  return rgb ? rgb.slice(1, 4).map((n) => Number(n).toString(16).padStart(2, '0')).join('').toUpperCase() : undefined;
+  return rgb
+    ? rgb
+        .slice(1, 4)
+        .map((n) => Number(n).toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase()
+    : undefined;
 };
 
 /** Font size in half-points from a CSS size (pt, px or em relative to the base size). */
@@ -88,7 +105,11 @@ const halfPoints = (value: string | undefined, basePt: number) => {
   return Math.round(number * 2);
 };
 
-const firstFamily = (value: string | undefined) => value?.split(',')[0]?.trim().replace(/^["']|["']$/g, '') || undefined;
+const firstFamily = (value: string | undefined) =>
+  value
+    ?.split(',')[0]
+    ?.trim()
+    .replace(/^["']|["']$/g, '') || undefined;
 
 interface Context {
   readonly basePt: number;
@@ -125,7 +146,10 @@ function runsOf(node: Node, run: Partial<IRunOptions>, ctx: Context): ParagraphC
   }
   if (style.fontSize) next.size = halfPoints(style.fontSize, ctx.basePt);
   if (style.fontFamily) next.font = firstFamily(style.fontFamily);
-  const children = () => Array.from(node.childNodes).flatMap((child) => runsOf(child, next as Partial<IRunOptions>, ctx));
+  const children = () =>
+    Array.from(node.childNodes).flatMap((child) =>
+      runsOf(child, next as Partial<IRunOptions>, ctx),
+    );
   switch (node.tagName) {
     case 'STRONG':
     case 'B':
@@ -157,14 +181,21 @@ function runsOf(node: Node, run: Partial<IRunOptions>, ctx: Context): ParagraphC
       const href = node.getAttribute('href') ?? '';
       next.style = 'Hyperlink';
       const inner = children();
-      return isSafeUrl(href) ? [new ExternalHyperlink({ link: href, children: inner as TextRun[] })] : inner;
+      return isSafeUrl(href)
+        ? [new ExternalHyperlink({ link: href, children: inner as TextRun[] })]
+        : inner;
     }
     case 'IMG': {
       const image = ctx.images.get(node.getAttribute('src') ?? '');
       if (!image) return [];
-      const width = Math.min(Number(node.getAttribute('width')) || image.width, ctx.maxImageWidthPx);
+      const width = Math.min(
+        Number(node.getAttribute('width')) || image.width,
+        ctx.maxImageWidthPx,
+      );
       const height = Math.round((width * image.height) / image.width);
-      return [new ImageRun({ type: image.type, data: image.data, transformation: { width, height } })];
+      return [
+        new ImageRun({ type: image.type, data: image.data, transformation: { width, height } }),
+      ];
     }
     default:
       return children();
@@ -189,22 +220,35 @@ function paragraphOptions(element: HTMLElement, ctx: Context) {
   };
 }
 
-function listParagraphs(list: HTMLElement, level: number, ctx: Context, run: Partial<IRunOptions>): Paragraph[] {
+function listParagraphs(
+  list: HTMLElement,
+  level: number,
+  ctx: Context,
+  run: Partial<IRunOptions>,
+): Paragraph[] {
   const ordered = list.tagName === 'OL';
   const instance = ordered ? (ctx.nextListInstance += 1) : 0;
   const out: Paragraph[] = [];
-  for (const item of Array.from(list.children).filter((c): c is HTMLElement => c instanceof HTMLElement && c.tagName === 'LI')) {
+  for (const item of Array.from(list.children).filter(
+    (c): c is HTMLElement => c instanceof HTMLElement && c.tagName === 'LI',
+  )) {
     const inline: Node[] = [];
     const nested: HTMLElement[] = [];
     for (const child of Array.from(item.childNodes)) {
-      if (child instanceof HTMLElement && (child.tagName === 'UL' || child.tagName === 'OL')) nested.push(child);
-      else if (child instanceof HTMLElement && child.tagName === 'P') inline.push(...Array.from(child.childNodes));
+      if (child instanceof HTMLElement && (child.tagName === 'UL' || child.tagName === 'OL'))
+        nested.push(child);
+      else if (child instanceof HTMLElement && child.tagName === 'P')
+        inline.push(...Array.from(child.childNodes));
       else inline.push(child);
     }
     out.push(
       new Paragraph({
         bidirectional: ctx.rtl,
-        numbering: { reference: ordered ? 'ov-numbers' : 'ov-bullets', level: Math.min(level, 8), ...(ordered ? { instance } : {}) },
+        numbering: {
+          reference: ordered ? 'ov-numbers' : 'ov-bullets',
+          level: Math.min(level, 8),
+          ...(ordered ? { instance } : {}),
+        },
         children: inline.flatMap((n) => runsOf(n, run, ctx)),
       }),
     );
@@ -214,7 +258,11 @@ function listParagraphs(list: HTMLElement, level: number, ctx: Context, run: Par
 }
 
 /** Rich text to Word paragraphs and tables. */
-function blocksOf(html: string, ctx: Context, run: Partial<IRunOptions> = {}): (Paragraph | Table)[] {
+function blocksOf(
+  html: string,
+  ctx: Context,
+  run: Partial<IRunOptions> = {},
+): (Paragraph | Table)[] {
   if (html.trim() === '') return [];
   const template = document.createElement('template');
   template.innerHTML = html;
@@ -238,7 +286,17 @@ function blocksOf(html: string, ctx: Context, run: Partial<IRunOptions> = {}): (
           new Paragraph({
             ...paragraphOptions(node, ctx),
             spacing: { before: 120, after: 40 },
-            children: Array.from(node.childNodes).flatMap((n) => runsOf(n, { ...run, bold: true, size: Math.round(ctx.basePt * 2 * (node.tagName === 'H4' ? 1 : 1.1)) }, ctx)),
+            children: Array.from(node.childNodes).flatMap((n) =>
+              runsOf(
+                n,
+                {
+                  ...run,
+                  bold: true,
+                  size: Math.round(ctx.basePt * 2 * (node.tagName === 'H4' ? 1 : 1.1)),
+                },
+                ctx,
+              ),
+            ),
           }),
         );
         break;
@@ -248,16 +306,28 @@ function blocksOf(html: string, ctx: Context, run: Partial<IRunOptions> = {}): (
             new Paragraph({
               shading: { type: ShadingType.CLEAR, fill: 'F5F5F4', color: 'auto' },
               spacing: { before: 0, after: 0 },
-              children: [new TextRun({ text: line || ' ', font: ctx.mono, size: Math.round(ctx.basePt * 1.8) })],
+              children: [
+                new TextRun({
+                  text: line || ' ',
+                  font: ctx.mono,
+                  size: Math.round(ctx.basePt * 1.8),
+                }),
+              ],
             }),
           );
         }
         break;
       case 'BLOCKQUOTE':
-        for (const block of blocksOf(node.innerHTML, ctx, { ...run, italics: true })) out.push(block);
+        for (const block of blocksOf(node.innerHTML, ctx, { ...run, italics: true }))
+          out.push(block);
         break;
       case 'HR':
-        out.push(new Paragraph({ border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: 'A8A29E', space: 1 } }, children: [] }));
+        out.push(
+          new Paragraph({
+            border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: 'A8A29E', space: 1 } },
+            children: [],
+          }),
+        );
         break;
       case 'TABLE': {
         const rows = Array.from(node.querySelectorAll('tr')).map(
@@ -267,18 +337,34 @@ function blocksOf(html: string, ctx: Context, run: Partial<IRunOptions> = {}): (
                 (cell) =>
                   new TableCell({
                     children: (() => {
-                      const blocks = blocksOf(cell.innerHTML, ctx, cell.tagName === 'TH' ? { ...run, bold: true } : run);
+                      const blocks = blocksOf(
+                        cell.innerHTML,
+                        ctx,
+                        cell.tagName === 'TH' ? { ...run, bold: true } : run,
+                      );
                       return blocks.length > 0 ? blocks : [new Paragraph({ children: [] })];
                     })(),
                   }),
               ),
             }),
         );
-        if (rows.length > 0) out.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE }, visuallyRightToLeft: ctx.rtl }));
+        if (rows.length > 0)
+          out.push(
+            new Table({
+              rows,
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              visuallyRightToLeft: ctx.rtl,
+            }),
+          );
         break;
       }
       default:
-        out.push(new Paragraph({ ...paragraphOptions(node, ctx), children: Array.from(node.childNodes).flatMap((n) => runsOf(n, run, ctx)) }));
+        out.push(
+          new Paragraph({
+            ...paragraphOptions(node, ctx),
+            children: Array.from(node.childNodes).flatMap((n) => runsOf(n, run, ctx)),
+          }),
+        );
     }
   }
   return out;
@@ -287,15 +373,24 @@ function blocksOf(html: string, ctx: Context, run: Partial<IRunOptions> = {}): (
 function collectImageSources(doc: ResumeDocument): string[] {
   const sources = new Set<string>();
   if (doc.photo) sources.add(doc.photo.dataUrl);
-  const htmls = [doc.profile.summaryHtml, ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml))];
-  for (const html of htmls) for (const match of html.matchAll(/<img[^>]+src="(data:image\/[^"]+)"/g)) if (match[1]) sources.add(match[1]);
+  const htmls = [
+    doc.profile.summaryHtml,
+    ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml)),
+  ];
+  for (const html of htmls)
+    for (const match of html.matchAll(/<img[^>]+src="(data:image\/[^"]+)"/g))
+      if (match[1]) sources.add(match[1]);
   return [...sources];
 }
 
 const listLevels = (format: 'bullet' | 'decimal') =>
   Array.from({ length: 9 }, (_, level) => ({
     level,
-    format: format === 'bullet' ? LevelFormat.BULLET : [LevelFormat.DECIMAL, LevelFormat.LOWER_LETTER, LevelFormat.LOWER_ROMAN][level % 3] ?? LevelFormat.DECIMAL,
+    format:
+      format === 'bullet'
+        ? LevelFormat.BULLET
+        : ([LevelFormat.DECIMAL, LevelFormat.LOWER_LETTER, LevelFormat.LOWER_ROMAN][level % 3] ??
+          LevelFormat.DECIMAL),
     text: format === 'bullet' ? (BULLETS[level % BULLETS.length] ?? '•') : `%${level + 1}.`,
     alignment: AlignmentType.START,
     style: { paragraph: { indent: { start: LIST_INDENT * (level + 1), hanging: LIST_INDENT } } },
@@ -323,8 +418,10 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
     maxImageWidthPx: Math.round((content.widthMm / 25.4) * 96),
     nextListInstance: 0,
   };
-  const p = (options: ConstructorParameters<typeof Paragraph>[0] & object) => new Paragraph({ bidirectional: rtl, ...options });
-  const text = (value: string, options: Partial<IRunOptions> = {}) => new TextRun({ ...options, text: value, rightToLeft: rtl });
+  const p = (options: ConstructorParameters<typeof Paragraph>[0] & object) =>
+    new Paragraph({ bidirectional: rtl, ...options });
+  const text = (value: string, options: Partial<IRunOptions> = {}) =>
+    new TextRun({ ...options, text: value, rightToLeft: rtl });
 
   const children: (Paragraph | Table)[] = [];
 
@@ -334,16 +431,50 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
     const widthPx = Math.round((doc.photo.widthMm / 25.4) * 96);
     children.push(
       p({
-        alignment: doc.photo.align === 'center' ? AlignmentType.CENTER : doc.photo.align === 'end' ? AlignmentType.END : AlignmentType.START,
-        children: [new ImageRun({ type: photo.type, data: photo.data, transformation: { width: widthPx, height: Math.round((widthPx * photo.height) / photo.width) } })],
+        alignment:
+          doc.photo.align === 'center'
+            ? AlignmentType.CENTER
+            : doc.photo.align === 'end'
+              ? AlignmentType.END
+              : AlignmentType.START,
+        children: [
+          new ImageRun({
+            type: photo.type,
+            data: photo.data,
+            transformation: {
+              width: widthPx,
+              height: Math.round((widthPx * photo.height) / photo.width),
+            },
+          }),
+        ],
       }),
     );
   }
   if (profile.fullName) {
-    children.push(p({ children: [text(profile.fullName, { bold: true, size: Math.round(layout.baseFontSizePt * 2.2 * 2), ...styleRun(profile.nameStyle) })] }));
+    children.push(
+      p({
+        children: [
+          text(profile.fullName, {
+            bold: true,
+            size: Math.round(layout.baseFontSizePt * 2.2 * 2),
+            ...styleRun(profile.nameStyle),
+          }),
+        ],
+      }),
+    );
   }
   if (profile.headline) {
-    children.push(p({ children: [text(profile.headline, { color: accent, size: Math.round(layout.baseFontSizePt * 1.1 * 2), ...styleRun(profile.headlineStyle) })] }));
+    children.push(
+      p({
+        children: [
+          text(profile.headline, {
+            color: accent,
+            size: Math.round(layout.baseFontSizePt * 1.1 * 2),
+            ...styleRun(profile.headlineStyle),
+          }),
+        ],
+      }),
+    );
   }
   const contacts: ParagraphChild[] = [];
   const addContact = (child: ParagraphChild) => {
@@ -351,12 +482,16 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
     contacts.push(child);
   };
   const linkRun = (label: string, href: string) =>
-    isSafeUrl(href) ? new ExternalHyperlink({ link: href, children: [text(label, { style: 'Hyperlink' })] }) : text(label);
+    isSafeUrl(href)
+      ? new ExternalHyperlink({ link: href, children: [text(label, { style: 'Hyperlink' })] })
+      : text(label);
   if (profile.email) addContact(linkRun(profile.email, `mailto:${profile.email}`));
   if (profile.phone) addContact(text(profile.phone));
   if (profile.location) addContact(text(profile.location));
-  if (profile.website) addContact(linkRun(profile.website.replace(/^https?:\/\//, ''), profile.website));
-  for (const link of profile.links.filter((l) => l.url)) addContact(linkRun(link.label || link.url, link.url));
+  if (profile.website)
+    addContact(linkRun(profile.website.replace(/^https?:\/\//, ''), profile.website));
+  for (const link of profile.links.filter((l) => l.url))
+    addContact(linkRun(link.label || link.url, link.url));
   if (contacts.length > 0) children.push(p({ spacing: { after: 120 }, children: contacts }));
   children.push(...blocksOf(profile.summaryHtml, ctx));
 
@@ -381,20 +516,46 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
     );
     for (const item of section.items.filter((i) => i.visible)) {
       if (item.title || item.dateRange) {
-        const title = item.url ? linkRun(item.title, item.url) : text(item.title, { bold: true, ...styleRun(item.titleStyle) });
+        const title = item.url
+          ? linkRun(item.title, item.url)
+          : text(item.title, { bold: true, ...styleRun(item.titleStyle) });
         children.push(
           p({
             pageBreakBefore: item.breakBefore,
             keepNext: true,
             spacing: { before: 120 },
             tabStops: [{ type: TabStopType.RIGHT, position: contentTwips }],
-            children: [title, ...(item.dateRange ? [text(`\t${item.dateRange}`, { color: '57534E', size: Math.round(layout.baseFontSizePt * 0.9 * 2) })] : [])],
+            children: [
+              title,
+              ...(item.dateRange
+                ? [
+                    text(`\t${item.dateRange}`, {
+                      color: '57534E',
+                      size: Math.round(layout.baseFontSizePt * 0.9 * 2),
+                    }),
+                  ]
+                : []),
+            ],
           }),
         );
       }
       const meta = [item.subtitle, item.location].filter(Boolean).join(' · ');
-      if (meta) children.push(p({ keepNext: true, children: [text(meta, { color: '57534E', size: Math.round(layout.baseFontSizePt * 0.9 * 2) })] }));
-      children.push(...blocksOf(item.descriptionHtml, ctx, styleRun(item.descriptionStyle ?? section.descriptionStyle)));
+      if (meta)
+        children.push(
+          p({
+            keepNext: true,
+            children: [
+              text(meta, { color: '57534E', size: Math.round(layout.baseFontSizePt * 0.9 * 2) }),
+            ],
+          }),
+        );
+      children.push(
+        ...blocksOf(
+          item.descriptionHtml,
+          ctx,
+          styleRun(item.descriptionStyle ?? section.descriptionStyle),
+        ),
+      );
     }
   }
 
@@ -406,11 +567,17 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
     styles: {
       default: {
         document: {
-          run: { font: layout.fontFamily, size: Math.round(layout.baseFontSizePt * 2), rightToLeft: rtl },
+          run: {
+            font: layout.fontFamily,
+            size: Math.round(layout.baseFontSizePt * 2),
+            rightToLeft: rtl,
+          },
           paragraph: { spacing: { line: Math.round(layout.lineHeight * 240), after: 60 } },
         },
       },
-      characterStyles: [{ id: 'Hyperlink', name: 'Hyperlink', run: { color: accent, underline: {} } }],
+      characterStyles: [
+        { id: 'Hyperlink', name: 'Hyperlink', run: { color: accent, underline: {} } },
+      ],
     },
     numbering: {
       config: [
@@ -423,9 +590,16 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
         properties: {
           page: {
             size: {
-              width: Math.round((layout.orientation === 'landscape' ? page.heightMm : page.widthMm) * TWIP_PER_MM),
-              height: Math.round((layout.orientation === 'landscape' ? page.widthMm : page.heightMm) * TWIP_PER_MM),
-              orientation: layout.orientation === 'landscape' ? PageOrientation.LANDSCAPE : PageOrientation.PORTRAIT,
+              width: Math.round(
+                (layout.orientation === 'landscape' ? page.heightMm : page.widthMm) * TWIP_PER_MM,
+              ),
+              height: Math.round(
+                (layout.orientation === 'landscape' ? page.widthMm : page.heightMm) * TWIP_PER_MM,
+              ),
+              orientation:
+                layout.orientation === 'landscape'
+                  ? PageOrientation.LANDSCAPE
+                  : PageOrientation.PORTRAIT,
             },
             margin: (() => {
               const m = Math.round(content.marginMm * TWIP_PER_MM);

@@ -1,7 +1,16 @@
 import { useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { ChevronIcon, CopyIcon, EyeIcon, EyeOffIcon, GripIcon, PageBreakIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
+import {
+  ChevronIcon,
+  CopyIcon,
+  EyeIcon,
+  EyeOffIcon,
+  GripIcon,
+  PageBreakIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@/components/ui/icons';
 import { SortableList } from '@/components/ui/sortable';
 import { TextField } from '@/components/ui/text-field';
 import { LIMITS } from '@/config/layout';
@@ -53,7 +62,9 @@ function ItemCard({
   const updateActive = useResumeStore((s) => s.updateActive);
   const labels = itemFieldLabels(section.kind);
   const set = (patch: Partial<Omit<ResumeItem, 'id'>>, field: string) =>
-    updateActive((d) => updateItem(d, section.id, item.id, patch), { group: `item.${item.id}.${field}` });
+    updateActive((d) => updateItem(d, section.id, item.id, patch), {
+      group: `item.${item.id}.${field}`,
+    });
   const heading = item.title || 'Untitled entry';
 
   return (
@@ -66,7 +77,12 @@ function ItemCard({
           aria-expanded={open}
           onClick={onToggle}
         >
-          <ChevronIcon className={cn('shrink-0 transition-transform rtl:-scale-x-100', open && 'rotate-90 rtl:rotate-90')} />
+          <ChevronIcon
+            className={cn(
+              'shrink-0 transition-transform rtl:-scale-x-100',
+              open && 'rotate-90 rtl:rotate-90',
+            )}
+          />
           <span className="min-w-0">
             <span className="block truncate text-sm font-semibold" dir="auto">
               {heading}
@@ -85,7 +101,11 @@ function ItemCard({
           aria-label={`Start ${heading} on a new page`}
           title={item.breakBefore ? 'Starts on a new page' : 'Start on a new page'}
           className={item.breakBefore ? 'text-brand' : 'text-stone-400'}
-          onClick={() => updateActive((d) => updateItem(d, section.id, item.id, { breakBefore: !item.breakBefore }))}
+          onClick={() =>
+            updateActive((d) =>
+              updateItem(d, section.id, item.id, { breakBefore: !item.breakBefore }),
+            )
+          }
         >
           <PageBreakIcon />
         </Button>
@@ -95,7 +115,9 @@ function ItemCard({
           aria-pressed={!item.visible}
           aria-label={item.visible ? `Hide ${heading}` : `Show ${heading}`}
           title={item.visible ? 'Hide on the page' : 'Show on the page'}
-          onClick={() => updateActive((d) => updateItem(d, section.id, item.id, { visible: !item.visible }))}
+          onClick={() =>
+            updateActive((d) => updateItem(d, section.id, item.id, { visible: !item.visible }))
+          }
         >
           {item.visible ? <EyeIcon /> : <EyeOffIcon />}
         </Button>
@@ -123,7 +145,13 @@ function ItemCard({
       {open ? (
         <div className="grid gap-3 border-t border-stone-200 p-3 sm:grid-cols-2">
           <div className="flex items-end gap-2 sm:col-span-2">
-            <TextField label={labels.title} className="flex-1" value={item.title} maxLength={300} onChange={(title) => set({ title }, 'title')} />
+            <TextField
+              label={labels.title}
+              className="flex-1"
+              value={item.title}
+              maxLength={300}
+              onChange={(title) => set({ title }, 'title')}
+            />
             <IconPicker
               className="mb-0.5 shrink-0"
               target={heading}
@@ -131,9 +159,26 @@ function ItemCard({
               onChange={(icon) => updateActive((d) => updateItem(d, section.id, item.id, { icon }))}
             />
           </div>
-          <TextField label={labels.subtitle} className="sm:col-span-2" value={item.subtitle} maxLength={300} onChange={(subtitle) => set({ subtitle }, 'subtitle')} />
-          <TextField label={labels.dateRange} value={item.dateRange} maxLength={100} placeholder="2022 – Present" onChange={(dateRange) => set({ dateRange }, 'dateRange')} />
-          <TextField label={labels.location} value={item.location} maxLength={120} onChange={(location) => set({ location }, 'location')} />
+          <TextField
+            label={labels.subtitle}
+            className="sm:col-span-2"
+            value={item.subtitle}
+            maxLength={300}
+            onChange={(subtitle) => set({ subtitle }, 'subtitle')}
+          />
+          <TextField
+            label={labels.dateRange}
+            value={item.dateRange}
+            maxLength={100}
+            placeholder="2022 – Present"
+            onChange={(dateRange) => set({ dateRange }, 'dateRange')}
+          />
+          <TextField
+            label={labels.location}
+            value={item.location}
+            maxLength={120}
+            onChange={(location) => set({ location }, 'location')}
+          />
           <TextField
             label={labels.url}
             type="url"
@@ -163,7 +208,9 @@ function ItemCard({
 /** Edit one section: its title, visibility, page break and entries. */
 export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProps) {
   const updateActive = useResumeStore((s) => s.updateActive);
-  const [openItems, setOpenItems] = useState<ReadonlySet<string>>(() => new Set(section.items.slice(0, 1).map((i) => i.id)));
+  const [openItems, setOpenItems] = useState<ReadonlySet<string>>(
+    () => new Set(section.items.slice(0, 1).map((i) => i.id)),
+  );
   const headingId = `section-${section.id}-heading`;
   const title = section.title || 'Untitled section';
 
@@ -226,7 +273,11 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
             className="flex-1"
             value={section.title}
             maxLength={120}
-            onChange={(value) => updateActive((d) => updateSection(d, section.id, { title: value }), { group: `section.${section.id}.title` })}
+            onChange={(value) =>
+              updateActive((d) => updateSection(d, section.id, { title: value }), {
+                group: `section.${section.id}.title`,
+              })
+            }
           />
           <IconPicker
             className="mb-0.5 shrink-0"
@@ -240,7 +291,9 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
             type="checkbox"
             className="accent-brand size-4"
             checked={section.visible}
-            onChange={(e) => updateActive((d) => updateSection(d, section.id, { visible: e.target.checked }))}
+            onChange={(e) =>
+              updateActive((d) => updateSection(d, section.id, { visible: e.target.checked }))
+            }
           />
           Show on the page
         </label>
@@ -249,7 +302,9 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
             type="checkbox"
             className="accent-brand size-4"
             checked={section.breakBefore}
-            onChange={(e) => updateActive((d) => updateSection(d, section.id, { breakBefore: e.target.checked }))}
+            onChange={(e) =>
+              updateActive((d) => updateSection(d, section.id, { breakBefore: e.target.checked }))
+            }
           />
           Start on a new page
         </label>
@@ -257,7 +312,9 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
 
       <div className="flex flex-col gap-2">
         <h3 className="text-xs font-semibold text-stone-700">Entries</h3>
-        {section.items.length === 0 ? <p className="text-sm text-stone-500">No entries yet.</p> : null}
+        {section.items.length === 0 ? (
+          <p className="text-sm text-stone-500">No entries yet.</p>
+        ) : null}
         <SortableList
           label={`Entries in ${title}`}
           items={section.items}
@@ -272,9 +329,19 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
               item={item}
               open={openItems.has(item.id)}
               onToggle={() => toggle(item.id)}
-              highlight={isDragging ? 'border-brand shadow-lg' : isDropTarget ? 'border-brand border-dashed' : 'border-stone-200'}
+              highlight={
+                isDragging
+                  ? 'border-brand shadow-lg'
+                  : isDropTarget
+                    ? 'border-brand border-dashed'
+                    : 'border-stone-200'
+              }
               dragHandle={
-                <button type="button" className="rounded p-1.5 text-stone-400 hover:text-ink" {...handleProps}>
+                <button
+                  type="button"
+                  className="rounded p-1.5 text-stone-400 hover:text-ink"
+                  {...handleProps}
+                >
                   <GripIcon />
                 </button>
               }

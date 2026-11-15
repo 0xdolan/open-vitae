@@ -46,7 +46,9 @@ describe('exportFileName', () => {
   });
 
   it('works without a version', () => {
-    expect(exportFileName('CV', null, new Date(2026, 0, 2, 3, 4, 5), '.pdf')).toBe('cv-2026-01-02_03-04-05.pdf');
+    expect(exportFileName('CV', null, new Date(2026, 0, 2, 3, 4, 5), '.pdf')).toBe(
+      'cv-2026-01-02_03-04-05.pdf',
+    );
   });
 });
 

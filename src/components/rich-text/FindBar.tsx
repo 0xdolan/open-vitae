@@ -75,18 +75,42 @@ export function FindBar({ editor, onClose }: FindBarProps) {
       <span role="status" aria-live="polite" className="min-w-20 text-xs text-stone-600">
         {status}
       </span>
-      <button type="button" className="ov-tool" aria-label="Previous match" title="Previous (Shift+Enter)" disabled={total === 0} onClick={() => editor.commands.findPrevious()}>
+      <button
+        type="button"
+        className="ov-tool"
+        aria-label="Previous match"
+        title="Previous (Shift+Enter)"
+        disabled={total === 0}
+        onClick={() => editor.commands.findPrevious()}
+      >
         ↑
       </button>
-      <button type="button" className="ov-tool" aria-label="Next match" title="Next (Enter)" disabled={total === 0} onClick={() => editor.commands.findNext()}>
+      <button
+        type="button"
+        className="ov-tool"
+        aria-label="Next match"
+        title="Next (Enter)"
+        disabled={total === 0}
+        onClick={() => editor.commands.findNext()}
+      >
         ↓
       </button>
       <label className="flex items-center gap-1 text-xs">
-        <input type="checkbox" className="accent-brand" checked={caseSensitive} onChange={(e) => setCaseSensitive(e.target.checked)} />
+        <input
+          type="checkbox"
+          className="accent-brand"
+          checked={caseSensitive}
+          onChange={(e) => setCaseSensitive(e.target.checked)}
+        />
         Match case
       </label>
       <label className="flex items-center gap-1 text-xs">
-        <input type="checkbox" className="accent-brand" checked={wholeWord} onChange={(e) => setWholeWord(e.target.checked)} />
+        <input
+          type="checkbox"
+          className="accent-brand"
+          checked={wholeWord}
+          onChange={(e) => setWholeWord(e.target.checked)}
+        />
         Whole words
       </label>
       <label htmlFor={`${id}-replace`} className="sr-only">
@@ -100,13 +124,28 @@ export function FindBar({ editor, onClose }: FindBarProps) {
         value={replacement}
         onChange={(e) => setReplacement(e.target.value)}
       />
-      <button type="button" className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs" disabled={total === 0} onClick={() => editor.commands.replaceCurrent(replacement)}>
+      <button
+        type="button"
+        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs"
+        disabled={total === 0}
+        onClick={() => editor.commands.replaceCurrent(replacement)}
+      >
         Replace
       </button>
-      <button type="button" className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs" disabled={total === 0} onClick={() => editor.commands.replaceAll(replacement)}>
+      <button
+        type="button"
+        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs"
+        disabled={total === 0}
+        onClick={() => editor.commands.replaceAll(replacement)}
+      >
         Replace all
       </button>
-      <button type="button" className="ov-tool ms-auto" aria-label="Close find and replace" onClick={onClose}>
+      <button
+        type="button"
+        className="ov-tool ms-auto"
+        aria-label="Close find and replace"
+        onClick={onClose}
+      >
         ×
       </button>
     </div>

@@ -3,7 +3,13 @@ import { create } from 'zustand';
 import { BUNDLED_FONTS, SYSTEM_FONTS } from '@/config/fonts';
 import { findGoogleFont } from '@/config/google-fonts';
 import { createId } from '@/lib/id';
-import { cleanFamilyName, detectFontFormat, familyFromFileName, MAX_FONT_BYTES, type FontFormat } from '@/lib/fonts/font-file';
+import {
+  cleanFamilyName,
+  detectFontFormat,
+  familyFromFileName,
+  MAX_FONT_BYTES,
+  type FontFormat,
+} from '@/lib/fonts/font-file';
 import { fetchGoogleFontCss, GoogleFontError } from '@/lib/fonts/google';
 import { loadBundledFonts } from '@/lib/fonts/bundled';
 import type { FontRegistrar } from '@/lib/fonts/registrar';
@@ -48,7 +54,9 @@ export interface FontStoreState {
   /** Google families the person has used, most recent first. */
   readonly googleFamilies: readonly string[];
   readonly googleConsent: boolean;
-  readonly googleState: Readonly<Record<string, { state: 'loading' | 'ready' | 'error'; message?: string }>>;
+  readonly googleState: Readonly<
+    Record<string, { state: 'loading' | 'ready' | 'error'; message?: string }>
+  >;
 
   init(): Promise<void>;
   addUserFont(file: File, name?: string): Promise<UserFont>;
@@ -154,10 +162,12 @@ export function createFontStore({
       },
 
       async addUserFont(file, name) {
-        if (file.size > MAX_FONT_BYTES) throw new FontFileError('This font file is larger than 25 MB.');
+        if (file.size > MAX_FONT_BYTES)
+          throw new FontFileError('This font file is larger than 25 MB.');
         const data = await file.arrayBuffer();
         const format = detectFontFormat(new Uint8Array(data.slice(0, 4)));
-        if (!format) throw new FontFileError('This is not a font file. Use a TTF, OTF, WOFF or WOFF2 file.');
+        if (!format)
+          throw new FontFileError('This is not a font file. Use a TTF, OTF, WOFF or WOFF2 file.');
 
         const requested = (name && cleanFamilyName(name)) || familyFromFileName(file.name);
         const family = uniqueName(requested, takenNames());
@@ -177,7 +187,9 @@ export function createFontStore({
         }
         await kv.set(USER_FONT_PREFIX + stored.id, stored);
         const meta = toMeta(stored);
-        set((state) => ({ userFonts: [...state.userFonts, meta].sort((a, b) => a.family.localeCompare(b.family)) }));
+        set((state) => ({
+          userFonts: [...state.userFonts, meta].sort((a, b) => a.family.localeCompare(b.family)),
+        }));
         return meta;
       },
 
@@ -185,12 +197,17 @@ export function createFontStore({
         const cleaned = cleanFamilyName(name);
         const stored = await kv.get(USER_FONT_PREFIX + id);
         if (!cleaned || !isStoredUserFont(stored) || cleaned === stored.family) return;
-        const family = uniqueName(cleaned, takenNames().filter((n) => n !== stored.family));
+        const family = uniqueName(
+          cleaned,
+          takenNames().filter((n) => n !== stored.family),
+        );
         registrar.removeFamily(stored.family);
         const next = { ...stored, family };
         await register(next);
         await kv.set(USER_FONT_PREFIX + id, next);
-        set((state) => ({ userFonts: state.userFonts.map((f) => (f.id === id ? toMeta(next) : f)) }));
+        set((state) => ({
+          userFonts: state.userFonts.map((f) => (f.id === id ? toMeta(next) : f)),
+        }));
       },
 
       async removeUserFont(id) {
@@ -216,7 +233,9 @@ export function createFontStore({
           rememberGoogle(family);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Could not load this font.';
-          set((state) => ({ googleState: { ...state.googleState, [family]: { state: 'error', message } } }));
+          set((state) => ({
+            googleState: { ...state.googleState, [family]: { state: 'error', message } },
+          }));
           throw error;
         }
       },
@@ -228,18 +247,31 @@ export function createFontStore({
           const ok = family === 'Manrope' || bundledLoaded.includes(family);
           return ok
             ? { family, kind: 'bundled', availability: 'ready' }
-            : { family, kind: 'bundled', availability: 'missing', message: 'Bundled font files are not installed; a similar font is used.' };
+            : {
+                family,
+                kind: 'bundled',
+                availability: 'missing',
+                message: 'Bundled font files are not installed; a similar font is used.',
+              };
         }
-        if (SYSTEM_FONTS.some((f) => f.family === family)) return { family, kind: 'system', availability: 'ready' };
-        if (userFonts.some((f) => f.family === family)) return { family, kind: 'user', availability: 'ready' };
+        if (SYSTEM_FONTS.some((f) => f.family === family))
+          return { family, kind: 'system', availability: 'ready' };
+        if (userFonts.some((f) => f.family === family))
+          return { family, kind: 'user', availability: 'ready' };
         if (findGoogleFont(family) || googleFamilies.includes(family) || googleState[family]) {
           const state = googleState[family];
           if (!googleConsent) return { family, kind: 'google', availability: 'needs-consent' };
           if (state?.state === 'ready') return { family, kind: 'google', availability: 'ready' };
-          if (state?.state === 'error') return { family, kind: 'google', availability: 'error', message: state.message };
+          if (state?.state === 'error')
+            return { family, kind: 'google', availability: 'error', message: state.message };
           return { family, kind: 'google', availability: 'loading' };
         }
-        return { family, kind: 'user', availability: 'missing', message: 'Not loaded in this browser. Load the font file again.' };
+        return {
+          family,
+          kind: 'user',
+          availability: 'missing',
+          message: 'Not loaded in this browser. Load the font file again.',
+        };
       },
 
       reset() {
@@ -251,7 +283,9 @@ export function createFontStore({
         for (const family of families) {
           const status = get().statusOf(family);
           if (status.kind === 'google' && get().googleConsent && !get().googleState[family]) {
-            await get().loadGoogleFont(family).catch(() => undefined);
+            await get()
+              .loadGoogleFont(family)
+              .catch(() => undefined);
           }
         }
         return families.map((family) => get().statusOf(family));
@@ -286,7 +320,9 @@ export function createLocalFontPreferences(): FontPreferences {
     getGoogleFamilies: () => {
       try {
         const parsed: unknown = JSON.parse(read(FAMILIES_KEY) ?? '[]');
-        return Array.isArray(parsed) ? parsed.filter((f): f is string => typeof f === 'string' && cleanFamilyName(f) === f) : [];
+        return Array.isArray(parsed)
+          ? parsed.filter((f): f is string => typeof f === 'string' && cleanFamilyName(f) === f)
+          : [];
       } catch {
         return [];
       }

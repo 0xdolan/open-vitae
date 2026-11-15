@@ -63,10 +63,14 @@ describe('resume repository', () => {
 
 describe('describeStorageError', () => {
   it('explains a full disk', () => {
-    expect(describeStorageError(new DOMException('full', 'QuotaExceededError'))).toMatch(/storage is full/);
+    expect(describeStorageError(new DOMException('full', 'QuotaExceededError'))).toMatch(
+      /storage is full/,
+    );
   });
 
   it('prefixes validation errors', () => {
-    expect(describeStorageError(new ResumeValidationError('name: required'))).toBe('Not saved: name: required');
+    expect(describeStorageError(new ResumeValidationError('name: required'))).toBe(
+      'Not saved: name: required',
+    );
   });
 });

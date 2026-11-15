@@ -2,7 +2,13 @@ import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from 'r
 
 import { Button } from '@/components/ui/button';
 import { CloseIcon, SearchIcon } from '@/components/ui/icons';
-import { DEFAULT_ICON_SET, ICON_SET_IDS, ICON_SETS, isIconSetId, type IconSetId } from '@/config/icon-sets';
+import {
+  DEFAULT_ICON_SET,
+  ICON_SET_IDS,
+  ICON_SETS,
+  isIconSetId,
+  type IconSetId,
+} from '@/config/icon-sets';
 import { iconLabel, searchIcons } from '@/lib/icons/search';
 import { cn } from '@/lib/utils';
 import type { IconRef } from '@/schema/resume';
@@ -29,7 +35,9 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
   const titleId = useId();
   const setSelectId = useId();
   const [open, setOpen] = useState(false);
-  const [setId, setSetId] = useState<IconSetId>(value && isIconSetId(value.set) ? value.set : DEFAULT_ICON_SET);
+  const [setId, setSetId] = useState<IconSetId>(
+    value && isIconSetId(value.set) ? value.set : DEFAULT_ICON_SET,
+  );
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
   const deferredQuery = useDeferredValue(query);
@@ -58,18 +66,27 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
     setOpen(false);
   };
 
-  const currentLabel = value && isIconSetId(value.set) ? iconLabel(value.name, ICON_SETS[value.set].prefix) : null;
+  const currentLabel =
+    value && isIconSetId(value.set) ? iconLabel(value.name, ICON_SETS[value.set].prefix) : null;
 
   return (
     <>
       <Button
         size="sm"
         className={className}
-        aria-label={currentLabel ? `Icon for ${target}: ${currentLabel}. Change icon` : `Add an icon to ${target}`}
+        aria-label={
+          currentLabel
+            ? `Icon for ${target}: ${currentLabel}. Change icon`
+            : `Add an icon to ${target}`
+        }
         title={currentLabel ? `Icon: ${currentLabel}` : 'Add an icon'}
         onClick={() => setOpen(true)}
       >
-        {value ? <ResumeIcon icon={value} className="text-base" /> : <span aria-hidden="true">＋</span>}
+        {value ? (
+          <ResumeIcon icon={value} className="text-base" />
+        ) : (
+          <span aria-hidden="true">＋</span>
+        )}
         <span>Icon</span>
       </Button>
 
@@ -88,7 +105,13 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
               <h2 id={titleId} className="text-base font-semibold">
                 Icon for {target}
               </h2>
-              <Button variant="ghost" size="sm" className="ms-auto" aria-label="Close" onClick={() => setOpen(false)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ms-auto"
+                aria-label="Close"
+                onClick={() => setOpen(false)}
+              >
                 <CloseIcon />
               </Button>
             </div>
@@ -137,7 +160,9 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
 
             <div className="min-h-40 overflow-y-auto">
               {results && results.names.length === 0 ? (
-                <p className="py-8 text-center text-sm text-stone-500">No icons match “{deferredQuery}”. Try another word or set.</p>
+                <p className="py-8 text-center text-sm text-stone-500">
+                  No icons match “{deferredQuery}”. Try another word or set.
+                </p>
               ) : null}
               <ul className="grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-1.5">
                 {results?.names.map((name) => {
@@ -156,7 +181,9 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
                         onClick={() => choose({ set: setId, name })}
                       >
                         <ResumeIcon icon={{ set: setId, name }} className="text-2xl" />
-                        <span className="line-clamp-2 text-[0.65rem] leading-tight text-stone-600">{label}</span>
+                        <span className="line-clamp-2 text-[0.65rem] leading-tight text-stone-600">
+                          {label}
+                        </span>
                       </button>
                     </li>
                   );

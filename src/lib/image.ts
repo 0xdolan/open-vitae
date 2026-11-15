@@ -3,17 +3,29 @@ export const MAX_EMBEDDED_IMAGE_SIDE = 1600;
 /** Largest embedded image after compression, in bytes of data URL. */
 export const MAX_EMBEDDED_IMAGE_BYTES = 1_500_000;
 
-const ACCEPTED_TYPES: ReadonlySet<string> = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+const ACCEPTED_TYPES: ReadonlySet<string> = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
+]);
 
 export function isAcceptedImageType(type: string): boolean {
   return ACCEPTED_TYPES.has(type);
 }
 
 /** Scale (width, height) down to fit inside `max` on its longer side; never scales up. */
-export function fitWithin(width: number, height: number, max: number): { width: number; height: number } {
+export function fitWithin(
+  width: number,
+  height: number,
+  max: number,
+): { width: number; height: number } {
   if (width <= 0 || height <= 0) return { width: 0, height: 0 };
   const scale = Math.min(1, max / Math.max(width, height));
-  return { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) };
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
 }
 
 export class ImageError extends Error {

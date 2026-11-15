@@ -27,7 +27,10 @@ function isPageBreakMode(value: string): value is PageBreakMode {
 }
 
 /** Parse a number input and keep it inside the allowed range. */
-function readNumber(raw: string, limits: { readonly min: number; readonly max: number }): number | null {
+function readNumber(
+  raw: string,
+  limits: { readonly min: number; readonly max: number },
+): number | null {
   const value = Number(raw);
   return raw === '' || Number.isNaN(value) ? null : clamp(value, limits.min, limits.max);
 }
@@ -93,7 +96,11 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         </select>
       </Field>
 
-      <Field label="Language" htmlFor={`${id}-language`} hint="Sets section titles, spelling and direction.">
+      <Field
+        label="Language"
+        htmlFor={`${id}-language`}
+        hint="Sets section titles, spelling and direction."
+      >
         <select
           id={`${id}-language`}
           className={controlClass}
@@ -124,7 +131,9 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
           id={`${id}-breaks`}
           className={controlClass}
           value={layout.pageBreaks}
-          onChange={(e) => isPageBreakMode(e.target.value) && onChange({ pageBreaks: e.target.value })}
+          onChange={(e) =>
+            isPageBreakMode(e.target.value) && onChange({ pageBreaks: e.target.value })
+          }
         >
           {PAGE_BREAK_MODES.map((mode) => (
             <option key={mode} value={mode}>
@@ -185,7 +194,11 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Indent size (spaces)" htmlFor={`${id}-indent`} hint="For lists and indented paragraphs.">
+      <Field
+        label="Indent size (spaces)"
+        htmlFor={`${id}-indent`}
+        hint="For lists and indented paragraphs."
+      >
         <input
           id={`${id}-indent`}
           type="number"
@@ -202,12 +215,18 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Nesting levels" htmlFor={`${id}-depth`} hint="How deep lists and indents may go.">
+      <Field
+        label="Nesting levels"
+        htmlFor={`${id}-depth`}
+        hint="How deep lists and indents may go."
+      >
         <select
           id={`${id}-depth`}
           className={controlClass}
           value={layout.maxDepth === null ? 'unlimited' : String(layout.maxDepth)}
-          onChange={(e) => onChange({ maxDepth: e.target.value === 'unlimited' ? null : Number(e.target.value) })}
+          onChange={(e) =>
+            onChange({ maxDepth: e.target.value === 'unlimited' ? null : Number(e.target.value) })
+          }
         >
           <option value="unlimited">Unlimited</option>
           {Array.from({ length: 9 }, (_, i) => i + 1).map((n) => (

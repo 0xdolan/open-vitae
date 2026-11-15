@@ -1,4 +1,11 @@
-import { PDFDocument, PDFName, PDFString, StandardFonts, type PDFFont, type PDFPage } from 'pdf-lib';
+import {
+  PDFDocument,
+  PDFName,
+  PDFString,
+  StandardFonts,
+  type PDFFont,
+  type PDFPage,
+} from 'pdf-lib';
 
 import type { Box, PageLink, TextRun } from './page-capture';
 
@@ -58,7 +65,13 @@ function addLink(pdf: PDFDocument, page: PDFPage, url: string, box: Box, pageHei
   page.node.addAnnot(pdf.context.register(annotation));
 }
 
-function addTextRun(page: PDFPage, font: PDFFont, supported: ReadonlySet<number>, run: TextRun, pageHeightPt: number) {
+function addTextRun(
+  page: PDFPage,
+  font: PDFFont,
+  supported: ReadonlySet<number>,
+  run: TextRun,
+  pageHeightPt: number,
+) {
   let text = '';
   let skipped = 0;
   for (const char of run.text) {
@@ -71,13 +84,17 @@ function addTextRun(page: PDFPage, font: PDFFont, supported: ReadonlySet<number>
   // Stretch the font size so the invisible words line up with the picture.
   const natural = font.widthOfTextAtSize(text, size);
   const target = run.width * PT_PER_PX;
-  const fitted = natural > 0 ? Math.min(size * 2, Math.max(size * 0.5, (size * target) / natural)) : size;
+  const fitted =
+    natural > 0 ? Math.min(size * 2, Math.max(size * 0.5, (size * target) / natural)) : size;
   const baseline = pageHeightPt - (run.y + run.height * 0.8) * PT_PER_PX;
   page.drawText(text, { x: run.x * PT_PER_PX, y: baseline, size: fitted, font, opacity: 0 });
   return { added: visibleText.length, skipped };
 }
 
-export async function buildPdf(pages: readonly PdfPageInput[], metadata: PdfMetadata): Promise<PdfResult> {
+export async function buildPdf(
+  pages: readonly PdfPageInput[],
+  metadata: PdfMetadata,
+): Promise<PdfResult> {
   const pdf = await PDFDocument.create();
   pdf.setTitle(metadata.title, { showInWindowTitleBar: true });
   pdf.setAuthor(metadata.author);
@@ -98,7 +115,8 @@ export async function buildPdf(pages: readonly PdfPageInput[], metadata: PdfMeta
     const widthPt = input.widthPx * PT_PER_PX;
     const heightPt = input.heightPx * PT_PER_PX;
     const page = pdf.addPage([widthPt, heightPt]);
-    const image = input.imageType === 'png' ? await pdf.embedPng(input.image) : await pdf.embedJpg(input.image);
+    const image =
+      input.imageType === 'png' ? await pdf.embedPng(input.image) : await pdf.embedJpg(input.image);
     page.drawImage(image, { x: 0, y: 0, width: widthPt, height: heightPt });
     for (const run of input.text) {
       const { added, skipped } = addTextRun(page, font, supported, run, heightPt);

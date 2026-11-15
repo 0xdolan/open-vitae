@@ -2,11 +2,23 @@ import type { ResumeDocument, TextStyle } from '@/schema/resume';
 
 /** The first family named in a CSS font-family value, without quotes. */
 function firstFamily(value: string): string | null {
-  const first = value.split(',')[0]?.trim().replace(/^["']|["']$/g, '').trim();
+  const first = value
+    .split(',')[0]
+    ?.trim()
+    .replace(/^["']|["']$/g, '')
+    .trim();
   return first ? first : null;
 }
 
-const GENERIC = new Set(['serif', 'sans-serif', 'monospace', 'system-ui', 'cursive', 'fantasy', 'ui-monospace']);
+const GENERIC = new Set([
+  'serif',
+  'sans-serif',
+  'monospace',
+  'system-ui',
+  'cursive',
+  'fantasy',
+  'ui-monospace',
+]);
 
 /** Every font family a resume uses: page font, per-text styles and fonts inside rich text. */
 export function fontsUsedBy(doc: ResumeDocument): string[] {

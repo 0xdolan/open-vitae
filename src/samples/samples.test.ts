@@ -6,7 +6,16 @@ import { createResumeFromSample, getSample, SAMPLE_IDS, SAMPLES } from './index'
 
 describe('samples', () => {
   it('ships the five field samples and a right-to-left sample', () => {
-    expect(SAMPLES.map((s) => s.id)).toEqual(['tech', 'finance', 'cybersecurity', 'cloud', 'marketing', 'persian', 'arabic', 'kurdish']);
+    expect(SAMPLES.map((s) => s.id)).toEqual([
+      'tech',
+      'finance',
+      'cybersecurity',
+      'cloud',
+      'marketing',
+      'persian',
+      'arabic',
+      'kurdish',
+    ]);
     expect([...SAMPLE_IDS]).toEqual(SAMPLES.map((s) => s.id));
   });
 
@@ -48,7 +57,10 @@ describe('samples', () => {
   it('escapes ampersands in rich text', () => {
     for (const id of SAMPLE_IDS) {
       const doc = createResumeFromSample(id);
-      const htmls = [doc.profile.summaryHtml, ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml))];
+      const htmls = [
+        doc.profile.summaryHtml,
+        ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml)),
+      ];
       for (const html of htmls) {
         expect(/&(?!amp;|lt;|gt;|quot;|#\d+;)/.test(html)).toBe(false);
       }

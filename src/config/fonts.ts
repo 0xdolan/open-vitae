@@ -18,8 +18,18 @@ export interface FontOption {
 /** Fonts that ship with the app and work offline. */
 export const BUNDLED_FONTS: readonly FontOption[] = [
   { family: 'Manrope', source: 'bundled', arabicScript: false, fallback: 'system-ui, sans-serif' },
-  { family: 'Sahel', source: 'bundled', arabicScript: true, fallback: 'Tahoma, system-ui, sans-serif' },
-  { family: 'Estedad', source: 'bundled', arabicScript: true, fallback: 'Tahoma, system-ui, sans-serif' },
+  {
+    family: 'Sahel',
+    source: 'bundled',
+    arabicScript: true,
+    fallback: 'Tahoma, system-ui, sans-serif',
+  },
+  {
+    family: 'Estedad',
+    source: 'bundled',
+    arabicScript: true,
+    fallback: 'Tahoma, system-ui, sans-serif',
+  },
 ];
 
 /**
@@ -27,8 +37,18 @@ export const BUNDLED_FONTS: readonly FontOption[] = [
  * machine and fall back to the metric-compatible open fonts Arimo and Tinos.
  */
 export const SYSTEM_FONTS: readonly FontOption[] = [
-  { family: 'Arial', source: 'system', arabicScript: true, fallback: 'Arimo, Helvetica, sans-serif' },
-  { family: 'Times New Roman', source: 'system', arabicScript: true, fallback: 'Tinos, Times, serif' },
+  {
+    family: 'Arial',
+    source: 'system',
+    arabicScript: true,
+    fallback: 'Arimo, Helvetica, sans-serif',
+  },
+  {
+    family: 'Times New Roman',
+    source: 'system',
+    arabicScript: true,
+    fallback: 'Tinos, Times, serif',
+  },
 ];
 
 export const KNOWN_FONTS: readonly FontOption[] = [...BUNDLED_FONTS, ...SYSTEM_FONTS];

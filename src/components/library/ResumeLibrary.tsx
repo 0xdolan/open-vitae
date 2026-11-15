@@ -44,12 +44,16 @@ export function ResumeLibrary() {
 
       {sorted.length === 0 ? (
         <p className="rounded-lg border border-dashed border-stone-300 p-6 text-center text-sm text-stone-600">
-          Nothing here yet. Start a new resume, or copy one of the samples below to see how a finished resume looks.
+          Nothing here yet. Start a new resume, or copy one of the samples below to see how a
+          finished resume looks.
         </p>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {sorted.map((doc) => (
-            <li key={doc.id} className="flex flex-col rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+            <li
+              key={doc.id}
+              className="flex flex-col rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
+            >
               <a href={routeHref({ name: 'editor', id: doc.id })} className="group block flex-1">
                 <span className="group-hover:text-brand block truncate font-semibold" dir="auto">
                   {doc.name || 'Untitled resume'}
@@ -57,18 +61,35 @@ export function ResumeLibrary() {
                 <span className="block truncate text-sm text-stone-600" dir="auto">
                   {doc.profile.fullName || 'No name yet'}
                 </span>
-                <span className="mt-1 block text-xs text-stone-500" title={formatDateTime(doc.updatedAt)}>
-                  Edited {formatRelative(doc.updatedAt)} · {doc.layout.pageSize.toUpperCase()} · {doc.layout.direction.toUpperCase()}
+                <span
+                  className="mt-1 block text-xs text-stone-500"
+                  title={formatDateTime(doc.updatedAt)}
+                >
+                  Edited {formatRelative(doc.updatedAt)} · {doc.layout.pageSize.toUpperCase()} ·{' '}
+                  {doc.layout.direction.toUpperCase()}
                 </span>
               </a>
               <div className="mt-3 flex gap-1">
-                <a href={routeHref({ name: 'editor', id: doc.id })} className={cn(buttonVariants({ variant: 'primary', size: 'sm' }))}>
+                <a
+                  href={routeHref({ name: 'editor', id: doc.id })}
+                  className={cn(buttonVariants({ variant: 'primary', size: 'sm' }))}
+                >
                   Open
                 </a>
-                <Button variant="ghost" size="sm" onClick={() => void duplicate(doc.id)} aria-label={`Duplicate ${doc.name}`}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => void duplicate(doc.id)}
+                  aria-label={`Duplicate ${doc.name}`}
+                >
                   Duplicate
                 </Button>
-                <Button variant="danger-ghost" size="sm" onClick={() => setPendingDelete(doc)} aria-label={`Delete ${doc.name}`}>
+                <Button
+                  variant="danger-ghost"
+                  size="sm"
+                  onClick={() => setPendingDelete(doc)}
+                  aria-label={`Delete ${doc.name}`}
+                >
                   Delete
                 </Button>
               </div>

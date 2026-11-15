@@ -42,7 +42,9 @@ export function StorageNotice() {
         </Button>
       ) : null}
       {info?.persisted === true ? (
-        <span className="text-xs font-medium">The browser will keep this data when space is low.</span>
+        <span className="text-xs font-medium">
+          The browser will keep this data when space is low.
+        </span>
       ) : null}
     </aside>
   );

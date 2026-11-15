@@ -10,7 +10,8 @@ export function detectFontFormat(bytes: Uint8Array): FontFormat | null {
   if (tag === 'wOF2') return 'woff2';
   if (tag === 'wOFF') return 'woff';
   if (tag === 'OTTO') return 'opentype';
-  if (tag === 'true' || (bytes[0] === 0 && bytes[1] === 1 && bytes[2] === 0 && bytes[3] === 0)) return 'truetype';
+  if (tag === 'true' || (bytes[0] === 0 && bytes[1] === 1 && bytes[2] === 0 && bytes[3] === 0))
+    return 'truetype';
   return null;
 }
 

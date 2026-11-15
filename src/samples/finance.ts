@@ -71,7 +71,11 @@ export const financeSample: SampleDefinition = {
       {
         kind: 'certifications',
         items: [
-          { title: 'Chartered Financial Analyst (CFA)', subtitle: 'CFA Institute', dateRange: '2021' },
+          {
+            title: 'Chartered Financial Analyst (CFA)',
+            subtitle: 'CFA Institute',
+            dateRange: '2021',
+          },
           {
             title: 'Financial Modeling & Valuation Analyst (FMVA)',
             subtitle: 'Corporate Finance Institute',
@@ -84,11 +88,15 @@ export const financeSample: SampleDefinition = {
         items: [
           {
             title: 'Analysis',
-            descriptionHtml: paragraph('DCF, LBO and merger models, scenario and sensitivity analysis'),
+            descriptionHtml: paragraph(
+              'DCF, LBO and merger models, scenario and sensitivity analysis',
+            ),
           },
           {
             title: 'Tools',
-            descriptionHtml: paragraph('Excel and VBA, Python (pandas), SQL, Power BI, Bloomberg Terminal'),
+            descriptionHtml: paragraph(
+              'Excel and VBA, Python (pandas), SQL, Power BI, Bloomberg Terminal',
+            ),
           },
           {
             title: 'Reporting',

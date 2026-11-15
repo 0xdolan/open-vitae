@@ -22,9 +22,18 @@ function crc32(bytes: Uint8Array): number {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-const u32 = (value: number) => [(value >>> 24) & 0xff, (value >>> 16) & 0xff, (value >>> 8) & 0xff, value & 0xff];
+const u32 = (value: number) => [
+  (value >>> 24) & 0xff,
+  (value >>> 16) & 0xff,
+  (value >>> 8) & 0xff,
+  value & 0xff,
+];
 const readU32 = (bytes: Uint8Array, offset: number) =>
-  (((bytes[offset] ?? 0) << 24) | ((bytes[offset + 1] ?? 0) << 16) | ((bytes[offset + 2] ?? 0) << 8) | (bytes[offset + 3] ?? 0)) >>> 0;
+  (((bytes[offset] ?? 0) << 24) |
+    ((bytes[offset + 1] ?? 0) << 16) |
+    ((bytes[offset + 2] ?? 0) << 8) |
+    (bytes[offset + 3] ?? 0)) >>>
+  0;
 
 function isPng(bytes: Uint8Array): boolean {
   return PNG_SIGNATURE.every((value, index) => bytes[index] === value);
@@ -68,7 +77,8 @@ export function readPngDpi(bytes: Uint8Array): number | null {
   while (offset + 8 <= bytes.length) {
     const length = readU32(bytes, offset);
     const name = String.fromCharCode(...bytes.subarray(offset + 4, offset + 8));
-    if (name === 'pHYs' && bytes[offset + 16] === 1) return Math.round(readU32(bytes, offset + 8) * 0.0254);
+    if (name === 'pHYs' && bytes[offset + 16] === 1)
+      return Math.round(readU32(bytes, offset + 8) * 0.0254);
     offset += 12 + length;
   }
   return null;
@@ -78,7 +88,10 @@ export function readPngDpi(bytes: Uint8Array): number | null {
 export function setJpegDpi(bytes: Uint8Array, dpi: number): Uint8Array {
   if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return bytes;
   const density = Math.max(1, Math.min(0xffff, Math.round(dpi)));
-  const hasJfif = bytes[2] === 0xff && bytes[3] === 0xe0 && String.fromCharCode(...bytes.subarray(6, 11)) === 'JFIF\0';
+  const hasJfif =
+    bytes[2] === 0xff &&
+    bytes[3] === 0xe0 &&
+    String.fromCharCode(...bytes.subarray(6, 11)) === 'JFIF\0';
   if (hasJfif) {
     const out = new Uint8Array(bytes);
     out[13] = 1;
@@ -88,7 +101,26 @@ export function setJpegDpi(bytes: Uint8Array, dpi: number): Uint8Array {
     out[17] = density & 0xff;
     return out;
   }
-  const app0 = [0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x02, 1, density >> 8, density & 0xff, density >> 8, density & 0xff, 0, 0];
+  const app0 = [
+    0xff,
+    0xe0,
+    0x00,
+    0x10,
+    0x4a,
+    0x46,
+    0x49,
+    0x46,
+    0x00,
+    0x01,
+    0x02,
+    1,
+    density >> 8,
+    density & 0xff,
+    density >> 8,
+    density & 0xff,
+    0,
+    0,
+  ];
   const out = new Uint8Array(bytes.length + app0.length);
   out.set(bytes.subarray(0, 2), 0);
   out.set(app0, 2);

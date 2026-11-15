@@ -4,7 +4,10 @@ import { contentBoxMm, pageBoxMm, pageWidthPx } from './page-geometry';
 
 describe('page geometry', () => {
   it('gives the sheet and the content area inside the margins', () => {
-    expect(pageBoxMm({ pageSize: 'a4', orientation: 'portrait', marginMm: 15 })).toEqual({ widthMm: 210, heightMm: 297 });
+    expect(pageBoxMm({ pageSize: 'a4', orientation: 'portrait', marginMm: 15 })).toEqual({
+      widthMm: 210,
+      heightMm: 297,
+    });
     expect(contentBoxMm({ pageSize: 'a4', orientation: 'landscape', marginMm: 15 })).toEqual({
       widthMm: 267,
       heightMm: 180,
@@ -22,6 +25,8 @@ describe('page geometry', () => {
   });
 
   it('converts the sheet width to CSS pixels', () => {
-    expect(Math.round(pageWidthPx({ pageSize: 'a4', orientation: 'portrait', marginMm: 0 }))).toBe(794);
+    expect(Math.round(pageWidthPx({ pageSize: 'a4', orientation: 'portrait', marginMm: 0 }))).toBe(
+      794,
+    );
   });
 });

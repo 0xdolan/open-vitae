@@ -67,7 +67,11 @@ export const cloudSample: SampleDefinition = {
             subtitle: 'Amazon Web Services',
             dateRange: '2023',
           },
-          { title: 'Certified Kubernetes Administrator (CKA)', subtitle: 'CNCF', dateRange: '2021' },
+          {
+            title: 'Certified Kubernetes Administrator (CKA)',
+            subtitle: 'CNCF',
+            dateRange: '2021',
+          },
           { title: 'Terraform Associate', subtitle: 'HashiCorp', dateRange: '2020' },
         ],
       },

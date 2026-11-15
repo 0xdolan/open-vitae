@@ -18,14 +18,14 @@ Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs 
 
 ## Where data lives
 
-| What                      | Where                                   | Notes                                   |
-| ------------------------- | --------------------------------------- | --------------------------------------- |
-| Resumes and drafts        | IndexedDB database `open-vitae`, store `resumes`, keys `resume:<id>` | Structured objects, not strings |
-| Which resume was last open | `localStorage` key `open-vitae:active-resume` | An id only, never content       |
-| Version history           | Same database: `versions:<resumeId>` index, `version:<resumeId>:<versionId>` snapshots | One snapshot per save |
-| Photos                    | Same database, `photo:<hash>`, each distinct photo and original picture stored once | Never uploaded |
-| How many versions to keep | `localStorage` key `open-vitae:version-retention` | `all` by default                |
-| User fonts                | IndexedDB (phase 5)                     | Never uploaded                          |
+| What                       | Where                                                                                  | Notes                           |
+| -------------------------- | -------------------------------------------------------------------------------------- | ------------------------------- |
+| Resumes and drafts         | IndexedDB database `open-vitae`, store `resumes`, keys `resume:<id>`                   | Structured objects, not strings |
+| Which resume was last open | `localStorage` key `open-vitae:active-resume`                                          | An id only, never content       |
+| Version history            | Same database: `versions:<resumeId>` index, `version:<resumeId>:<versionId>` snapshots | One snapshot per save           |
+| Photos                     | Same database, `photo:<hash>`, each distinct photo and original picture stored once    | Never uploaded                  |
+| How many versions to keep  | `localStorage` key `open-vitae:version-retention`                                      | `all` by default                |
+| User fonts                 | IndexedDB (phase 5)                                                                    | Never uploaded                  |
 
 Nothing is sent to a server. Clearing the site's data in the browser removes all of it. The app tells people this in a banner and offers to ask the browser for **persistent storage**, which stops the browser from evicting the data when disk space runs low.
 
@@ -63,16 +63,16 @@ Text fields are always strings (empty when unused) so forms never deal with `und
 
 Data is validated **on every read and every write**. Invalid data is never written, and a corrupted or edited entry never reaches the editor.
 
-| Field                     | Rule                                              | Stops                                 |
-| ------------------------- | ------------------------------------------------- | ------------------------------------- |
-| Colours                   | Hex only: `#rgb`, `#rrggbb`, `#rrggbbaa`          | CSS injection through `style`         |
-| Font names                | Letters, digits, space, `.`, `_`, `-`             | Breaking out of `font-family`         |
-| Emails, links, names      | Length limits only; checked in the editor as warnings | Lost work from a half-typed value |
-| Links on the page         | Only absolute `http`, `https`, `mailto`, `tel` become links when drawn | `javascript:` and `data:` links |
-| Photo                     | PNG, JPEG or WebP data URL, about 5 MB at most    | SVG with scripts, oversized storage   |
-| Ids                       | 1–64 URL-safe characters, unique in the document  | Broken lists and drag and drop        |
-| Rich text                 | 2 MB (room for small images), then sanitised; styles, classes and images go through allowlists | Scripts, handlers, iframes, remote images, positioning |
-| Unknown fields            | Dropped                                           | Smuggling data through imports        |
+| Field                | Rule                                                                                           | Stops                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Colours              | Hex only: `#rgb`, `#rrggbb`, `#rrggbbaa`                                                       | CSS injection through `style`                          |
+| Font names           | Letters, digits, space, `.`, `_`, `-`                                                          | Breaking out of `font-family`                          |
+| Emails, links, names | Length limits only; checked in the editor as warnings                                          | Lost work from a half-typed value                      |
+| Links on the page    | Only absolute `http`, `https`, `mailto`, `tel` become links when drawn                         | `javascript:` and `data:` links                        |
+| Photo                | PNG, JPEG or WebP data URL, about 5 MB at most                                                 | SVG with scripts, oversized storage                    |
+| Ids                  | 1–64 URL-safe characters, unique in the document                                               | Broken lists and drag and drop                         |
+| Rich text            | 2 MB (room for small images), then sanitised; styles, classes and images go through allowlists | Scripts, handlers, iframes, remote images, positioning |
+| Unknown fields       | Dropped                                                                                        | Smuggling data through imports                         |
 
 The sanitiser ([`src/lib/sanitize.ts`](../src/lib/sanitize.ts)) keeps formatting, lists, tables, links and the `dir` and `lang` attributes needed for mixed-direction text. It removes everything else and makes links open in a new tab with `rel="noopener noreferrer"`. [`SafeHtml`](../src/components/SafeHtml.tsx) is the only component allowed to insert HTML; lint blocks it everywhere else.
 
@@ -84,9 +84,9 @@ Every document has a `schemaVersion`. When the shape of stored data changes:
 2. Add a migration to `MIGRATIONS` in [`src/lib/migrations.ts`](../src/lib/migrations.ts), keyed by the version it upgrades from.
 3. Add a test that upgrades a document from the old version.
 
-| Version | Phase | Change                                                         |
-| ------- | ----- | -------------------------------------------------------------- |
-| 1       | 2     | First format                                                   |
+| Version | Phase | Change                                                                       |
+| ------- | ----- | ---------------------------------------------------------------------------- |
+| 1       | 2     | First format                                                                 |
 | 2       | 4     | Adds `layout.indentCh` (default 4) and `layout.maxDepth` (default unlimited) |
 
 Documents are migrated before validation, on load and on import. A document from a **newer** app version is refused with a clear message instead of being damaged. Unreadable entries are reported and left in storage untouched.
@@ -160,23 +160,23 @@ To add a sample: create `src/samples/<id>.ts` exporting a `SampleDefinition`, ad
 
 ## Code map
 
-| File                                   | Responsibility                                       |
-| -------------------------------------- | ---------------------------------------------------- |
-| `src/schema/resume.ts`                 | Schema and types                                     |
-| `src/lib/resume-factory.ts`            | Build blank resumes, clone with new ids, naming      |
-| `src/lib/resume-parse.ts`              | Migrate and validate unknown data, never throws      |
-| `src/lib/migrations.ts`                | Format upgrades                                      |
-| `src/lib/storage/key-value.ts`         | Storage interface and in-memory store for tests      |
-| `src/lib/storage/indexeddb.ts`         | IndexedDB store                                      |
-| `src/lib/storage/repository.ts`        | Validated resume persistence                         |
-| `src/lib/storage/sync-channel.ts`      | Cross-tab messages                                   |
-| `src/lib/storage/persistence.ts`       | Usage estimate and persistent-storage request        |
-| `src/lib/versions/repository.ts`       | Version history, photo deduplication, retention      |
-| `src/lib/export/json.ts`               | JSON backup format                                   |
-| `src/lib/export/file-name.ts`          | Versioned, time-stamped file names                   |
-| `src/lib/datetime.ts`                  | Human-readable dates and times                       |
-| `src/stores/resume-store.ts`           | App state, autosave, versions, restore, export       |
-| `src/stores/toast-store.ts`            | Notifications                                        |
+| File                              | Responsibility                                  |
+| --------------------------------- | ----------------------------------------------- |
+| `src/schema/resume.ts`            | Schema and types                                |
+| `src/lib/resume-factory.ts`       | Build blank resumes, clone with new ids, naming |
+| `src/lib/resume-parse.ts`         | Migrate and validate unknown data, never throws |
+| `src/lib/migrations.ts`           | Format upgrades                                 |
+| `src/lib/storage/key-value.ts`    | Storage interface and in-memory store for tests |
+| `src/lib/storage/indexeddb.ts`    | IndexedDB store                                 |
+| `src/lib/storage/repository.ts`   | Validated resume persistence                    |
+| `src/lib/storage/sync-channel.ts` | Cross-tab messages                              |
+| `src/lib/storage/persistence.ts`  | Usage estimate and persistent-storage request   |
+| `src/lib/versions/repository.ts`  | Version history, photo deduplication, retention |
+| `src/lib/export/json.ts`          | JSON backup format                              |
+| `src/lib/export/file-name.ts`     | Versioned, time-stamped file names              |
+| `src/lib/datetime.ts`             | Human-readable dates and times                  |
+| `src/stores/resume-store.ts`      | App state, autosave, versions, restore, export  |
+| `src/stores/toast-store.ts`       | Notifications                                   |
 
 ---
 

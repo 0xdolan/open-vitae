@@ -4,7 +4,9 @@ import { readJpegDpi, readPngDpi, setJpegDpi, setPngDpi } from './dpi-metadata';
 
 /** The smallest valid PNG: one white pixel. */
 const PNG = Uint8Array.from(
-  atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='),
+  atob(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+  ),
   (c) => c.charCodeAt(0),
 );
 
@@ -24,7 +26,10 @@ describe('DPI metadata', () => {
   });
 
   it('writes the resolution into an existing JFIF header or adds one', () => {
-    const withJfif = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0xff, 0xd9]);
+    const withJfif = new Uint8Array([
+      0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 1, 1, 0, 0, 1, 0, 1, 0, 0,
+      0xff, 0xd9,
+    ]);
     expect(readJpegDpi(withJfif)).toBeNull();
     expect(readJpegDpi(setJpegDpi(withJfif, 300))).toBe(300);
 

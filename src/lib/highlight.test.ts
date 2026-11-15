@@ -21,7 +21,8 @@ describe('code highlighting', () => {
   });
 
   it('escapes code instead of running it', () => {
-    const html = '<pre><code class="language-xml">&lt;script&gt;alert(1)&lt;/script&gt;</code></pre>';
+    const html =
+      '<pre><code class="language-xml">&lt;script&gt;alert(1)&lt;/script&gt;</code></pre>';
     const out = sanitizeHtml(highlightCodeBlocks(sanitizeHtml(html)));
     expect(out).not.toContain('<script');
     expect(out).toContain('&lt;');

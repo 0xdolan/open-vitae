@@ -51,7 +51,9 @@ function VersionRow({
             {REASON_LABELS[version.reason]}
           </span>
           {isLatest ? (
-            <span className="bg-brand-soft text-brand rounded px-1.5 py-0.5 text-xs font-medium">Current</span>
+            <span className="bg-brand-soft text-brand rounded px-1.5 py-0.5 text-xs font-medium">
+              Current
+            </span>
           ) : null}
           {version.exportedAt ? (
             <span
@@ -76,7 +78,12 @@ function VersionRow({
         </p>
       </div>
       <div className="flex gap-1">
-        <Button size="sm" variant="ghost" onClick={onDownload} aria-label={`Download version ${version.number} as JSON`}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onDownload}
+          aria-label={`Download version ${version.number} as JSON`}
+        >
           Download
         </Button>
         {!isLatest ? (
@@ -137,13 +144,17 @@ export function VersionHistory() {
 
       <div className="flex flex-col gap-4 border-t border-stone-200 px-4 py-3">
         <p className="text-sm text-stone-600">
-          Every save is kept as a version with its date and time, so you can always go back.
-          We recommend keeping all versions: they stay on this device and take little space
-          ({formatBytes(totalBytes)} so far).
+          Every save is kept as a version with its date and time, so you can always go back. We
+          recommend keeping all versions: they stay on this device and take little space (
+          {formatBytes(totalBytes)} so far).
         </p>
 
         <div className="flex flex-wrap items-end gap-3">
-          <Field label="Name this version (optional)" htmlFor={`${id}-note`} className="min-w-48 flex-1">
+          <Field
+            label="Name this version (optional)"
+            htmlFor={`${id}-note`}
+            className="min-w-48 flex-1"
+          >
             <input
               id={`${id}-note`}
               className={controlClass}
@@ -204,7 +215,12 @@ export function VersionHistory() {
         )}
 
         {versions.length > INITIAL_ROWS ? (
-          <Button variant="ghost" size="sm" className="self-start" onClick={() => setShowAll((v) => !v)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="self-start"
+            onClick={() => setShowAll((v) => !v)}
+          >
             {showAll ? 'Show fewer' : `Show all ${versions.length} versions`}
           </Button>
         ) : null}
@@ -225,7 +241,10 @@ export function VersionHistory() {
           if (!target) return;
           void restoreVersion(target.id).then((version) => {
             if (version) {
-              toast.success(`Version ${target.number} restored`, `Saved as version ${version.number}.`);
+              toast.success(
+                `Version ${target.number} restored`,
+                `Saved as version ${version.number}.`,
+              );
             }
           });
         }}

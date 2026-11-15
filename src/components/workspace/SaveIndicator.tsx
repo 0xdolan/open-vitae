@@ -19,8 +19,14 @@ export function SaveIndicator({ state, latest }: SaveIndicatorProps) {
     <p
       role="status"
       aria-live="polite"
-      title={latest && state !== 'error' ? `Version ${latest.number}, saved ${formatDateTime(latest.savedAt)}` : undefined}
-      className={state === 'error' ? 'text-xs font-semibold text-red-700' : 'text-xs text-stone-500'}
+      title={
+        latest && state !== 'error'
+          ? `Version ${latest.number}, saved ${formatDateTime(latest.savedAt)}`
+          : undefined
+      }
+      className={
+        state === 'error' ? 'text-xs font-semibold text-red-700' : 'text-xs text-stone-500'
+      }
     >
       {text}
     </p>
