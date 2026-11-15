@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { FontsManager } from '@/components/fonts/FontsManager';
+import { FontStatusNotice } from '@/components/fonts/FontStatusNotice';
 import { PagePreview } from '@/components/PagePreview';
 import { ResumeRenderer } from '@/components/resume/ResumeRenderer';
 import { PageSettings } from '@/components/workspace/PageSettings';
@@ -44,6 +46,8 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
     <div className="flex flex-col gap-4">
       <EditorHeader doc={doc} />
 
+      <FontStatusNotice doc={doc} onOpenFonts={() => select({ kind: 'page' })} />
+
       <div role="tablist" aria-label="Editor view" className="flex gap-1 rounded-lg bg-stone-200/70 p-1 xl:hidden">
         {(['edit', 'preview'] as const).map((tab) => (
           <button
@@ -76,8 +80,9 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
           ) : null}
           {panel.kind === 'page' ? (
             <section aria-labelledby="page-heading" className="flex flex-col gap-5">
-              <PanelHeading id="page-heading" title="Page setup" description="Paper size, direction, font and spacing." />
+              <PanelHeading id="page-heading" title="Page setup" description="Paper size, direction, fonts and spacing." />
               <PageSettings layout={doc.layout} onChange={updateLayout} />
+              <FontsManager />
             </section>
           ) : null}
           {panel.kind === 'versions' ? <VersionHistory /> : null}

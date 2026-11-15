@@ -8,7 +8,7 @@ import { StorageNotice } from '@/components/StorageNotice';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/Toaster';
 import { useHashRoute } from '@/hooks/useHashRoute';
-import { useResumeStore } from '@/stores';
+import { useFontStore, useResumeStore } from '@/stores';
 
 function Messages() {
   const message = useResumeStore((s) => s.message);
@@ -57,11 +57,11 @@ function LibraryView() {
       <ConfirmDialog
         open={confirmClear}
         title="Delete all data?"
-        description="Every resume, every saved version, every draft and setting stored by Open Vitae in this browser will be removed. This cannot be undone. Export backups first if you might need them."
+        description="Every resume, every saved version, every font you loaded, every draft and setting stored by Open Vitae in this browser will be removed. This cannot be undone. Export backups first if you might need them."
         confirmLabel="Delete everything"
         onCancel={() => setConfirmClear(false)}
         onConfirm={() => {
-          void clearAll();
+          void clearAll().then(() => useFontStore.getState().reset());
           setConfirmClear(false);
         }}
       />
@@ -91,6 +91,7 @@ export function App() {
 
   useEffect(() => {
     void init();
+    void useFontStore.getState().init();
   }, [init]);
 
   // The open resume follows the address, so links, reloads and the back button all work.
