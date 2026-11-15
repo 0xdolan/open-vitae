@@ -4,7 +4,9 @@ import {
   DEFAULT_PAGE_SIZE,
   getPageDimensionsMm,
   getPageSize,
+  isPageSizeId,
   mmToPx,
+  PAGE_SIZE_IDS,
   PAGE_SIZES,
 } from './page-sizes';
 
@@ -14,12 +16,18 @@ describe('page sizes', () => {
     expect(getPageSize('a4')).toMatchObject({ widthMm: 210, heightMm: 297 });
   });
 
-  it('has unique ids and portrait dimensions', () => {
+  it('has exactly one entry per id, all in portrait', () => {
     const ids = PAGE_SIZES.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
+    expect([...ids].sort()).toEqual([...PAGE_SIZE_IDS].sort());
     for (const size of PAGE_SIZES) {
       expect(size.heightMm).toBeGreaterThan(size.widthMm);
     }
+  });
+
+  it('recognises valid ids only', () => {
+    expect(isPageSizeId('letter')).toBe(true);
+    expect(isPageSizeId('a0')).toBe(false);
   });
 
   it('swaps dimensions for landscape', () => {
