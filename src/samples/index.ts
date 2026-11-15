@@ -5,6 +5,8 @@ import { cloudSample } from './cloud';
 import { cybersecuritySample } from './cybersecurity';
 import { financeSample } from './finance';
 import { marketingSample } from './marketing';
+import { arabicSample } from './arabic';
+import { kurdishSample } from './kurdish';
 import { persianSample } from './persian';
 import { techSample } from './tech';
 import { SAMPLE_IDS, type SampleDefinition, type SampleId } from './types';
@@ -19,6 +21,8 @@ export const SAMPLES: readonly SampleDefinition[] = [
   cloudSample,
   marketingSample,
   persianSample,
+  arabicSample,
+  kurdishSample,
 ];
 
 export function isSampleId(value: string): value is SampleId {
