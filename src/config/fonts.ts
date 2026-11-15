@@ -1,3 +1,5 @@
+import { findGoogleFont, genericFamily } from '@/config/google-fonts';
+
 export const TEXT_DIRECTIONS = ['ltr', 'rtl'] as const;
 
 export type TextDirection = (typeof TEXT_DIRECTIONS)[number];
@@ -52,12 +54,14 @@ function quote(family: string): string {
  */
 export function fontStack(family: string): string {
   const known = KNOWN_FONTS.find((f) => f.family === family);
+  const google = known ? undefined : findGoogleFont(family);
+  const coversArabic = known?.arabicScript ?? google?.arabic ?? false;
   const parts = [quote(family)];
 
-  if (!known?.arabicScript && family !== ARABIC_SCRIPT_FALLBACK) {
+  if (!coversArabic && family !== ARABIC_SCRIPT_FALLBACK) {
     parts.push(quote(ARABIC_SCRIPT_FALLBACK));
   }
 
-  parts.push(known?.fallback ?? 'system-ui, sans-serif');
+  parts.push(known?.fallback ?? genericFamily(google?.category));
   return parts.join(', ');
 }
