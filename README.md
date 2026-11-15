@@ -1,5 +1,7 @@
 # Open Vitae
 
+*Pronounced OH-pən VEE-tie (/ˈoʊ.pən ˈviː.taɪ/). Vitae is Latin for “of life”, as in curriculum vitae.*
+
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
 > **Status:** phase 3 of 11. A working editor with drag-and-drop sections, undo and live preview; autosave with a full version history; JSON backups; five sample resumes. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
