@@ -24,7 +24,8 @@ describe('resume repository', () => {
   it('refuses to write invalid data', async () => {
     const store = createMemoryStore();
     const repo = createResumeRepository(store);
-    const bad = { ...createBlankResume('x'), name: '' };
+    const blank = createBlankResume('x');
+    const bad = { ...blank, layout: { ...blank.layout, fontFamily: 'x"; } body {' } };
 
     await expect(repo.save(bad)).rejects.toBeInstanceOf(ResumeValidationError);
     expect(await store.entries()).toEqual([]);

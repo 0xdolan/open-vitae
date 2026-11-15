@@ -28,12 +28,22 @@ describe('resume schema', () => {
     expect(resumeSchema.safeParse(bad).success).toBe(false);
   });
 
-  it('rejects script links', () => {
+  it('stores typed link text without judging it (links are checked when drawn)', () => {
     const doc = sample();
-    const bad = { ...doc, profile: { ...doc.profile, website: 'javascript:alert(1)' } };
-    const result = parseResume(bad);
+    const typed = { ...doc, profile: { ...doc.profile, website: 'javascript:alert(1)' } };
+    expect(parseResume(typed).ok).toBe(true);
+  });
+
+  it('reports the field path of structural errors', () => {
+    const doc = sample();
+    const result = parseResume({ ...doc, layout: { ...doc.layout, accentColor: 'red' } });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toContain('profile.website');
+    if (!result.ok) expect(result.error).toContain('layout.accentColor');
+  });
+
+  it('limits the length of typed text', () => {
+    const doc = sample();
+    expect(resumeSchema.safeParse({ ...doc, profile: { ...doc.profile, email: 'a'.repeat(300) } }).success).toBe(false);
   });
 
   it('rejects photos that are not PNG, JPEG or WebP data URLs', () => {
@@ -59,8 +69,8 @@ describe('resume schema', () => {
     if (result.success) expect('injected' in result.data).toBe(false);
   });
 
-  it('requires a name', () => {
-    expect(resumeSchema.safeParse({ ...createBlankResume('x'), name: '' }).success).toBe(false);
+  it('allows an empty name while renaming', () => {
+    expect(resumeSchema.safeParse({ ...createBlankResume('x'), name: '' }).success).toBe(true);
   });
 });
 

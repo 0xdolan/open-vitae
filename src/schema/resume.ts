@@ -4,22 +4,25 @@ import { TEXT_DIRECTIONS } from '@/config/fonts';
 import { HORIZONTAL_ALIGNS, LIMITS, PAGE_BREAK_MODES, PHOTO_SHAPES } from '@/config/layout';
 import { ORIENTATIONS, PAGE_SIZE_IDS } from '@/config/page-sizes';
 import { SECTION_KINDS } from '@/config/sections';
-import { isSafeUrl } from '@/lib/url';
 
 /**
  * The resume document schema: the single source of truth for the editor,
  * storage, import and every export format.
  *
- * Every value that ends up in CSS (colours, font names) or in an attribute
- * (URLs, ids) is constrained here, so nothing user-supplied can break out of
- * its context. Rich text is additionally sanitised when rendered.
+ * Every value that ends up in CSS (colours, font names) or identifies data
+ * (ids, photos) is constrained here, so nothing user-supplied can break out of
+ * its context. Rich text is sanitised when rendered.
+ *
+ * Typed text such as email addresses and links is only length-limited here:
+ * a half-typed address must never stop the rest of the resume from saving.
+ * Those fields are checked in the editor (src/lib/field-validation.ts), and
+ * only safe http, https, mailto and tel URLs are ever turned into links
+ * when the resume is drawn.
  *
  * Changing the shape of stored data means bumping RESUME_SCHEMA_VERSION and
  * adding a migration in src/lib/migrations.ts.
  */
 export const RESUME_SCHEMA_VERSION = 1;
-
-const SAFE_URL_MESSAGE = 'Only http, https, mailto and tel links are allowed';
 
 const idSchema = z.string().regex(/^[A-Za-z0-9_-]{1,64}$/, 'Invalid id');
 
@@ -35,10 +38,8 @@ const fontFamilySchema = z
   .max(100)
   .regex(/^[\p{L}\p{N} ._-]+$/u, 'Font name contains unsupported characters');
 
-const optionalUrlSchema = z
-  .string()
-  .max(2048)
-  .refine((value) => value === '' || isSafeUrl(value), SAFE_URL_MESSAGE);
+/** Typed link text. Checked in the editor; only safe URLs become links when rendered. */
+const urlTextSchema = z.string().max(2048);
 
 const htmlSchema = z.string().max(LIMITS.htmlLength);
 
@@ -64,7 +65,7 @@ export const resumeItemSchema = z.object({
   subtitle: text(300),
   dateRange: text(100),
   location: text(120),
-  url: optionalUrlSchema,
+  url: urlTextSchema,
   descriptionHtml: htmlSchema,
   icon: iconRefSchema.optional(),
   titleStyle: textStyleSchema.optional(),
@@ -89,20 +90,17 @@ export const profileLinkSchema = z.object({
   id: idSchema,
   label: text(80),
   /** Empty while being filled in; links without a URL are not shown. */
-  url: optionalUrlSchema,
+  url: urlTextSchema,
   icon: iconRefSchema.optional(),
 });
 
 export const profileSchema = z.object({
   fullName: text(120),
   headline: text(200),
-  email: z
-    .string()
-    .max(254)
-    .regex(/^$|^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Enter a valid email address'),
+  email: text(254),
   phone: text(40),
   location: text(120),
-  website: optionalUrlSchema,
+  website: urlTextSchema,
   links: z.array(profileLinkSchema).max(LIMITS.links),
   summaryHtml: htmlSchema,
   nameStyle: textStyleSchema.optional(),
@@ -152,7 +150,8 @@ export const resumeSchema = z
   .object({
     schemaVersion: z.literal(RESUME_SCHEMA_VERSION),
     id: idSchema,
-    name: z.string().min(1, 'Give the resume a name').max(120),
+    /** May be empty while being renamed; the app shows "Untitled resume" then. */
+    name: text(120),
     /** BCP 47 language tag of the resume content, e.g. "en", "fa", "ckb". */
     language: z.string().regex(/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/, 'Invalid language tag'),
     createdAt: z.iso.datetime(),

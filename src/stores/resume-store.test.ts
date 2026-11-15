@@ -86,6 +86,20 @@ describe('resume store', () => {
     expect(b?.name).toBe(`${a?.name ?? ''} (2)`);
   });
 
+  it('saves half-typed emails, links and empty names instead of blocking the save', async () => {
+    const { store, repository } = setup();
+    await store.getState().init();
+    const doc = await store.getState().createBlank();
+    store.getState().updateActive((d) => ({
+      ...d,
+      name: '',
+      profile: { ...d.profile, email: 'maya@', website: 'https://exa' },
+    }));
+    await store.getState().flush();
+    expect(store.getState().saveState).toBe('saved');
+    expect((await repository.get(doc?.id ?? ''))?.profile).toMatchObject({ email: 'maya@', website: 'https://exa' });
+  });
+
   it('keeps edits in memory until flushed, then writes them', async () => {
     const { store, repository } = setup();
     await store.getState().init();
@@ -109,18 +123,18 @@ describe('resume store', () => {
     expect((await repository.get(doc?.id ?? ''))?.name).toBe('Autosaved');
   });
 
-  it('reports invalid edits and keeps them for the next attempt', async () => {
+  it('reports structurally invalid edits and keeps them for the next attempt', async () => {
     const { store, repository } = setup();
     await store.getState().init();
     const doc = await store.getState().createBlank();
-    store.getState().updateActive((d) => ({ ...d, name: '' }));
+    store.getState().updateActive((d) => ({ ...d, layout: { ...d.layout, accentColor: 'not-a-colour' } }));
     await store.getState().flush();
 
     expect(store.getState().saveState).toBe('error');
     expect(store.getState().message).toMatch(/Not saved/);
-    expect((await repository.get(doc?.id ?? ''))?.name).toBe('Untitled resume');
+    expect((await repository.get(doc?.id ?? ''))?.layout.accentColor).toBe('#14532d');
 
-    store.getState().updateActive((d) => ({ ...d, name: 'Fixed' }));
+    store.getState().updateActive((d) => ({ ...d, name: 'Fixed', layout: { ...d.layout, accentColor: '#123456' } }));
     await store.getState().flush();
     expect(store.getState().saveState).toBe('saved');
     expect((await repository.get(doc?.id ?? ''))?.name).toBe('Fixed');
@@ -301,10 +315,98 @@ describe('resume store', () => {
       const { store, downloads } = setup();
       await store.getState().init();
       await store.getState().createBlank();
-      store.getState().updateActive((d) => ({ ...d, name: '' }));
+      store.getState().updateActive((d) => ({ ...d, layout: { ...d.layout, accentColor: 'not-a-colour' } }));
       expect(await store.getState().exportJson()).toBeNull();
       expect(downloads).toHaveLength(0);
-      expect(store.getState().message).toMatch(/name/);
+      expect(store.getState().message).toMatch(/accentColor/);
+    });
+  });
+
+  describe('undo and redo', () => {
+    it('undoes and redoes edits, and saves each change', async () => {
+      const { store, repository } = setup();
+      await store.getState().init();
+      const doc = await store.getState().createBlank();
+      expect(store.getState().canUndo).toBe(false);
+
+      store.getState().updateActive((d) => ({ ...d, name: 'A' }));
+      store.getState().updateActive((d) => ({ ...d, name: 'B' }));
+      expect(store.getState().canUndo).toBe(true);
+
+      store.getState().undo();
+      expect(store.getState().resumes[doc?.id ?? '']?.name).toBe('A');
+      expect(store.getState().canRedo).toBe(true);
+
+      store.getState().redo();
+      expect(store.getState().resumes[doc?.id ?? '']?.name).toBe('B');
+
+      store.getState().undo();
+      await store.getState().flush();
+      expect((await repository.get(doc?.id ?? ''))?.name).toBe('A');
+    });
+
+    it('groups quick typing into one undo step', async () => {
+      let clock = Date.parse('2026-11-14T19:00:00Z');
+      const kv = createMemoryStore();
+      const store = createResumeStore({
+        repository: createResumeRepository(kv),
+        versions: createVersionRepository(kv),
+        preferences: createMemoryPreferences(),
+        download: () => undefined,
+        autosaveDelayMs: 10_000,
+        now: () => new Date(clock),
+      });
+      await store.getState().init();
+      await store.getState().createBlank();
+
+      for (const name of ['M', 'Ma', 'May', 'Maya']) {
+        clock += 200;
+        store.getState().updateActive((d) => ({ ...d, name }), { group: 'name' });
+      }
+      clock += 5000;
+      store.getState().updateActive((d) => ({ ...d, name: 'Maya O' }), { group: 'name' });
+
+      store.getState().undo();
+      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Maya');
+      store.getState().undo();
+      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Untitled resume');
+      expect(store.getState().canUndo).toBe(false);
+    });
+
+    it('clears redo after a new edit and ignores no-op updates', async () => {
+      const { store } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d, name: 'A' }));
+      store.getState().undo();
+      store.getState().updateActive((d) => ({ ...d, name: 'C' }));
+      expect(store.getState().canRedo).toBe(false);
+
+      store.getState().updateActive((d) => d);
+      store.getState().undo();
+      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Untitled resume');
+    });
+
+    it('starts a fresh history when another resume is opened', async () => {
+      const { store } = setup();
+      await store.getState().init();
+      const first = await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d, name: 'Edited' }));
+      await store.getState().createBlank();
+      expect(store.getState().canUndo).toBe(false);
+      store.getState().setActive(first?.id ?? '');
+      expect(store.getState().canUndo).toBe(false);
+    });
+
+    it('can undo a restore', async () => {
+      const { store } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d, name: 'Newer' }));
+      await store.getState().flush();
+      await store.getState().restoreVersion(store.getState().versions.at(-1)?.id ?? '');
+      store.getState().undo();
+      expect(store.getState().resumes[store.getState().activeId ?? '']?.name).toBe('Newer');
     });
   });
 });
