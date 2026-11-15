@@ -328,3 +328,10 @@ export const DownloadIcon = (p: IconProps) => (
     <path d="m7 10 5 5 5-5M12 15V3" />
   </Icon>
 );
+
+export const CalendarIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="4" width="18" height="18" rx="2" />
+    <path d="M16 2v4M8 2v4M3 10h18" />
+  </Icon>
+);
