@@ -19,7 +19,7 @@ export type SectionKind = (typeof SECTION_KINDS)[number];
  * Default section titles. Phase 9 moves these into the full translation
  * system; English, Persian, Arabic and Central Kurdish (Sorani) are covered until then.
  */
-const DEFAULT_TITLES: Readonly<Record<string, Readonly<Record<SectionKind, string>>>> = {
+export const SECTION_TITLES: Readonly<Record<string, Readonly<Record<SectionKind, string>>>> = {
   en: {
     experience: 'Experience',
     education: 'Education',
@@ -80,7 +80,7 @@ const DEFAULT_TITLES: Readonly<Record<string, Readonly<Record<SectionKind, strin
 
 export function defaultSectionTitle(kind: SectionKind, language: string): string {
   const base = language.split('-')[0]?.toLowerCase() ?? 'en';
-  const titles = DEFAULT_TITLES[base] ?? DEFAULT_TITLES.en;
+  const titles = SECTION_TITLES[base] ?? SECTION_TITLES.en;
   return titles?.[kind] ?? kind;
 }
 
