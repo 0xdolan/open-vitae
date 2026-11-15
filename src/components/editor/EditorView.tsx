@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { FontsManager } from '@/components/fonts/FontsManager';
 import { FontStatusNotice } from '@/components/fonts/FontStatusNotice';
+import { ExportDialog } from '@/components/export/ExportDialog';
 import { FlowMeasure } from '@/components/pages/FlowMeasure';
 import { PageStack } from '@/components/pages/PageStack';
 import { PrintLayer } from '@/components/pages/PrintLayer';
@@ -34,6 +35,8 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
   const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
   const [pages, setPages] = useState<PageSlice[] | null>(null);
   const [printPreview, setPrintPreview] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const closeExport = useCallback(() => setExporting(false), []);
   useEditorShortcuts();
 
   // If the selected section disappears (deleted, undo, another tab), fall back to the profile.
@@ -52,7 +55,8 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <EditorHeader doc={doc} />
+      <EditorHeader doc={doc} onExport={() => setExporting(true)} />
+      <ExportDialog open={exporting} pages={pages} onClose={closeExport} />
       <PrintPreview open={printPreview} doc={doc} pages={pages} onClose={() => setPrintPreview(false)} />
       <PrintLayer doc={doc} pages={pages} />
       {/* Measures pages even while the preview tab is hidden on small screens. */}

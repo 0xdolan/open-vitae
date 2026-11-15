@@ -1,17 +1,19 @@
-import { useState } from 'react';
-
 import { Button, buttonVariants } from '@/components/ui/button';
-import { RedoIcon, UndoIcon } from '@/components/ui/icons';
+import { DownloadIcon, RedoIcon, UndoIcon } from '@/components/ui/icons';
 import { SaveIndicator } from '@/components/workspace/SaveIndicator';
-import { formatDateTime } from '@/lib/datetime';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument } from '@/schema/resume';
-import { toast, useResumeStore } from '@/stores';
+import { useResumeStore } from '@/stores';
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 const mod = isMac ? '⌘' : 'Ctrl';
 
-export function EditorHeader({ doc }: { readonly doc: ResumeDocument }) {
+interface EditorHeaderProps {
+  readonly doc: ResumeDocument;
+  readonly onExport: () => void;
+}
+
+export function EditorHeader({ doc, onExport }: EditorHeaderProps) {
   const updateActive = useResumeStore((s) => s.updateActive);
   const saveState = useResumeStore((s) => s.saveState);
   const latest = useResumeStore((s) => s.versions[0]);
@@ -19,21 +21,6 @@ export function EditorHeader({ doc }: { readonly doc: ResumeDocument }) {
   const canRedo = useResumeStore((s) => s.canRedo);
   const undo = useResumeStore((s) => s.undo);
   const redo = useResumeStore((s) => s.redo);
-  const exportJson = useResumeStore((s) => s.exportJson);
-  const [exporting, setExporting] = useState(false);
-
-  const exportBackup = async () => {
-    setExporting(true);
-    const result = await exportJson();
-    setExporting(false);
-    if (result) {
-      const saved = result.version
-        ? ` Version ${result.version.number}, saved ${formatDateTime(result.version.savedAt)}.`
-        : '';
-      toast.success('Export complete', `${result.fileName} is in your downloads.${saved}`);
-    }
-  };
-
   return (
     <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-stone-200 pb-3">
       <a href="#/" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'shrink-0')}>
@@ -59,8 +46,8 @@ export function EditorHeader({ doc }: { readonly doc: ResumeDocument }) {
         <Button variant="ghost" size="sm" onClick={redo} disabled={!canRedo} aria-label="Redo" title={`Redo (${mod}+Shift+Z)`}>
           <RedoIcon />
         </Button>
-        <Button variant="primary" size="sm" onClick={() => void exportBackup()} disabled={exporting}>
-          {exporting ? 'Exporting…' : 'Export JSON'}
+        <Button variant="primary" size="sm" onClick={onExport}>
+          <DownloadIcon /> Export
         </Button>
       </div>
     </header>
