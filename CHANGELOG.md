@@ -8,6 +8,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Resumes are saved in the browser (IndexedDB) with autosave, an unsaved/saving/saved indicator and a save on tab close.
+- Five sample resumes: technology, finance, cybersecurity, cloud and marketing. Using one creates an editable copy.
+- Resume library: new resume (LTR or RTL), open, duplicate, delete, and delete all data, each with confirmation.
+- Live, true-size page preview with page settings: size, orientation, direction, font, page-break mode, margin, text size, line height and accent colour.
+- Resume schema with validation on every read and write, format versions and migrations.
+- Open tabs stay in sync with each other.
+- Banner explaining that data stays in the browser, with a button to request persistent storage.
+- HTML sanitising for all rich text.
+- Mixed-direction text: English inside RTL resumes (and the reverse) keeps correct punctuation and alignment; Sahel is the fallback for Arabic-script characters in any font.
+
 - Project scaffold: Vite, React, TypeScript, Tailwind CSS, PWA plugin.
 - Page size catalogue (A4 default) with millimetre-to-pixel conversion and tests.
 - Font configuration: Manrope for LTR, Sahel for RTL, system Arial and Times New Roman.

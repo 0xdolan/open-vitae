@@ -12,6 +12,7 @@
 | 4   | [Release process](04-release-process.md)  | Versioning, changelog, tagging                      |
 | 5   | [Docker](05-docker.md)                    | Local containers and how they are hardened          |
 | 6   | [Roadmap](06-roadmap.md)                  | The eleven build phases and their status            |
+| 7   | [Data and storage](07-data-and-storage.md) | Schema, validation, migrations, autosave, samples   |
 
 ## Conventions used in these pages
 

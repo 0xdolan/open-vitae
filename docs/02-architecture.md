@@ -29,6 +29,10 @@ Previous: [Getting started](01-getting-started.md) · Next: [Git flow](03-git-fl
 | Build          | Vite                                      |
 | Styling        | Tailwind CSS 4, shadcn/ui components      |
 | Offline        | `vite-plugin-pwa` (Workbox service worker) |
+| State          | Zustand                                   |
+| Validation     | Zod                                       |
+| HTML sanitising | DOMPurify                                |
+| Storage        | IndexedDB (own small wrapper)             |
 | Tests          | Vitest                                    |
 | Lint / format  | ESLint (typescript-eslint strict), Prettier |
 | Hosting        | GitHub Pages, or the nginx Docker image   |
@@ -41,26 +45,35 @@ GitHub Pages serves static files only, and the privacy promise rules out a backe
 
 ```text
 src/
-├── components/   Reusable React components (ui/ holds shadcn components)
-├── config/       page-sizes.ts, fonts.ts and other constants
-├── lib/          Shared helpers such as cn()
-├── types/        resume.ts, the document model
-├── App.tsx       Application shell
-├── main.tsx      Entry point
-└── index.css     Tailwind import and theme tokens
+├── components/
+│   ├── ui/          Base controls (Button, Field), shadcn style
+│   ├── library/     Resume list and sample gallery
+│   ├── workspace/   Editing area, page settings, save status
+│   └── resume/      ResumeRenderer, shared by preview and exporters
+├── config/          Page sizes, fonts, layout limits, section kinds
+├── lib/             Helpers, sanitiser, migrations, factory
+│   └── storage/     IndexedDB, repository, cross-tab sync
+├── samples/         The five sample resumes
+├── schema/          resume.ts, the Zod schema and inferred types
+├── stores/          Zustand store with autosave
+├── types/           Public re-exports of the model types
+├── App.tsx          Application shell
+├── main.tsx         Entry point
+└── index.css        Tailwind import, theme tokens, rich-text and bidi rules
 ```
 
-Folders added in later phases: `features/` (editor, export, import), `stores/`, `samples/`, `i18n/`, `hooks/`.
+Folders added in later phases: `features/` (editor, export, import), `i18n/`, `hooks/`.
 
 ## Data model
 
-Defined in [`src/types/resume.ts`](../src/types/resume.ts).
+Defined as a Zod schema in [`src/schema/resume.ts`](../src/schema/resume.ts); the full description, validation rules and migration process are in [Data and storage](07-data-and-storage.md).
 
 ```text
 ResumeDocument
 ├── schemaVersion        for migrations
-├── layout               page size, orientation, margin, page-break mode, direction, font
-├── photo?               data URL, alignment, width
+├── layout               page size, orientation, margin, page-break mode, direction, font, size, accent
+├── profile              name, headline, contact details, links, summary
+├── photo?               data URL, alignment, shape, width
 └── sections[]           array order is display order (drag and drop reorders it)
     ├── title, icon?, titleStyle?, visible, breakBefore
     └── items[]
@@ -93,7 +106,7 @@ Defined in [`src/config/fonts.ts`](../src/config/fonts.ts).
 ## Privacy and security model
 
 - No backend, accounts, analytics or cookies.
-- Storage is browser-local. Clearing site data removes everything, including loaded fonts and photos; the app warns about this where it matters.
+- Storage is browser-local (IndexedDB), validated on every read and write. Clearing site data removes everything, including loaded fonts and photos; the app warns about this where it matters.
 - A Content Security Policy is injected at build time ([`vite.config.ts`](../vite.config.ts)) and sent as a header by the Docker image ([`docker/security-headers.inc`](../docker/security-headers.inc)). The two must stay in sync.
 - `dangerouslySetInnerHTML` is blocked by lint; rich text goes through one sanitising renderer.
 - Imports are validated against the schema before they reach the store.
