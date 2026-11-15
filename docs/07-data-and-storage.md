@@ -23,7 +23,7 @@ Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs 
 | Resumes and drafts        | IndexedDB database `open-vitae`, store `resumes`, keys `resume:<id>` | Structured objects, not strings |
 | Which resume was last open | `localStorage` key `open-vitae:active-resume` | An id only, never content       |
 | Version history           | Same database: `versions:<resumeId>` index, `version:<resumeId>:<versionId>` snapshots | One snapshot per save |
-| Photos                    | Same database, `photo:<hash>`, each distinct photo stored once | Never uploaded          |
+| Photos                    | Same database, `photo:<hash>`, each distinct photo and original picture stored once | Never uploaded |
 | How many versions to keep | `localStorage` key `open-vitae:version-retention` | `all` by default                |
 | User fonts                | IndexedDB (phase 5)                     | Never uploaded                          |
 
@@ -40,10 +40,12 @@ ResumeDocument
 ├── createdAt, updatedAt ISO 8601 timestamps
 ├── layout               page size, orientation, margin, page breaks, direction,
 │                        font, base text size, line height, accent colour,
-│                        indent size (indentCh) and nesting limit (maxDepth)
+│                        indent size (indentCh), nesting limit (maxDepth),
+│                        showContactIcons?
 ├── profile              name, headline, email, phone, location, website,
 │                        links[], summary (rich text), name and headline styles
-├── photo?               data URL, alignment, shape, width
+├── photo?               finished photo (data URL), alignment, shape, width,
+│                        source? (original picture, its size and the crop)
 └── sections[]           order = order on the page
     ├── kind             experience, education, skills, projects, certifications,
     │                    languages, awards, publications, volunteering,
@@ -55,7 +57,7 @@ ResumeDocument
         └── breakBefore?, icon?, titleStyle?, descriptionStyle?
 ```
 
-Text fields are always strings (empty when unused) so forms never deal with `undefined`. Styles, icons and the photo are optional.
+Text fields are always strings (empty when unused) so forms never deal with `undefined`. Styles, icons and the photo are optional. An icon is stored as a set and a name, for example `{ "set": "lu", "name": "LuBriefcase" }`; see [Photos and icons](12-photos-and-icons.md).
 
 ## Validation rules that protect the page
 

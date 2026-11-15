@@ -4,7 +4,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 6 of 11. Real pages with smart or manual page breaks, 13 paper sizes, zoom and a print preview that prints exactly what you see; bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with Persian, Arabic and Kurdish (Sorani) samples; a full rich text editor; drag-and-drop sections with undo; autosave with a full version history; JSON backups. Images, icons and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 7 of 11. A profile photo with cropping, a print-size guide, shape, width and position; more than 50,000 searchable icons from Lucide and react-icons for sections, entries, links and the contact line; real pages with smart or manual page breaks, 13 paper sizes, zoom and a print preview that prints exactly what you see; bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with Persian, Arabic and Kurdish (Sorani) samples; a full rich text editor; drag-and-drop sections with undo; autosave with a full version history; JSON backups. Import and export formats arrive in phase 8. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -100,6 +100,7 @@ open-vitae/
 10. [Rich text editor](docs/09-rich-text-editor.md)
 11. [Fonts and right-to-left text](docs/10-fonts.md)
 12. [Pages and printing](docs/11-pages-and-printing.md)
+13. [Photos and icons](docs/12-photos-and-icons.md)
 
 ## Contributing
 
@@ -113,4 +114,4 @@ Open Vitae collects nothing. The only outside request the app can make is to Goo
 
 [GPL-3.0-or-later](LICENSE). You may use, study, share and change this software; changed versions you distribute must stay under the same licence.
 
-Bundled fonts keep their own licences: Manrope (SIL Open Font License 1.1), Sahel and Estedad (see the licence files that `npm run fonts:fetch` places in `public/fonts`).
+Icon sets keep their own licences, listed in [Photos and icons](docs/12-photos-and-icons.md#icon-sets-and-licences). Bundled fonts keep their own licences: Manrope (SIL Open Font License 1.1), Sahel and Estedad (see the licence files that `npm run fonts:fetch` places in `public/fonts`).

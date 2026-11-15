@@ -218,6 +218,16 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         </select>
       </Field>
 
+      <label className="col-span-2 flex items-center gap-2 self-end pb-2 text-sm sm:col-span-1">
+        <input
+          type="checkbox"
+          className="accent-brand size-4"
+          checked={layout.showContactIcons === true}
+          onChange={(e) => onChange({ showContactIcons: e.target.checked })}
+        />
+        Icons in the contact line
+      </label>
+
       <Field label="Accent colour" htmlFor={`${id}-accent`}>
         <input
           id={`${id}-accent`}

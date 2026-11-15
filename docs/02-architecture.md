@@ -51,6 +51,8 @@ src/
 │   ├── library/     Resume list and sample gallery
 │   ├── workspace/   Editing area, page settings, save status
 │   ├── pages/       Measuring, page sheets, page stack, print preview, print layer
+│   ├── photo/       Photo panel, crop window, size guide
+│   ├── icons/       Icon picker and the icon drawn on the page
 │   └── resume/      ResumeRenderer, shared by preview and exporters
 ├── config/          Page sizes, fonts, layout limits, section kinds
 ├── lib/             Helpers, sanitiser, migrations, factory
@@ -106,6 +108,10 @@ Defined in [`src/config/fonts.ts`](../src/config/fonts.ts).
 | User     | Any font file the user loads           | Kept in the browser; must be reloaded after clearing site data |
 
 Font state lives in `src/stores/font-store.ts`; file checks, Google stylesheet validation and the bundled manifest loader are in `src/lib/fonts/`. Full details in [Fonts and right-to-left text](10-fonts.md).
+
+## Photos and icons
+
+Photos are cropped with canvas in the browser and stored in the resume, with the original kept for re-cropping; version history stores each image once. Icons come from react-icons (Lucide is its `lu` set); each set is a separate file loaded on demand, and only Lucide is precached by the service worker. Details in [Photos and icons](12-photos-and-icons.md).
 
 ## Privacy and security model
 

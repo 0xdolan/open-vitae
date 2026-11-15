@@ -86,6 +86,21 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,woff2}', 'fonts/manifest.json'],
+        // Icon sets are large and loaded on demand: cache each one the first
+        // time it is used instead of downloading all of them up front.
+        // Lucide is not named icons-*, so it is precached for offline use.
+        globIgnores: ['**/icons-*.js'],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.includes('/assets/icons-'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'open-vitae-icon-sets',
+              expiration: { maxEntries: 40 },
+            },
+          },
+        ],
         navigateFallback: `${base}index.html`,
       },
     }),
@@ -102,6 +117,17 @@ export default defineConfig({
   build: {
     target: 'es2022',
     sourcemap: true,
+    // Icon sets are big by nature; they are split per set and loaded on demand.
+    chunkSizeWarningLimit: 7000,
+    rollupOptions: {
+      output: {
+        chunkFileNames(chunk) {
+          const set = /react-icons[\\/](\w+)[\\/]/.exec(chunk.facadeModuleId ?? '')?.[1];
+          if (set === 'lu') return 'assets/lucide-[hash].js';
+          return set ? `assets/icons-${set}-[hash].js` : 'assets/[name]-[hash].js';
+        },
+      },
+    },
   },
   test: {
     environment: 'node',

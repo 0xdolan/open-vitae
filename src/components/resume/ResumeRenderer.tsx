@@ -1,12 +1,14 @@
 import { useMemo, type CSSProperties, type ReactNode } from 'react';
 
+import { ResumeIcon } from '@/components/icons/ResumeIcon';
 import { SafeHtml } from '@/components/SafeHtml';
+import { CONTACT_ICONS } from '@/config/icon-sets';
 import { fontStack } from '@/config/fonts';
 import { PHOTO_RADIUS } from '@/config/layout';
 import { isValidEmail } from '@/lib/field-validation';
 import { isSafeUrl, telUrl } from '@/lib/url';
 import { cn } from '@/lib/utils';
-import type { ResumeDocument, ResumeItem, ResumeSection, TextStyle } from '@/schema/resume';
+import type { IconRef, ResumeDocument, ResumeItem, ResumeSection, TextStyle } from '@/schema/resume';
 
 /** Values are already constrained by the schema (hex colours, safe font names). */
 function toCss(style: TextStyle | undefined): CSSProperties | undefined {
@@ -34,24 +36,50 @@ function displayUrl(url: string): string {
 
 function ContactLine({ doc, centred = false }: { readonly doc: ResumeDocument; readonly centred?: boolean }) {
   const { email, phone, location, website, links } = doc.profile;
+  const withIcons = doc.layout.showContactIcons === true;
   const parts: ReactNode[] = [];
+  const icon = (ref: IconRef | undefined) => (withIcons && ref ? <ResumeIcon icon={ref} className="me-[0.35em]" /> : null);
 
   // <bdi> keeps emails, numbers and URLs in their own direction inside RTL text.
   if (email) {
+    const content = (
+      <>
+        {icon(CONTACT_ICONS.email)}
+        <bdi>{email}</bdi>
+      </>
+    );
+    parts.push(isValidEmail(email) ? <SafeLink key="email" href={`mailto:${email}`}>{content}</SafeLink> : <span key="email">{content}</span>);
+  }
+  if (phone) {
     parts.push(
-      isValidEmail(email) ? (
-        <SafeLink key="email" href={`mailto:${email}`}><bdi>{email}</bdi></SafeLink>
-      ) : (
-        <bdi key="email">{email}</bdi>
-      ),
+      <SafeLink key="phone" href={telUrl(phone)}>
+        {icon(CONTACT_ICONS.phone)}
+        <bdi dir="ltr">{phone}</bdi>
+      </SafeLink>,
     );
   }
-  if (phone) parts.push(<SafeLink key="phone" href={telUrl(phone)}><bdi dir="ltr">{phone}</bdi></SafeLink>);
-  if (location) parts.push(<bdi key="location">{location}</bdi>);
-  if (website) parts.push(<SafeLink key="website" href={website}><bdi>{displayUrl(website)}</bdi></SafeLink>);
+  if (location) {
+    parts.push(
+      <span key="location">
+        {icon(CONTACT_ICONS.location)}
+        <bdi>{location}</bdi>
+      </span>,
+    );
+  }
+  if (website) {
+    parts.push(
+      <SafeLink key="website" href={website}>
+        {icon(CONTACT_ICONS.website)}
+        <bdi>{displayUrl(website)}</bdi>
+      </SafeLink>,
+    );
+  }
   for (const link of links.filter((l) => l.url !== '')) {
+    // A link's own icon always shows; the generic link icon only with contact icons on.
+    const linkIcon = link.icon ? <ResumeIcon icon={link.icon} className="me-[0.35em]" /> : icon(CONTACT_ICONS.link);
     parts.push(
       <SafeLink key={link.id} href={link.url}>
+        {linkIcon}
         <bdi>{link.label || displayUrl(link.url)}</bdi>
       </SafeLink>,
     );
@@ -105,6 +133,7 @@ function Item({ item, section, filter }: ItemProps) {
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             {item.title ? (
               <h3 className="font-semibold" style={toCss(item.titleStyle)}>
+                <ResumeIcon icon={item.icon} className="me-[0.4em]" />
                 <bdi>{titleNode}</bdi>
               </h3>
             ) : null}
@@ -168,6 +197,7 @@ function Section({ section, accent, selected, onClick, filter }: SectionProps) {
           className="mb-2 border-b pb-1 text-[1.1em] font-bold tracking-wide uppercase"
           style={{ color: accent, borderColor: accent, ...toCss(section.titleStyle) }}
         >
+          <ResumeIcon icon={section.icon} className="me-[0.4em]" />
           {section.title}
         </h2>
       ) : null}

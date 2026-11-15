@@ -8,6 +8,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Profile photo: add from a file or by dragging, crop (move, zoom, turn, Square, Portrait 4:5, Passport 35 × 45 mm or original shape) with mouse, touch or keyboard, and re-crop any time from the original picture.
+- Print-size guide for the photo: pixels needed and the resolution it will print at, rated Sharp, Acceptable or May look soft.
+- Photo shape (square, rounded, circle), width (10 to 80 mm) and position (start, end or centred above the name).
+- Icons for sections, entries and profile links, from 31 sets (Lucide, Font Awesome, Simple Icons brand logos, Tabler, Material Design and more), searchable by name and everyday words, with each set's licence shown.
+- Optional icons in the contact line.
+- Documentation page for photos and icons.
 - Real pages in the preview: each page at true size with its number, smart page breaks that keep headings with what follows and avoid splitting entries, and manual page breaks for sections and single entries.
 - Zoom for the preview: fit width, or 25% to 200%.
 - Print preview, and printing (also with Ctrl+P) that produces exactly the previewed pages at the right paper size, with no app interface and no hidden duplicate text in saved PDFs.
@@ -62,6 +68,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- Version history stores the original photo picture once, like the photo itself.
+- Icon sets load on demand, one file per set; only Lucide is kept for offline use from the start.
 - Margins shrink automatically on small paper so at least 20 mm is left for content.
 - “Start on a new page” on a section now works in smart mode too, and entries can start on a new page.
 - The font stack adds Sahel only when the chosen font does not cover Arabic script, then a fallback of the right kind.

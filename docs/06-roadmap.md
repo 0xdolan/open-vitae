@@ -18,7 +18,7 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 | 4   | Rich text editor              | Formatting, lists with nesting and indent settings, tables, links, images, code blocks with highlighting, emoji, find and replace, format painter, presets, spell check, sanitising | Done |
 | 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, RTL sample resume | Done |
 | 6   | Pages                         | True-size preview, all page sizes, margins, smart and manual page breaks, zoom, print preview | Done |
-| 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search | Planned |
+| 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search | Done |
 | 8   | Import and export             | JSON, CSV, Excel, Markdown in; plus PDF, Word, IDML, PNG, JPG, SVG out; DPI control; templates | Planned |
 | 9   | PWA, accessibility, languages | Install and offline polish, WCAG AA audit, translated interface, numerals and calendars, optional self-hosted grammar checking (LanguageTool) | Planned |
 | 10  | Brand and docs                | Landing page, about, playground, icon set, screenshots, social images, AI skill | Planned |
