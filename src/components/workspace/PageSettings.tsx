@@ -3,6 +3,7 @@ import { useId } from 'react';
 import { Field, controlClass } from '@/components/ui/field';
 import { FontPicker } from '@/components/fonts/FontPicker';
 import { DEFAULT_FONT_BY_DIRECTION, type TextDirection } from '@/config/fonts';
+import { findResumeLanguage, RESUME_LANGUAGES } from '@/config/languages';
 import { LIMITS, PAGE_BREAK_MODES, type PageBreakMode } from '@/config/layout';
 import { isPageSizeId, PAGE_SIZES } from '@/config/page-sizes';
 import { clamp } from '@/lib/format';
@@ -11,6 +12,9 @@ import type { ResumeLayout } from '@/schema/resume';
 interface PageSettingsProps {
   readonly layout: ResumeLayout;
   readonly onChange: (patch: Partial<ResumeLayout>) => void;
+  /** BCP 47 tag of the resume content. */
+  readonly language: string;
+  readonly onLanguageChange: (language: string) => void;
 }
 
 const BREAK_LABELS: Record<PageBreakMode, string> = {
@@ -28,7 +32,7 @@ function readNumber(raw: string, limits: { readonly min: number; readonly max: n
   return raw === '' || Number.isNaN(value) ? null : clamp(value, limits.min, limits.max);
 }
 
-export function PageSettings({ layout, onChange }: PageSettingsProps) {
+export function PageSettings({ layout, onChange, language, onLanguageChange }: PageSettingsProps) {
   const id = useId();
 
   const setDirection = (direction: TextDirection) => {
@@ -82,6 +86,23 @@ export function PageSettings({ layout, onChange }: PageSettingsProps) {
         >
           <option value="ltr">Left to right</option>
           <option value="rtl">Right to left</option>
+        </select>
+      </Field>
+
+      <Field label="Language" htmlFor={`${id}-language`} hint="Sets section titles, spelling and direction.">
+        <select
+          id={`${id}-language`}
+          className={controlClass}
+          value={findResumeLanguage(language)?.tag ?? language}
+          onChange={(e) => onLanguageChange(e.target.value)}
+        >
+          {findResumeLanguage(language) ? null : <option value={language}>{language}</option>}
+          {RESUME_LANGUAGES.map((option) => (
+            <option key={option.tag} value={option.tag}>
+              {option.label}
+              {option.nativeName === option.label ? '' : ` · ${option.nativeName}`}
+            </option>
+          ))}
         </select>
       </Field>
 

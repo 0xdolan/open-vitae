@@ -1,3 +1,5 @@
+import { DEFAULT_FONT_BY_DIRECTION } from '@/config/fonts';
+import { findResumeLanguage } from '@/config/languages';
 import { LIMITS } from '@/config/layout';
 import { defaultSectionTitle, type SectionKind } from '@/config/sections';
 import { createId } from '@/lib/id';
@@ -195,4 +197,29 @@ export function removeLink(doc: ResumeDocument, linkId: string): ResumeDocument 
 
 export function moveLink(doc: ResumeDocument, from: number, to: number): ResumeDocument {
   return { ...doc, profile: { ...doc.profile, links: arrayMove(doc.profile.links, from, to) } };
+}
+
+/**
+ * Change the resume's language. Section titles still at the old language's
+ * default are renamed to the new default; titles the person typed are kept.
+ * Choosing a language that is written the other way also flips the page
+ * direction, and swaps the default font if the default was in use.
+ */
+export function setLanguage(doc: ResumeDocument, language: string): ResumeDocument {
+  const sections = doc.sections.map((section) =>
+    section.title === defaultSectionTitle(section.kind, doc.language)
+      ? { ...section, title: defaultSectionTitle(section.kind, language) }
+      : section,
+  );
+  let layout = doc.layout;
+  const target = findResumeLanguage(language);
+  if (target && target.direction !== layout.direction) {
+    const keepFont = layout.fontFamily !== DEFAULT_FONT_BY_DIRECTION[layout.direction];
+    layout = {
+      ...layout,
+      direction: target.direction,
+      fontFamily: keepFont ? layout.fontFamily : DEFAULT_FONT_BY_DIRECTION[target.direction],
+    };
+  }
+  return { ...doc, language, layout, sections };
 }

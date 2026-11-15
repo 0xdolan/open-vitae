@@ -7,6 +7,7 @@ import { ResumeRenderer } from '@/components/resume/ResumeRenderer';
 import { PageSettings } from '@/components/workspace/PageSettings';
 import { VersionHistory } from '@/components/workspace/VersionHistory';
 import { useEditorShortcuts } from '@/hooks/useEditorShortcuts';
+import { setLanguage } from '@/lib/document-ops';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeLayout } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
@@ -81,7 +82,12 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
           {panel.kind === 'page' ? (
             <section aria-labelledby="page-heading" className="flex flex-col gap-5">
               <PanelHeading id="page-heading" title="Page setup" description="Paper size, direction, fonts and spacing." />
-              <PageSettings layout={doc.layout} onChange={updateLayout} />
+              <PageSettings
+                layout={doc.layout}
+                onChange={updateLayout}
+                language={doc.language}
+                onLanguageChange={(language) => updateActive((d) => setLanguage(d, language))}
+              />
               <FontsManager />
             </section>
           ) : null}

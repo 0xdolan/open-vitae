@@ -6,7 +6,7 @@ import { createResumeFromSample, getSample, SAMPLE_IDS, SAMPLES } from './index'
 
 describe('samples', () => {
   it('ships the five field samples and a right-to-left sample', () => {
-    expect(SAMPLES.map((s) => s.id)).toEqual(['tech', 'finance', 'cybersecurity', 'cloud', 'marketing', 'persian']);
+    expect(SAMPLES.map((s) => s.id)).toEqual(['tech', 'finance', 'cybersecurity', 'cloud', 'marketing', 'persian', 'arabic', 'kurdish']);
     expect([...SAMPLE_IDS]).toEqual(SAMPLES.map((s) => s.id));
   });
 
@@ -60,5 +60,19 @@ describe('samples', () => {
     expect(doc.layout).toMatchObject({ direction: 'rtl', fontFamily: 'Sahel' });
     expect(doc.language).toBe('fa');
     expect(doc.sections.map((s) => s.title)).toContain('سوابق کاری');
+  });
+
+  it('has Arabic and Central Kurdish (Sorani) samples with their own section titles', () => {
+    const arabic = createResumeFromSample('arabic');
+    expect(arabic.layout.direction).toBe('rtl');
+    expect(arabic.language).toBe('ar');
+    expect(arabic.sections[0]?.title).toBe('الخبرة العملية');
+
+    const kurdish = createResumeFromSample('kurdish');
+    expect(kurdish.layout).toMatchObject({ direction: 'rtl', fontFamily: 'Estedad' });
+    expect(kurdish.language).toBe('ckb');
+    expect(kurdish.sections[0]?.title).toBe('ئەزموونی کار');
+    // Sorani-specific letters must survive (ڕ ڵ ێ ۆ ە).
+    expect(/[\u0695\u06B5\u06CE\u06C6\u06D5]/.test(kurdish.profile.summaryHtml)).toBe(true);
   });
 });
