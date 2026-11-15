@@ -12,6 +12,7 @@ import {
   PAGE_SIZES,
   type PageSizeGroup,
 } from '@/config/page-sizes';
+import { isDigitSystem } from '@/lib/digits';
 import { clamp } from '@/lib/format';
 import type { ResumeLayout } from '@/schema/resume';
 import { useT, type MessageKey } from '@/i18n';
@@ -236,6 +237,22 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
               {t('page.levels', { count: n })}
             </option>
           ))}
+        </select>
+      </Field>
+
+      <Field label={t('page.digits')} htmlFor={`${id}-digits`} hint={t('page.digitsHint')}>
+        <select
+          id={`${id}-digits`}
+          className={controlClass}
+          value={layout.digits ?? 'typed'}
+          onChange={(e) =>
+            onChange({ digits: isDigitSystem(e.target.value) ? e.target.value : undefined })
+          }
+        >
+          <option value="typed">{t('page.digitsAsTyped')}</option>
+          <option value="latn">{t('page.digitsLatn')}</option>
+          <option value="arab">{t('page.digitsArab')}</option>
+          <option value="arabext">{t('page.digitsArabext')}</option>
         </select>
       </Field>
 

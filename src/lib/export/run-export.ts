@@ -3,6 +3,7 @@ import JSZip from 'jszip';
 
 import type { ExportFormat } from '@/config/export';
 import type { FontFaceSource } from '@/lib/fonts/registrar';
+import { applyDigits } from '@/lib/digits';
 import { pageBoxMm } from '@/lib/page-geometry';
 import type { VersionSummary } from '@/lib/versions/repository';
 import type { ResumeDocument } from '@/schema/resume';
@@ -98,14 +99,16 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
   if (options.format === 'docx') {
     progress('Building the Word document…');
     const { buildDocx } = await import('./docx');
-    return { fileName: base('docx'), blob: await buildDocx(doc), warnings: [] };
+    return { fileName: base('docx'), blob: await buildDocx(applyDigits(doc)), warnings: [] };
   }
 
   if (options.format === 'icml') {
     const { buildIcml } = await import('./icml');
     return {
       fileName: base('icml'),
-      blob: new Blob([buildIcml(doc)], { type: 'application/vnd.adobe.incopy-icml+xml' }),
+      blob: new Blob([buildIcml(applyDigits(doc))], {
+        type: 'application/vnd.adobe.incopy-icml+xml',
+      }),
       warnings: [
         'In InDesign, use File › Place to put the story into a text frame. Place the photo separately.',
       ],
