@@ -35,8 +35,6 @@ const fontFamilySchema = z
   .max(100)
   .regex(/^[\p{L}\p{N} ._-]+$/u, 'Font name contains unsupported characters');
 
-const safeUrlSchema = z.string().max(2048).refine(isSafeUrl, SAFE_URL_MESSAGE);
-
 const optionalUrlSchema = z
   .string()
   .max(2048)
@@ -90,7 +88,8 @@ export const resumeSectionSchema = z.object({
 export const profileLinkSchema = z.object({
   id: idSchema,
   label: text(80),
-  url: safeUrlSchema,
+  /** Empty while being filled in; links without a URL are not shown. */
+  url: optionalUrlSchema,
   icon: iconRefSchema.optional(),
 });
 
