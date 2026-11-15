@@ -8,6 +8,7 @@ import { emailError, urlError } from '@/lib/field-validation';
 import type { Profile, ResumeDocument } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
 
+import { IconPicker } from '@/components/icons/IconPicker';
 import { PhotoField } from '@/components/photo/PhotoField';
 import { RichTextField } from '@/components/rich-text/RichTextField';
 import { PanelHeading } from './PanelHeading';
@@ -87,6 +88,12 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
                 placeholder="https://"
                 error={urlError(link.url)}
                 onChange={(url) => updateActive((d) => updateLink(d, link.id, { url: url.trim() }), { group: `link.${link.id}.url` })}
+              />
+              <IconPicker
+                className="mt-5 shrink-0"
+                target={link.label || 'this link'}
+                value={link.icon}
+                onChange={(icon) => updateActive((d) => updateLink(d, link.id, { icon }))}
               />
               <Button
                 variant="danger-ghost"

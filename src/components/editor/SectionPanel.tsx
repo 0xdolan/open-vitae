@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeItem, ResumeSection } from '@/schema/resume';
 import { toast, useResumeStore } from '@/stores';
 
+import { IconPicker } from '@/components/icons/IconPicker';
 import { RichTextField } from '@/components/rich-text/RichTextField';
 import { PanelHeading } from './PanelHeading';
 
@@ -121,7 +122,15 @@ function ItemCard({
 
       {open ? (
         <div className="grid gap-3 border-t border-stone-200 p-3 sm:grid-cols-2">
-          <TextField label={labels.title} className="sm:col-span-2" value={item.title} maxLength={300} onChange={(title) => set({ title }, 'title')} />
+          <div className="flex items-end gap-2 sm:col-span-2">
+            <TextField label={labels.title} className="flex-1" value={item.title} maxLength={300} onChange={(title) => set({ title }, 'title')} />
+            <IconPicker
+              className="mb-0.5 shrink-0"
+              target={heading}
+              value={item.icon}
+              onChange={(icon) => updateActive((d) => updateItem(d, section.id, item.id, { icon }))}
+            />
+          </div>
           <TextField label={labels.subtitle} className="sm:col-span-2" value={item.subtitle} maxLength={300} onChange={(subtitle) => set({ subtitle }, 'subtitle')} />
           <TextField label={labels.dateRange} value={item.dateRange} maxLength={100} placeholder="2022 – Present" onChange={(dateRange) => set({ dateRange }, 'dateRange')} />
           <TextField label={labels.location} value={item.location} maxLength={120} onChange={(location) => set({ location }, 'location')} />
@@ -211,13 +220,21 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
       />
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <TextField
-          label="Section title"
-          className="sm:col-span-2"
-          value={section.title}
-          maxLength={120}
-          onChange={(value) => updateActive((d) => updateSection(d, section.id, { title: value }), { group: `section.${section.id}.title` })}
-        />
+        <div className="flex items-end gap-2 sm:col-span-2">
+          <TextField
+            label="Section title"
+            className="flex-1"
+            value={section.title}
+            maxLength={120}
+            onChange={(value) => updateActive((d) => updateSection(d, section.id, { title: value }), { group: `section.${section.id}.title` })}
+          />
+          <IconPicker
+            className="mb-0.5 shrink-0"
+            target={title}
+            value={section.icon}
+            onChange={(icon) => updateActive((d) => updateSection(d, section.id, { icon }))}
+          />
+        </div>
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"

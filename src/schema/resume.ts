@@ -53,7 +53,7 @@ export const textStyleSchema = z.object({
 });
 
 export const iconRefSchema = z.object({
-  /** Icon set: "lucide" or a react-icons pack such as "fa6". */
+  /** Icon set: a react-icons pack such as "lu" (Lucide), "fa6" or "si". See src/config/icon-sets.ts. */
   set: z.string().regex(/^[a-z0-9-]{1,32}$/, 'Invalid icon set'),
   name: z.string().regex(/^[A-Za-z0-9-]{1,80}$/, 'Invalid icon name'),
 });
@@ -158,6 +158,8 @@ export const layoutSchema = z.object({
   indentCh: range(LIMITS.indentCh),
   /** Deepest list or indent level allowed; null means unlimited. */
   maxDepth: z.number().int().min(LIMITS.maxDepth.min).max(LIMITS.maxDepth.max).nullable(),
+  /** Show small icons before the email, phone, location and links. Optional; off when absent. */
+  showContactIcons: z.boolean().optional(),
 });
 
 /** Collect every id in a document so duplicates can be rejected. */
