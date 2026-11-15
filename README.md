@@ -2,7 +2,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 1 (project scaffold). The editor, exports and samples arrive in later phases. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 2 of 11. Resumes are saved in your browser with autosave, and five sample resumes are included. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -73,10 +73,13 @@ open-vitae/
 ├── public/               Static assets copied as-is
 ├── scripts/              Git flow and branch protection helpers
 └── src/
-    ├── components/       Reusable React components
-    ├── config/           Page sizes, fonts and other constants
-    ├── lib/              Small shared utilities
-    └── types/            The resume data model
+    ├── components/       Reusable React components (ui/, library/, workspace/, resume/)
+    ├── config/           Page sizes, fonts, layout limits, section kinds
+    ├── lib/              Utilities, sanitiser, migrations, storage/
+    ├── samples/          The five sample resumes
+    ├── schema/           Zod schema: the resume data model
+    ├── stores/           App state and autosave
+    └── types/            Public type exports
 ```
 
 ## Documentation
@@ -88,6 +91,7 @@ open-vitae/
 5. [Release process](docs/04-release-process.md)
 6. [Docker](docs/05-docker.md)
 7. [Roadmap](docs/06-roadmap.md)
+8. [Data and storage](docs/07-data-and-storage.md)
 
 ## Contributing
 

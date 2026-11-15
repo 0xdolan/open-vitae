@@ -8,7 +8,7 @@ Open Vitae is a browser-only resume builder. Read this before changing anything.
 - **TypeScript strict.** No `any`, no `@ts-ignore`.
 - **RTL and LTR equally.** Use logical CSS properties. Test both directions.
 - **Sanitise.** Never render user HTML without the sanitiser. `dangerouslySetInnerHTML` is lint-blocked.
-- **Reusable components.** Constants go in `src/config`. The data model lives in `src/types/resume.ts`.
+- **Reusable components.** Constants go in `src/config`. The data model is the Zod schema in `src/schema/resume.ts`; change it only with a migration (see `docs/07-data-and-storage.md`).
 - **Licence.** GPL-3.0-or-later. Only add dependencies with a GPL-compatible licence.
 
 ## Commands

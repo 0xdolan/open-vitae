@@ -1,14 +1,19 @@
-export type PageSizeId =
-  | 'a3'
-  | 'a4'
-  | 'a5'
-  | 'b5'
-  | 'letter'
-  | 'legal'
-  | 'tabloid'
-  | 'executive';
+export const PAGE_SIZE_IDS = [
+  'a4',
+  'letter',
+  'a3',
+  'a5',
+  'b5',
+  'legal',
+  'tabloid',
+  'executive',
+] as const;
 
-export type Orientation = 'portrait' | 'landscape';
+export type PageSizeId = (typeof PAGE_SIZE_IDS)[number];
+
+export const ORIENTATIONS = ['portrait', 'landscape'] as const;
+
+export type Orientation = (typeof ORIENTATIONS)[number];
 
 export interface PageSize {
   readonly id: PageSizeId;
@@ -36,6 +41,13 @@ export const MIN_DPI = 72;
 export const MAX_DPI = 1200;
 
 const MM_PER_INCH = 25.4;
+
+/** CSS pixels per millimetre (CSS defines 96 px per inch). */
+export const CSS_PX_PER_MM = 96 / MM_PER_INCH;
+
+export function isPageSizeId(value: string): value is PageSizeId {
+  return (PAGE_SIZE_IDS as readonly string[]).includes(value);
+}
 
 export function getPageSize(id: PageSizeId): PageSize {
   const size = PAGE_SIZES.find((s) => s.id === id);

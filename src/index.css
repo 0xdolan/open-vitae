@@ -23,13 +23,81 @@
     min-height: 100dvh;
   }
 
-  /* Any element flagged RTL gets the RTL font stack, wherever it sits. */
-  [dir='rtl'] {
+  /* App chrome flagged RTL gets the RTL font stack. Resumes set their own font. */
+  [dir='rtl']:not(article) {
     font-family: var(--font-rtl);
   }
 
   :focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 2px;
+  }
+}
+
+/* Rich text inside resumes. Tailwind's reset removes list and heading styles. */
+@layer components {
+  /*
+   * Each block takes its base direction from its own first strong character,
+   * so an English bullet inside a Persian resume (or the reverse) keeps its
+   * punctuation on the correct side. Alignment still follows the resume.
+   */
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th) {
+    unicode-bidi: plaintext;
+  }
+  /* plaintext would also flip alignment per block; keep it with the resume and its list markers. */
+  /* :dir() follows the nearest dir attribute; [dir] selectors would also match <html dir="ltr">. */
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th):not([dir]):dir(rtl) {
+    text-align: right;
+  }
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th):not([dir]):dir(ltr) {
+    text-align: left;
+  }
+  .ov-rich > * + * {
+    margin-block-start: 0.4em;
+  }
+  .ov-rich ul {
+    list-style: disc;
+    padding-inline-start: 1.25em;
+  }
+  .ov-rich ol {
+    list-style: decimal;
+    padding-inline-start: 1.5em;
+  }
+  .ov-rich li + li {
+    margin-block-start: 0.15em;
+  }
+  .ov-rich a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .ov-rich strong,
+  .ov-rich b {
+    font-weight: 700;
+  }
+  .ov-rich code,
+  .ov-rich pre {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+  .ov-rich pre {
+    white-space: pre-wrap;
+    background: #f5f5f4;
+    padding: 0.5em 0.75em;
+    border-radius: 4px;
+  }
+  .ov-rich blockquote {
+    border-inline-start: 3px solid #d6d3d1;
+    padding-inline-start: 0.75em;
+    color: #57534e;
+  }
+  .ov-rich table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .ov-rich th,
+  .ov-rich td {
+    border: 1px solid #d6d3d1;
+    padding: 0.25em 0.5em;
+    text-align: start;
   }
 }
