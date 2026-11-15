@@ -161,6 +161,7 @@ export function ResumeRenderer({ doc, selectedSectionId, onSectionClick }: Resum
         fontFamily: fontStack(layout.fontFamily),
         fontSize: `${layout.baseFontSizePt}pt`,
         lineHeight: layout.lineHeight,
+        ['--ov-indent' as string]: `${layout.indentCh}ch`,
       }}
     >
       <header>

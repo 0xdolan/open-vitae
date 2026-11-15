@@ -55,13 +55,77 @@
   .ov-rich > * + * {
     margin-block-start: 0.4em;
   }
+  /* --ov-indent is the resume's indent size ("4 spaces" = 4ch by default). */
+  .ov-rich ul,
+  .ov-rich ol {
+    padding-inline-start: max(1.25em, var(--ov-indent, 4ch));
+  }
   .ov-rich ul {
     list-style: disc;
-    padding-inline-start: 1.25em;
+  }
+  .ov-rich ul ul {
+    list-style: circle;
+  }
+  .ov-rich ul ul ul {
+    list-style: square;
   }
   .ov-rich ol {
     list-style: decimal;
-    padding-inline-start: 1.5em;
+  }
+  .ov-rich ol ol {
+    list-style: lower-alpha;
+  }
+  .ov-rich ol ol ol {
+    list-style: lower-roman;
+  }
+  /* Indented paragraphs store only their level, so a new indent size applies everywhere. */
+  .ov-rich :is(p, h1, h2, h3, h4, h5, h6, blockquote) {
+    margin-inline-start: calc(var(--ov-indent, 4ch) * var(--ov-level, 0));
+  }
+  .ov-rich h1 {
+    font-size: 1.6em;
+    font-weight: 700;
+  }
+  .ov-rich h2 {
+    font-size: 1.35em;
+    font-weight: 700;
+  }
+  .ov-rich h3 {
+    font-size: 1.15em;
+    font-weight: 600;
+  }
+  .ov-rich h4 {
+    font-size: 1em;
+    font-weight: 600;
+  }
+  .ov-rich em,
+  .ov-rich i {
+    font-style: italic;
+  }
+  .ov-rich u {
+    text-decoration: underline;
+  }
+  .ov-rich s {
+    text-decoration: line-through;
+  }
+  .ov-rich hr {
+    border: 0;
+    border-top: 1px solid #d6d3d1;
+    margin-block: 0.75em;
+  }
+  .ov-rich img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  .ov-rich img.ov-img-center {
+    margin-inline: auto;
+  }
+  .ov-rich img.ov-img-end {
+    margin-inline-start: auto;
+  }
+  .ov-rich table.ov-table-borderless :is(td, th) {
+    border-color: transparent;
   }
   .ov-rich li + li {
     margin-block-start: 0.15em;
@@ -78,6 +142,14 @@
   .ov-rich pre {
     font-family: var(--font-mono);
     font-size: 0.9em;
+    /* Code always reads left to right, even in an RTL resume. */
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .ov-rich :not(pre) > code {
+    background: #f5f5f4;
+    border-radius: 3px;
+    padding: 0.05em 0.3em;
   }
   .ov-rich pre {
     white-space: pre-wrap;
@@ -182,5 +254,94 @@
   }
   .ov-toast-progress {
     opacity: 0;
+  }
+}
+
+/* Code highlighting colours (a light theme with good contrast on white). */
+@layer components {
+  .ov-rich .hljs-keyword,
+  .ov-rich .hljs-selector-tag,
+  .ov-rich .hljs-built_in,
+  .ov-rich .hljs-type {
+    color: #7c3aed;
+  }
+  .ov-rich .hljs-string,
+  .ov-rich .hljs-attr,
+  .ov-rich .hljs-template-string {
+    color: #047857;
+  }
+  .ov-rich .hljs-number,
+  .ov-rich .hljs-literal,
+  .ov-rich .hljs-symbol {
+    color: #b45309;
+  }
+  .ov-rich .hljs-comment,
+  .ov-rich .hljs-quote {
+    color: #78716c;
+    font-style: italic;
+  }
+  .ov-rich .hljs-title,
+  .ov-rich .hljs-title.function_,
+  .ov-rich .hljs-section {
+    color: #1d4ed8;
+  }
+  .ov-rich .hljs-variable,
+  .ov-rich .hljs-name,
+  .ov-rich .hljs-tag {
+    color: #be123c;
+  }
+  .ov-rich .hljs-meta {
+    color: #57534e;
+  }
+}
+
+/* Rich text editor. */
+@layer components {
+  .ov-tool {
+    display: inline-flex;
+    height: 2rem;
+    min-width: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    padding-inline: 0.375rem;
+    color: var(--color-ink);
+  }
+  .ov-tool:hover:not(:disabled) {
+    background: #e7e5e4;
+  }
+  .ov-tool:disabled {
+    opacity: 0.4;
+  }
+  .ov-tool-active {
+    background: var(--color-brand-soft);
+    color: var(--color-brand);
+  }
+  .ov-editor .ov-editor-content {
+    min-height: 6rem;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    outline: none;
+  }
+  .ov-editor .ov-editor-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: #a8a29e;
+    float: inline-start;
+    height: 0;
+    pointer-events: none;
+  }
+  .ov-editor .selectedCell {
+    background: #dbeafe;
+  }
+  .ov-editor img.ProseMirror-selectednode {
+    outline: 2px solid var(--color-brand);
+  }
+  .ov-editor .ov-find-match {
+    background: #fde68a;
+  }
+  .ov-editor .ov-find-current {
+    background: #f59e0b;
+    color: #1c1917;
   }
 }
