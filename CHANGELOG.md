@@ -8,6 +8,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Real pages in the preview: each page at true size with its number, smart page breaks that keep headings with what follows and avoid splitting entries, and manual page breaks for sections and single entries.
+- Zoom for the preview: fit width, or 25% to 200%.
+- Print preview, and printing (also with Ctrl+P) that produces exactly the previewed pages at the right paper size, with no app interface and no hidden duplicate text in saved PDFs.
+- Thirteen paper sizes in groups: A3, A4, A5, A6, B4, B5, Letter, Legal, Tabloid, Executive, Statement, Folio and JIS B5, with their dimensions.
+- Notes under a page when a block is taller than a page, or when manual breaks let a page overflow.
+- Arabic and Kurdish (Sorani) sample resumes, with section titles in both languages.
+- Language setting in Page setup that renames default section titles and flips the direction when needed.
+- Documentation page for pages and printing.
 - Fonts: bundled Sahel and Estedad for Persian and Arabic (downloaded by `npm run fonts:fetch`, with checksums and licences), a searchable font picker, and the same fonts in the rich text toolbar.
 - Your own fonts: load TTF, OTF, WOFF or WOFF2 files, kept only in this browser, with a clear warning that clearing site data means loading them again; rename or remove them.
 - Optional Google Fonts, off until you agree, with a curated catalogue or any family by name.
@@ -54,6 +62,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- Margins shrink automatically on small paper so at least 20 mm is left for content.
+- “Start on a new page” on a section now works in smart mode too, and entries can start on a new page.
 - The font stack adds Sahel only when the chosen font does not cover Arabic script, then a fallback of the right kind.
 - Resume format version 2: indent size and nesting limit. Older resumes and backups are upgraded automatically.
 - The sanitiser now allows the editor's formatting through strict allowlists and removes remote images entirely.

@@ -16,6 +16,7 @@
 | 8   | [The editor](08-editor.md)                | Navigator, drag and drop, editing, undo, shortcuts  |
 | 9   | [Rich text editor](09-rich-text-editor.md) | Formatting, lists, tables, images, code, find, safety |
 | 10  | [Fonts and right-to-left text](10-fonts.md) | Bundled, user and Google fonts, missing fonts, RTL resumes |
+| 11  | [Pages and printing](11-pages-and-printing.md) | Paper sizes, zoom, smart and manual page breaks, print preview |
 
 ## Conventions used in these pages
 
