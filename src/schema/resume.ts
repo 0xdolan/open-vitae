@@ -109,18 +109,39 @@ export const profileSchema = z.object({
   headlineStyle: textStyleSchema.optional(),
 });
 
+const imageDataUrlSchema = z
+  .string()
+  .max(LIMITS.photoDataUrlLength)
+  .regex(/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/, 'Photo must be a PNG, JPEG or WebP image');
+
+/** A crop of the source picture, in source pixels after rotation. */
+export const photoCropSchema = z.object({
+  x: z.number().min(0),
+  y: z.number().min(0),
+  width: z.number().positive(),
+  height: z.number().positive(),
+  rotation: z.union([z.literal(0), z.literal(90), z.literal(180), z.literal(270)]),
+});
+
 export const photoSchema = z.object({
-  /** Kept in the browser only, never uploaded. */
-  dataUrl: z
-    .string()
-    .max(LIMITS.photoDataUrlLength)
-    .regex(
-      /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/,
-      'Photo must be a PNG, JPEG or WebP image',
-    ),
+  /** The cropped photo as drawn on the page. Kept in the browser only, never uploaded. */
+  dataUrl: imageDataUrlSchema,
   align: z.enum(HORIZONTAL_ALIGNS),
   shape: z.enum(PHOTO_SHAPES),
   widthMm: range(LIMITS.photoWidthMm),
+  /**
+   * The picture as chosen (shrunk, metadata removed) and the crop applied to
+   * it, so the photo can be cropped again without losing quality. Optional:
+   * older resumes and imported ones may not have it.
+   */
+  source: z
+    .object({
+      dataUrl: imageDataUrlSchema,
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+      crop: photoCropSchema,
+    })
+    .optional(),
 });
 
 export const layoutSchema = z.object({
@@ -180,5 +201,6 @@ export type ResumeSection = z.infer<typeof resumeSectionSchema>;
 export type ProfileLink = z.infer<typeof profileLinkSchema>;
 export type Profile = z.infer<typeof profileSchema>;
 export type ResumePhoto = z.infer<typeof photoSchema>;
+export type PhotoCrop = z.infer<typeof photoCropSchema>;
 export type ResumeLayout = z.infer<typeof layoutSchema>;
 export type ResumeDocument = z.infer<typeof resumeSchema>;

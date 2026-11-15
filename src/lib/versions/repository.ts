@@ -25,6 +25,8 @@ const summarySchema = z.object({
   bytes: z.number().int().min(0),
   contentHash: z.string().max(32),
   photoKey: z.string().max(80).nullable(),
+  /** The uncropped source picture, stored once like the photo. Absent in older versions. */
+  sourceKey: z.string().max(80).nullable().optional(),
 });
 
 export type VersionSummary = z.infer<typeof summarySchema>;
@@ -80,6 +82,13 @@ export function createVersionRepository(store: KeyValueStore): VersionRepository
 
   const recordKey = (resumeId: string, versionId: string) => `${RECORD}${resumeId}:${versionId}`;
 
+  /** Store an image once under a content key and return the key. */
+  const storeImage = async (dataUrl: string): Promise<string> => {
+    const key = `${hashString(dataUrl)}-${dataUrl.length}`;
+    if ((await store.get(PHOTO + key)) === undefined) await store.set(PHOTO + key, dataUrl);
+    return key;
+  };
+
   return {
     async list(resumeId) {
       return (await readIndex(resumeId)).reverse();
@@ -87,14 +96,17 @@ export function createVersionRepository(store: KeyValueStore): VersionRepository
 
     async record(doc, { reason, note = '', force = false, now = new Date() }) {
       let photoKey: string | null = null;
+      let sourceKey: string | null = null;
       let snapshot: ResumeDocument = doc;
 
       if (doc.photo) {
-        photoKey = `${hashString(doc.photo.dataUrl)}-${doc.photo.dataUrl.length}`;
-        if ((await store.get(PHOTO + photoKey)) === undefined) {
-          await store.set(PHOTO + photoKey, doc.photo.dataUrl);
-        }
-        snapshot = { ...doc, photo: { ...doc.photo, dataUrl: '' } };
+        photoKey = await storeImage(doc.photo.dataUrl);
+        const { source } = doc.photo;
+        if (source) sourceKey = await storeImage(source.dataUrl);
+        snapshot = {
+          ...doc,
+          photo: { ...doc.photo, dataUrl: '', ...(source ? { source: { ...source, dataUrl: '' } } : {}) },
+        };
       }
 
       // The save time is not content: two saves of the same text are one version.
@@ -118,6 +130,7 @@ export function createVersionRepository(store: KeyValueStore): VersionRepository
         bytes: canonical.length,
         contentHash,
         photoKey,
+        sourceKey,
       };
 
       await store.set(recordKey(doc.id, summary.id), { doc: snapshot });
@@ -134,11 +147,15 @@ export function createVersionRepository(store: KeyValueStore): VersionRepository
       if (typeof raw !== 'object' || raw === null || !('doc' in raw)) return undefined;
       let doc: unknown = raw.doc;
 
-      if (summary.photoKey) {
+      if (summary.photoKey && typeof doc === 'object' && doc !== null && 'photo' in doc) {
         const dataUrl = await store.get(PHOTO + summary.photoKey);
-        if (typeof dataUrl === 'string' && typeof doc === 'object' && doc !== null && 'photo' in doc) {
-          doc = { ...doc, photo: { ...(doc.photo as object), dataUrl } };
+        const photo = doc.photo as Record<string, unknown>;
+        let restored: Record<string, unknown> = { ...photo, dataUrl };
+        if (summary.sourceKey && typeof photo.source === 'object' && photo.source !== null) {
+          const sourceUrl = await store.get(PHOTO + summary.sourceKey);
+          restored = { ...restored, source: { ...(photo.source as object), dataUrl: sourceUrl } };
         }
+        if (typeof dataUrl === 'string') doc = { ...doc, photo: restored };
       }
 
       const result = parseResume(doc);
@@ -187,6 +204,7 @@ export function createVersionRepository(store: KeyValueStore): VersionRepository
         if (!key.startsWith(INDEX)) continue;
         for (const summary of await readIndex(key.slice(INDEX.length))) {
           if (summary.photoKey) referenced.add(summary.photoKey);
+          if (summary.sourceKey) referenced.add(summary.sourceKey);
         }
       }
       let removed = 0;
