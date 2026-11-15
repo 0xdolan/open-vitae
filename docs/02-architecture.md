@@ -52,6 +52,7 @@ src/
 │   ├── workspace/   Editing area, page settings, save status
 │   ├── pages/       Measuring, page sheets, page stack, print preview, print layer
 │   ├── photo/       Photo panel, crop window, size guide
+│   ├── export/      Export window
 │   ├── icons/       Icon picker and the icon drawn on the page
 │   └── resume/      ResumeRenderer, shared by preview and exporters
 ├── config/          Page sizes, fonts, layout limits, section kinds
@@ -112,6 +113,10 @@ Font state lives in `src/stores/font-store.ts`; file checks, Google stylesheet v
 ## Photos and icons
 
 Photos are cropped with canvas in the browser and stored in the resume, with the original kept for re-cropping; version history stores each image once. Icons come from react-icons (Lucide is its `lu` set); each set is a separate file loaded on demand, and only Lucide is precached by the service worker. Details in [Photos and icons](12-photos-and-icons.md).
+
+## Import and export
+
+Exporters live in `src/lib/export/` and readers and writers for the data formats in `src/lib/interchange/`; both load only when someone exports or imports. Picture formats (PDF, PNG, JPG, SVG) draw a copy of the pages laid out off screen at 100% zoom with html-to-image, inlining the fonts the resume uses; PDF is assembled with pdf-lib, Word with docx, Excel with jszip. Details in [Import and export](13-import-and-export.md).
 
 ## Privacy and security model
 

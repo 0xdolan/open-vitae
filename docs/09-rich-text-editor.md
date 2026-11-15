@@ -130,7 +130,7 @@ Everything else is removed, including scripts, event handlers, iframes, forms, S
 
 ## Not in the editor
 
-- **Print preview** is in the page preview (see [Pages and printing](11-pages-and-printing.md)). Library-generated PDF and the other export formats come in phase 8.
+- **Print preview** is in the page preview (see [Pages and printing](11-pages-and-printing.md)); PDF, Word and the other formats are in **Export** (see [Import and export](13-import-and-export.md)).
 - **Google Fonts and fonts you load yourself** join the font menu in phase 5.
 - **Icons from Lucide and react-icons** come in phase 7.
 

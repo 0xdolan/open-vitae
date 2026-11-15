@@ -113,7 +113,7 @@ Every save that changes something is stored as a **version** with a number and i
 
 ## JSON backups
 
-**Export JSON backup** (and **Download** on any version) saves a file such as:
+**Export › JSON** (and **Download** on any version) saves a file such as:
 
 ```text
 maya-okafor-v12-2026-11-14_19-05-23.json
@@ -140,7 +140,7 @@ The file contains:
 }
 ```
 
-Unsaved edits are saved first, and invalid data is never exported; the person sees what to fix instead. A success message with an animated check mark confirms the file name and version. It closes by itself, pauses while hovered or focused, and stays still for people who prefer reduced motion. Import of these files arrives in phase 8, together with CSV, Excel, Markdown, PDF, Word and image exports.
+Unsaved edits are saved first, and invalid data is never exported; the person sees what to fix instead. A success message with an animated check mark confirms the file name and version. It closes by itself, pauses while hovered or focused, and stays still for people who prefer reduced motion. These files can be imported on the **My resumes** screen; see [Import and export](13-import-and-export.md) for that and for the other formats.
 
 ## Several tabs at once
 

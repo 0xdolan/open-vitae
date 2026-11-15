@@ -62,7 +62,7 @@ A break on the first entry of a section is moved before the section heading, so 
 - Colours print as shown without turning on "background graphics".
 - **Ctrl+P** (⌘P on a Mac) in the editor prints the same pages.
 
-A PDF made by a library, with the same pages, plus Word, image and other exports, arrive in phase 8.
+**Export › PDF** makes the same pages with a PDF library, with clickable links and the resolution you choose; see [Import and export](13-import-and-export.md).
 
 ## When something does not fit
 
