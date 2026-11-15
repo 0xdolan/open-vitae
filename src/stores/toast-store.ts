@@ -9,6 +9,8 @@ export interface Toast {
   readonly tone: ToastTone;
   readonly title: string;
   readonly description?: string;
+  /** Optional button, such as "Undo". Clicking it also closes the toast. */
+  readonly action?: { readonly label: string; readonly onClick: () => void };
   /** Visible time; paused while hovered or focused. */
   readonly durationMs: number;
 }
@@ -39,6 +41,6 @@ export const toast = {
     useToastStore.getState().show({ tone: 'success', title, description }),
   error: (title: string, description?: string) =>
     useToastStore.getState().show({ tone: 'error', title, description, durationMs: 10_000 }),
-  info: (title: string, description?: string) =>
-    useToastStore.getState().show({ tone: 'info', title, description }),
+  info: (title: string, description?: string, action?: Toast['action']) =>
+    useToastStore.getState().show({ tone: 'info', title, description, action, durationMs: action ? 10_000 : 7000 }),
 };

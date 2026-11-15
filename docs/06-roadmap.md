@@ -14,8 +14,8 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 | --- | ----------------------------- | --------------------------------------------------------------------- | ----------- |
 | 1   | Scaffold                      | Tooling, git flow, Docker, CI, Pages, docs skeleton                   | Done        |
 | 2   | Data and samples              | Runtime validation, local storage, drafts, version history, JSON backup export, five sample resumes (tech, finance, cybersecurity, cloud, marketing) | Done |
-| 3   | Editor shell                  | Layout, navigator side panel, drag-and-drop section order, show/hide  | Next        |
-| 4   | Rich text editor              | Formatting, lists, tables, links, code blocks, find, undo/redo, styles, sanitising | Planned |
+| 3   | Editor shell                  | Library and editor views, navigator panel, accessible drag and drop for sections, entries and links, show/hide, profile and entry forms, undo/redo, shortcuts | Done |
+| 4   | Rich text editor              | Formatting, lists, tables, links, code blocks, find, undo/redo, styles, sanitising | Next |
 | 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, per-block direction | Planned |
 | 6   | Pages                         | True-size preview, all page sizes, margins, smart and manual page breaks, zoom | Planned |
 | 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search | Planned |

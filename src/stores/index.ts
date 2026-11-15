@@ -15,6 +15,7 @@ export {
   type ResumeStore,
   type ResumeStoreState,
   type SaveState,
+  type UpdateOptions,
 } from './resume-store';
 export { toast, useToastStore, type Toast } from './toast-store';
 

@@ -27,6 +27,18 @@ import type { ResumeDocument } from '@/schema/resume';
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 export type SaveState = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 
+export interface UpdateOptions {
+  /**
+   * Edits with the same group key made within a short time become one undo
+   * step, so undo removes a typed word or sentence, not one letter.
+   */
+  readonly group?: string;
+}
+
+/** How many document states undo keeps per open resume. */
+export const UNDO_LIMIT = 100;
+const GROUP_WINDOW_MS = 1500;
+
 export interface ExportResult {
   readonly fileName: string;
   readonly version: VersionSummary | null;
@@ -44,6 +56,8 @@ export interface ResumeStoreState {
   /** Version history of the active resume, newest first. */
   readonly versions: readonly VersionSummary[];
   readonly retention: Retention;
+  readonly canUndo: boolean;
+  readonly canRedo: boolean;
 
   init(): Promise<void>;
   setActive(id: string): void;
@@ -52,7 +66,9 @@ export interface ResumeStoreState {
   duplicate(id: string): Promise<ResumeDocument | null>;
   remove(id: string): Promise<void>;
   /** Change the active resume; it is saved (and versioned) automatically shortly after. */
-  updateActive(updater: (doc: ResumeDocument) => ResumeDocument): void;
+  updateActive(updater: (doc: ResumeDocument) => ResumeDocument, options?: UpdateOptions): void;
+  undo(): void;
+  redo(): void;
   /** Write any pending changes now (on tab hide, before export...). */
   flush(): Promise<void>;
   clearAll(): Promise<void>;
@@ -104,6 +120,11 @@ export function createResumeStore({
   const pending = new Map<string, ResumeDocument>();
   let timer: ReturnType<typeof setTimeout> | undefined;
 
+  /** Undo history of the open resume, in memory only. */
+  let past: ResumeDocument[] = [];
+  let future: ResumeDocument[] = [];
+  let lastGroup: { readonly key: string; readonly at: number } | null = null;
+
   return create<ResumeStoreState>()((set, get) => {
     const names = () => Object.values(get().resumes).map((doc) => doc.name);
 
@@ -120,10 +141,31 @@ export function createResumeStore({
       }
     };
 
+    const resetHistory = () => {
+      past = [];
+      future = [];
+      lastGroup = null;
+      set({ canUndo: false, canRedo: false });
+    };
+
     const activate = (id: string | null) => {
       preferences.setActiveId(id);
+      resetHistory();
       set({ activeId: id, versions: [] });
       if (id) void loadVersions(id);
+    };
+
+    /** Put a document state in place as an unsaved edit and schedule the save. */
+    const applyEdit = (next: ResumeDocument) => {
+      const stamped = touch(next, now());
+      pending.set(stamped.id, stamped);
+      set((state) => ({
+        resumes: { ...state.resumes, [stamped.id]: stamped },
+        saveState: 'unsaved',
+        canUndo: past.length > 0,
+        canRedo: future.length > 0,
+      }));
+      scheduleSave();
     };
 
     /** Record a version after a successful save. Never fails the save itself. */
@@ -182,6 +224,8 @@ export function createResumeStore({
           if (local && local.updatedAt >= message.updatedAt) return;
           const fresh = await repository.get(message.id);
           if (fresh) {
+            // Undo steps from before another tab's change would overwrite it.
+            if (get().activeId === fresh.id) resetHistory();
             set((state) => ({ resumes: { ...state.resumes, [fresh.id]: fresh } }));
           }
           return;
@@ -210,6 +254,8 @@ export function createResumeStore({
       message: null,
       versions: [],
       retention: preferences.getRetention(),
+      canUndo: false,
+      canRedo: false,
 
       async init() {
         // Safe to call twice (React StrictMode runs effects twice in development).
@@ -267,14 +313,45 @@ export function createResumeStore({
         sync?.post({ type: 'removed', id });
       },
 
-      updateActive(updater) {
+      updateActive(updater, options = {}) {
         const { activeId, resumes } = get();
         const current = activeId ? resumes[activeId] : undefined;
         if (!current) return;
-        const next = touch(updater(current), now());
-        pending.set(next.id, next);
-        set({ resumes: { ...resumes, [next.id]: next }, saveState: 'unsaved' });
-        scheduleSave();
+        const next = updater(current);
+        if (next === current) return;
+
+        const at = now().getTime();
+        const sameGroup =
+          options.group !== undefined &&
+          lastGroup?.key === options.group &&
+          at - lastGroup.at < GROUP_WINDOW_MS;
+        if (!sameGroup) {
+          past.push(current);
+          if (past.length > UNDO_LIMIT) past.shift();
+        }
+        future = [];
+        lastGroup = options.group === undefined ? null : { key: options.group, at };
+        applyEdit(next);
+      },
+
+      undo() {
+        const { activeId, resumes } = get();
+        const current = activeId ? resumes[activeId] : undefined;
+        const previous = past.pop();
+        if (!current || !previous) return;
+        future.push(current);
+        lastGroup = null;
+        applyEdit(previous);
+      },
+
+      redo() {
+        const { activeId, resumes } = get();
+        const current = activeId ? resumes[activeId] : undefined;
+        const next = future.pop();
+        if (!current || !next) return;
+        past.push(current);
+        lastGroup = null;
+        applyEdit(next);
       },
 
       async flush() {
@@ -371,10 +448,18 @@ export function createResumeStore({
             set({ message: 'That version could not be read, so nothing was changed.' });
             return null;
           }
+          const before = get().resumes[activeId];
           const restored = await repository.save(touch({ ...old, id: activeId }, now()));
+          if (before) {
+            past.push(before);
+            future = [];
+            lastGroup = null;
+          }
           set((state) => ({
             resumes: { ...state.resumes, [restored.id]: restored },
             saveState: 'saved',
+            canUndo: past.length > 0,
+            canRedo: false,
           }));
           sync?.post({ type: 'saved', id: restored.id, updatedAt: restored.updatedAt });
           return recordVersion(restored, 'restore', `Restored from version ${source.number}`, true);

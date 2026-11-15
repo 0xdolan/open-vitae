@@ -2,7 +2,9 @@ import type { CSSProperties, ReactNode } from 'react';
 
 import { SafeHtml } from '@/components/SafeHtml';
 import { fontStack } from '@/config/fonts';
+import { isValidEmail } from '@/lib/field-validation';
 import { isSafeUrl, telUrl } from '@/lib/url';
+import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeItem, ResumeSection, TextStyle } from '@/schema/resume';
 
 /** Values are already constrained by the schema (hex colours, safe font names). */
@@ -34,11 +36,19 @@ function ContactLine({ doc }: { readonly doc: ResumeDocument }) {
   const parts: ReactNode[] = [];
 
   // <bdi> keeps emails, numbers and URLs in their own direction inside RTL text.
-  if (email) parts.push(<SafeLink key="email" href={`mailto:${email}`}><bdi>{email}</bdi></SafeLink>);
+  if (email) {
+    parts.push(
+      isValidEmail(email) ? (
+        <SafeLink key="email" href={`mailto:${email}`}><bdi>{email}</bdi></SafeLink>
+      ) : (
+        <bdi key="email">{email}</bdi>
+      ),
+    );
+  }
   if (phone) parts.push(<SafeLink key="phone" href={telUrl(phone)}><bdi dir="ltr">{phone}</bdi></SafeLink>);
   if (location) parts.push(<bdi key="location">{location}</bdi>);
   if (website) parts.push(<SafeLink key="website" href={website}><bdi>{displayUrl(website)}</bdi></SafeLink>);
-  for (const link of links) {
+  for (const link of links.filter((l) => l.url !== '')) {
     parts.push(
       <SafeLink key={link.id} href={link.url}>
         <bdi>{link.label || displayUrl(link.url)}</bdi>
@@ -91,10 +101,25 @@ function Item({ item, section }: { readonly item: ResumeItem; readonly section: 
   );
 }
 
-function Section({ section, accent }: { readonly section: ResumeSection; readonly accent: string }) {
+interface SectionProps {
+  readonly section: ResumeSection;
+  readonly accent: string;
+  readonly selected: boolean;
+  readonly onClick?: (id: string) => void;
+}
+
+function Section({ section, accent, selected, onClick }: SectionProps) {
   const items = section.items.filter((item) => item.visible);
   return (
-    <section className="mt-5" aria-label={section.title || section.kind}>
+    <section
+      className={cn(
+        'mt-5',
+        onClick && '-mx-2 cursor-pointer rounded px-2 outline-offset-2 hover:outline hover:outline-1 hover:outline-stone-300',
+        selected && 'outline outline-2 outline-brand/60',
+      )}
+      aria-label={section.title || section.kind}
+      onClick={onClick ? () => onClick(section.id) : undefined}
+    >
       {section.title ? (
         <h2
           className="mb-2 border-b pb-1 text-[1.1em] font-bold tracking-wide uppercase"
@@ -114,13 +139,17 @@ function Section({ section, accent }: { readonly section: ResumeSection; readonl
 
 interface ResumeRendererProps {
   readonly doc: ResumeDocument;
+  /** Editor only: outline this section. */
+  readonly selectedSectionId?: string;
+  /** Editor only: clicking a section opens it for editing. Exporters leave this out. */
+  readonly onSectionClick?: (id: string) => void;
 }
 
 /**
  * Draws a resume. Used by the on-screen preview now and by the PDF and image
  * exporters later, so it uses only physical units (pt, em) and logical CSS.
  */
-export function ResumeRenderer({ doc }: ResumeRendererProps) {
+export function ResumeRenderer({ doc, selectedSectionId, onSectionClick }: ResumeRendererProps) {
   const { layout, profile } = doc;
 
   return (
@@ -153,7 +182,13 @@ export function ResumeRenderer({ doc }: ResumeRendererProps) {
       {doc.sections
         .filter((section) => section.visible)
         .map((section) => (
-          <Section key={section.id} section={section} accent={layout.accentColor} />
+          <Section
+            key={section.id}
+            section={section}
+            accent={layout.accentColor}
+            selected={section.id === selectedSectionId}
+            onClick={onSectionClick}
+          />
         ))}
     </article>
   );

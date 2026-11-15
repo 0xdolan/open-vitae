@@ -42,7 +42,7 @@ export function PageSettings({ layout, onChange }: PageSettingsProps) {
   };
 
   return (
-    <fieldset className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+    <fieldset className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       <legend className="sr-only">Page settings</legend>
 
       <Field label="Page size" htmlFor={`${id}-size`}>

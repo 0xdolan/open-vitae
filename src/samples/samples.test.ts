@@ -44,4 +44,14 @@ describe('samples', () => {
   it('uses the custom name when one is given', () => {
     expect(createResumeFromSample('marketing', 'My copy').name).toBe('My copy');
   });
+
+  it('escapes ampersands in rich text', () => {
+    for (const id of SAMPLE_IDS) {
+      const doc = createResumeFromSample(id);
+      const htmls = [doc.profile.summaryHtml, ...doc.sections.flatMap((s) => s.items.map((i) => i.descriptionHtml))];
+      for (const html of htmls) {
+        expect(/&(?!amp;|lt;|gt;|quot;|#\d+;)/.test(html)).toBe(false);
+      }
+    }
+  });
 });
