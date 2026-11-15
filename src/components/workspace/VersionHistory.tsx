@@ -75,9 +75,15 @@ function VersionRow({
         ) : null}
         <p className="mt-0.5 text-xs text-stone-600">
           <time dateTime={version.savedAt}>{formatDateTime(version.savedAt, t.locale)}</time>
-          <span className="text-stone-400"> · </span>
+          <span aria-hidden="true" className="text-stone-400">
+            {' '}
+            ·{' '}
+          </span>
           {formatRelative(version.savedAt, now, t.locale)}
-          <span className="text-stone-400"> · </span>
+          <span aria-hidden="true" className="text-stone-400">
+            {' '}
+            ·{' '}
+          </span>
           {formatBytes(version.bytes)}
         </p>
       </div>
