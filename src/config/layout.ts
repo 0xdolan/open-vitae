@@ -35,3 +35,7 @@ export const LIMITS = {
 } as const;
 
 export const DEFAULT_INDENT_CH = 4;
+
+/** Digit sets a resume can be drawn with: Western (0123), Arabic-Indic (٠١٢٣) and Persian (۰۱۲۳). */
+export const DIGIT_SYSTEMS = ['latn', 'arab', 'arabext'] as const;
+export type DigitSystem = (typeof DIGIT_SYSTEMS)[number];
