@@ -8,6 +8,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Version history: every save is kept as a numbered version with its date and time; name a version, restore or download any version. Keeping all versions is the recommended default.
+- JSON backup export with versioned, time-stamped file names such as `maya-okafor-v12-2026-11-14_19-05-23.json`.
+- Animated success message after exporting, saving a named version or restoring.
 - Resumes are saved in the browser (IndexedDB) with autosave, an unsaved/saving/saved indicator and a save on tab close.
 - Five sample resumes: technology, finance, cybersecurity, cloud and marketing. Using one creates an editable copy.
 - Resume library: new resume (LTR or RTL), open, duplicate, delete, and delete all data, each with confirmation.

@@ -9,6 +9,8 @@ Previous: [Roadmap](06-roadmap.md) · [Docs home](README.md) · [Main README](..
 - [Validation rules that protect the page](#validation-rules-that-protect-the-page)
 - [Format versions and migrations](#format-versions-and-migrations)
 - [Saving and drafts](#saving-and-drafts)
+- [Version history](#version-history)
+- [JSON backups](#json-backups)
 - [Several tabs at once](#several-tabs-at-once)
 - [Samples](#samples)
 - [Deleting data](#deleting-data)
@@ -20,7 +22,10 @@ Previous: [Roadmap](06-roadmap.md) · [Docs home](README.md) · [Main README](..
 | ------------------------- | --------------------------------------- | --------------------------------------- |
 | Resumes and drafts        | IndexedDB database `open-vitae`, store `resumes`, keys `resume:<id>` | Structured objects, not strings |
 | Which resume was last open | `localStorage` key `open-vitae:active-resume` | An id only, never content       |
-| Photos and user fonts     | IndexedDB (phases 5 and 7)              | Never uploaded                          |
+| Version history           | Same database: `versions:<resumeId>` index, `version:<resumeId>:<versionId>` snapshots | One snapshot per save |
+| Photos                    | Same database, `photo:<hash>`, each distinct photo stored once | Never uploaded          |
+| How many versions to keep | `localStorage` key `open-vitae:version-retention` | `all` by default                |
+| User fonts                | IndexedDB (phase 5)                     | Never uploaded                          |
 
 Nothing is sent to a server. Clearing the site's data in the browser removes all of it. The app tells people this in a banner and offers to ask the browser for **persistent storage**, which stops the browser from evicting the data when disk space runs low.
 
@@ -84,6 +89,50 @@ Documents are migrated before validation, on load and on import. A document from
 - The editor shows **Unsaved changes**, **Saving…**, **Saved in this browser** or **Not saved**.
 - If a save fails (invalid value, full disk, blocked storage), the edit stays in memory, a message explains why, and the next edit retries.
 
+## Version history
+
+Every save that changes something is stored as a **version** with a number and its date and time. Nothing is overwritten.
+
+- **Shown as** "Version 12 · Autosave · Saturday, 14 November 2026 at 19:05:23 · 3 minutes ago · 4.3 KB". Wording and clock format follow the browser's language. The editor header shows "Saved · version 12 · 19:05:23".
+- **Kinds:** Created, Autosave, Named version (the person typed a name and pressed **Save version**), Restored, Imported. Exported versions get an **Exported** badge.
+- **Identical saves are skipped:** a save whose content matches the previous version adds nothing. The save time alone is not a change.
+- **Restore** brings back an older version and records it as a new version ("Restored from version 3"). The state before restoring is already a version, so restoring never loses anything.
+- **Download** exports any version as a JSON backup.
+- **Keeping versions:** the default is **Keep all versions (recommended)**. People can choose to keep the latest 100, 50 or 20 instead. When a limit applies, only old **autosaves** are removed; named versions and the current version are always kept.
+- **Size:** a resume version is a few kilobytes. Photos are stored once and shared by every version that uses them, so keeping everything stays cheap. Photos no version uses any more are removed automatically.
+- Deleting a resume deletes its versions. **Delete all data** removes everything.
+
+## JSON backups
+
+**Export JSON backup** (and **Download** on any version) saves a file such as:
+
+```text
+maya-okafor-v12-2026-11-14_19-05-23.json
+```
+
+The name is the person's name (or the resume name), the version number and the **local** save time, so files sort by time and never overwrite each other. Persian and Arabic names stay readable.
+
+The file contains:
+
+```json
+{
+  "format": "open-vitae",
+  "formatVersion": 1,
+  "app": "Open Vitae 0.1.0",
+  "exportedAt": "2026-11-14T19:06:02.000Z",
+  "exportedAtText": "Saturday, 14 November 2026 at 19:06:02",
+  "version": {
+    "number": 12,
+    "savedAt": "2026-11-14T19:05:23.000Z",
+    "savedAtText": "Saturday, 14 November 2026 at 19:05:23",
+    "note": "Sent to Larkspur Labs"
+  },
+  "resume": { "...": "the full resume document" }
+}
+```
+
+Unsaved edits are saved first, and invalid data is never exported; the person sees what to fix instead. A success message with an animated check mark confirms the file name and version. It closes by itself, pauses while hovered or focused, and stays still for people who prefer reduced motion. Import of these files arrives in phase 8, together with CSV, Excel, Markdown, PDF, Word and image exports.
+
 ## Several tabs at once
 
 Tabs announce saves, deletions and clears to each other over `BroadcastChannel`. A tab picks up a newer version from another tab unless it has unsaved edits of its own, so two tabs never silently overwrite each other. Messages carry ids and timestamps only.
@@ -113,7 +162,12 @@ To add a sample: create `src/samples/<id>.ts` exporting a `SampleDefinition`, ad
 | `src/lib/storage/repository.ts`        | Validated resume persistence                         |
 | `src/lib/storage/sync-channel.ts`      | Cross-tab messages                                   |
 | `src/lib/storage/persistence.ts`       | Usage estimate and persistent-storage request        |
-| `src/stores/resume-store.ts`           | App state, autosave, cross-tab handling              |
+| `src/lib/versions/repository.ts`       | Version history, photo deduplication, retention      |
+| `src/lib/export/json.ts`               | JSON backup format                                   |
+| `src/lib/export/file-name.ts`          | Versioned, time-stamped file names                   |
+| `src/lib/datetime.ts`                  | Human-readable dates and times                       |
+| `src/stores/resume-store.ts`           | App state, autosave, versions, restore, export       |
+| `src/stores/toast-store.ts`            | Notifications                                        |
 
 ---
 

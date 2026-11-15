@@ -2,7 +2,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 2 of 11. Resumes are saved in your browser with autosave, and five sample resumes are included. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 2 of 11. Resumes are saved in your browser with autosave and a full version history, can be exported as JSON backups, and five sample resumes are included. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -19,6 +19,7 @@ A free, open-source resume builder that runs entirely in your browser. No accoun
 ## Why Open Vitae
 
 - **Private by design.** Your resume, photo and fonts stay in your browser. There is no backend.
+- **Nothing is lost.** Every save becomes a dated version you can restore or download.
 - **Real bidirectional text.** Persian, Arabic, Kurdish, Urdu and Hebrew sit next to English correctly.
 - **Print-accurate pages.** A4 by default, plus Letter, A3, A5, B5, Legal, Tabloid and Executive.
 - **Open formats.** Planned import and export: JSON, CSV, Excel, Markdown, PDF, Word, IDML, PNG, JPG, SVG.
