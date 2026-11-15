@@ -6,6 +6,7 @@ Previous: [Release process](04-release-process.md) · Next: [Roadmap](06-roadmap
 
 - [Run the production build](#run-the-production-build)
 - [Run the dev server](#run-the-dev-server)
+- [Grammar checking (optional)](#grammar-checking-optional)
 - [How the containers are hardened](#how-the-containers-are-hardened)
 - [Checking it yourself](#checking-it-yourself)
 
@@ -30,6 +31,14 @@ Open <http://127.0.0.1:5173>. The project folder is mounted into the container, 
 ```bash
 OV_UID=$(id -u) OV_GID=$(id -g) docker compose --profile dev up dev
 ```
+
+## Grammar checking (optional)
+
+```bash
+docker compose --profile grammar up --build
+```
+
+Adds a [LanguageTool](https://languagetool.org) server (`erikvl87/languagetool`, pinned to 6.8) for the editor's **Grammar** panel. It has no published port: the app's nginx forwards `/languagetool/` to it on the Compose network, resolving the name per request so the app also starts without it. The container is hardened like the app (read-only, no capabilities, no privilege escalation) and limited to 1.5 GB of memory. See [Languages, offline use and accessibility](14-languages-and-offline.md#grammar-and-spelling).
 
 ## How the containers are hardened
 

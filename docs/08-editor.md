@@ -39,11 +39,14 @@ Each entry row also has a page-break button to start that entry on a new page; a
 
 ## The navigator
 
-- **Page setup:** paper size, orientation, direction, language, font, page breaks, margin, text size, line height, indent, nesting levels, accent colour, and fonts.
+- **Page setup:** paper size, orientation, direction, language, font, page breaks, margin, text size, line height, indent, nesting levels, digits, accent colour, and fonts.
 - **Profile:** name, headline, contact details, links and summary.
 - **Sections**, in page order. Each row has a drag handle, the title, the number of entries, and an eye button to show or hide the section on the page without deleting it.
 - **Add section:** experience, education, skills, projects, certifications, languages, awards, publications, volunteering, references, interests or a custom section. New sections get a title in the resume's language.
 - **Version history:** every saved version (see [Data and storage](07-data-and-storage.md#version-history)).
+- **Grammar:** optional grammar and spelling check with your own LanguageTool server (see [Languages, offline use and accessibility](14-languages-and-offline.md#grammar-and-spelling)).
+
+The calendar button beside an entry's **Dates** field writes a date range in the Gregorian, Persian, Islamic or Kurdish calendar (see [Digits and calendars](14-languages-and-offline.md#digits-and-calendars)).
 
 ## Reordering with mouse, touch or keyboard
 

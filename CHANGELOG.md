@@ -8,6 +8,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- The interface in Persian, Arabic and Central Kurdish (Sorani) as well as English, chosen from the browser's languages or the Interface language menu, with the page direction following the language, plural forms and local digits.
+- Sorani dates and times with Kurdish month and weekday names and Arabic-Indic digits, also in browsers without Sorani data.
+- Digits setting in Page setup: draw the resume with Western, Arabic-Indic or Persian digits, or as typed; links, email and phone numbers stay unchanged.
+- Date range helper for the Dates field with Gregorian, Persian (Solar Hijri), Islamic (Umm al-Qura) and Kurdish calendars, month names in the resume's language and the word for “present”.
+- Install app button, PNG and maskable app icons, an Apple touch icon and a richer web app manifest.
+- Offline notice, a message when the app is ready to work offline, and an update prompt that saves pending edits before reloading.
+- Optional grammar and spelling check with a self-hosted LanguageTool server: Grammar panel in the editor, a Docker Compose `grammar` profile and an nginx proxy at `/languagetool/`.
+- Documentation page for languages, offline use and accessibility.
 - Export window with PDF, Word (.docx), InDesign (.icml), PNG, JPG, SVG, JSON, Excel (.xlsx), CSV and Markdown.
 - PDF export with pdf-lib: exact paper size, pages as in the preview at 72, 150, 300 (default) or 600 DPI, clickable links, document details and a searchable text layer for Latin script.
 - Word export built from the resume: headings, lists, tables, links, the photo, fonts, colours and right-to-left text.
@@ -76,6 +84,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- Code formatted with Prettier.
+- Validation messages, sample names, font notices and every dialog follow the interface language.
+- Focus moves to the new view's heading after navigating; the editor has a page heading for screen readers.
+- Counts and labels that were too light now meet WCAG AA contrast.
 - **Export JSON** in the editor header became **Export**, with every format.
 - Import and export code loads only when used, keeping the first load small.
 - Version history stores the original photo picture once, like the photo itself.
