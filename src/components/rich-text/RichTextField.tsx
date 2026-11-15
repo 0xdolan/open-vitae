@@ -4,6 +4,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { LIMITS } from '@/config/layout';
 import { formatBytes } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { useT } from '@/i18n';
 
 import { buildExtensions } from './extensions';
 import { FindBar } from './FindBar';
@@ -40,13 +41,15 @@ export function RichTextField({
   label,
   html,
   onChange,
-  placeholder = 'Write here…',
+  placeholder,
   language,
   accentColor,
   indentCh,
   maxDepth,
 }: RichTextFieldProps) {
+  const t = useT();
   const labelId = useId();
+  const placeholderText = placeholder ?? t('rt.placeholder');
   const [spellcheck, setSpellcheck] = useState(readSpellcheck);
   const [findOpen, setFindOpen] = useState(false);
   /** The last HTML this editor sent out, to tell our own echoes from outside changes. */
@@ -55,8 +58,8 @@ export function RichTextField({
   onChangeRef.current = onChange;
 
   const extensions = useMemo(
-    () => buildExtensions({ placeholder, maxDepth }),
-    [placeholder, maxDepth],
+    () => buildExtensions({ placeholder: placeholderText, maxDepth }),
+    [placeholderText, maxDepth],
   );
 
   const editor = useEditor(
@@ -155,12 +158,13 @@ export function RichTextField({
         )}
       >
         <span>
-          {counts?.words ?? 0} words · {counts?.characters ?? 0} characters
+          {t('rt.words', { count: counts?.words ?? 0 })} ·{' '}
+          {t('rt.characters', { count: counts?.characters ?? 0 })}
         </span>
         <span>
           {nearLimit
-            ? `Getting large: ${formatBytes(size)} of ${formatBytes(LIMITS.htmlLength)}. Use smaller images.`
-            : 'Tab indents · Esc then Tab leaves the editor'}
+            ? t('rt.tooLarge', { size: formatBytes(size), limit: formatBytes(LIMITS.htmlLength) })
+            : t('rt.keys')}
         </span>
       </p>
     </div>
