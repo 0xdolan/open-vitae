@@ -1,3 +1,5 @@
+import type { MessageKey } from '@/i18n/messages/en';
+
 export const SECTION_KINDS = [
   'experience',
   'education',
@@ -84,37 +86,42 @@ export function defaultSectionTitle(kind: SectionKind, language: string): string
   return titles?.[kind] ?? kind;
 }
 
+/** Field labels for an entry, as interface text keys (translated in the editor). */
 export interface ItemFieldLabels {
-  readonly title: string;
-  readonly subtitle: string;
-  readonly dateRange: string;
-  readonly location: string;
-  readonly url: string;
-  readonly description: string;
+  readonly title: MessageKey;
+  readonly subtitle: MessageKey;
+  readonly dateRange: MessageKey;
+  readonly location: MessageKey;
+  readonly url: MessageKey;
+  readonly description: MessageKey;
 }
 
 const GENERIC: ItemFieldLabels = {
-  title: 'Title',
-  subtitle: 'Subtitle',
-  dateRange: 'Dates',
-  location: 'Location',
-  url: 'Link',
-  description: 'Description',
+  title: 'field.title',
+  subtitle: 'field.subtitle',
+  dateRange: 'field.dates',
+  location: 'field.location',
+  url: 'field.link',
+  description: 'field.description',
 };
 
 /** Field labels that match what each kind of section holds. */
 const ITEM_LABELS: Partial<Record<SectionKind, Partial<ItemFieldLabels>>> = {
-  experience: { title: 'Job title', subtitle: 'Company or organisation' },
-  education: { title: 'Degree or qualification', subtitle: 'School or university' },
-  skills: { title: 'Skill group', description: 'Skills' },
-  projects: { title: 'Project name', subtitle: 'Short summary' },
-  certifications: { title: 'Certification', subtitle: 'Issued by', dateRange: 'Date' },
-  languages: { title: 'Language', description: 'Level' },
-  awards: { title: 'Award', subtitle: 'Awarded by', dateRange: 'Date' },
-  publications: { title: 'Title', subtitle: 'Publisher or journal', dateRange: 'Date' },
-  volunteering: { title: 'Role', subtitle: 'Organisation' },
-  references: { title: 'Name', subtitle: 'Role and company', description: 'Contact details' },
-  interests: { title: 'Interest' },
+  experience: { title: 'field.jobTitle', subtitle: 'field.company' },
+  education: { title: 'field.degree', subtitle: 'field.school' },
+  skills: { title: 'field.skillGroup', description: 'field.skills' },
+  projects: { title: 'field.projectName', subtitle: 'field.shortSummary' },
+  certifications: {
+    title: 'field.certification',
+    subtitle: 'field.issuedBy',
+    dateRange: 'field.date',
+  },
+  languages: { title: 'field.language', description: 'field.level' },
+  awards: { title: 'field.award', subtitle: 'field.awardedBy', dateRange: 'field.date' },
+  publications: { title: 'field.title', subtitle: 'field.publisher', dateRange: 'field.date' },
+  volunteering: { title: 'field.role', subtitle: 'field.organisation' },
+  references: { title: 'field.name', subtitle: 'field.roleCompany', description: 'field.contact' },
+  interests: { title: 'field.interest' },
 };
 
 export function itemFieldLabels(kind: SectionKind): ItemFieldLabels {

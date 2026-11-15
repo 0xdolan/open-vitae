@@ -46,12 +46,12 @@ describe('routes', () => {
 
 describe('field validation', () => {
   it('explains invalid values and accepts valid or empty ones', () => {
-    expect(emailError('not-an-email')).toMatch(/valid email/);
+    expect(emailError('not-an-email')).toBe('validation.email');
     expect(emailError('')).toBeNull();
     expect(emailError('maya@example.com')).toBeNull();
     expect(isValidEmail('maya@')).toBe(false);
-    expect(urlError('javascript:alert(1)')).toMatch(/https/);
-    expect(urlError('example.com')).toMatch(/https/);
+    expect(urlError('javascript:alert(1)')).toBe('validation.url');
+    expect(urlError('example.com')).toBe('validation.url');
     expect(urlError('https://example.com')).toBeNull();
     expect(urlError('')).toBeNull();
   });
@@ -60,10 +60,16 @@ describe('field validation', () => {
 describe('item field labels', () => {
   it('match what each section holds', () => {
     expect(itemFieldLabels('experience')).toMatchObject({
-      title: 'Job title',
-      subtitle: 'Company or organisation',
+      title: 'field.jobTitle',
+      subtitle: 'field.company',
     });
-    expect(itemFieldLabels('languages')).toMatchObject({ title: 'Language', description: 'Level' });
-    expect(itemFieldLabels('custom')).toMatchObject({ title: 'Title', description: 'Description' });
+    expect(itemFieldLabels('languages')).toMatchObject({
+      title: 'field.language',
+      description: 'field.level',
+    });
+    expect(itemFieldLabels('custom')).toMatchObject({
+      title: 'field.title',
+      description: 'field.description',
+    });
   });
 });

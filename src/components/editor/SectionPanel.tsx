@@ -33,6 +33,7 @@ import { toast, useResumeStore } from '@/stores';
 
 import { IconPicker } from '@/components/icons/IconPicker';
 import { RichTextField } from '@/components/rich-text/RichTextField';
+import { errorText, useT } from '@/i18n';
 import { PanelHeading } from './PanelHeading';
 
 interface SectionPanelProps {
@@ -60,12 +61,13 @@ function ItemCard({
   readonly highlight: string;
 }) {
   const updateActive = useResumeStore((s) => s.updateActive);
+  const t = useT();
   const labels = itemFieldLabels(section.kind);
   const set = (patch: Partial<Omit<ResumeItem, 'id'>>, field: string) =>
     updateActive((d) => updateItem(d, section.id, item.id, patch), {
       group: `item.${item.id}.${field}`,
     });
-  const heading = item.title || 'Untitled entry';
+  const heading = item.title || t('entry.untitled');
 
   return (
     <div className={cn('rounded-lg border bg-white', highlight, !item.visible && 'opacity-60')}>
@@ -98,8 +100,8 @@ function ItemCard({
           variant="ghost"
           size="sm"
           aria-pressed={Boolean(item.breakBefore)}
-          aria-label={`Start ${heading} on a new page`}
-          title={item.breakBefore ? 'Starts on a new page' : 'Start on a new page'}
+          aria-label={t('entry.newPage', { name: heading })}
+          title={item.breakBefore ? t('entry.startsNewPage') : t('entry.startNewPage')}
           className={item.breakBefore ? 'text-brand' : 'text-stone-400'}
           onClick={() =>
             updateActive((d) =>
@@ -113,8 +115,10 @@ function ItemCard({
           variant="ghost"
           size="sm"
           aria-pressed={!item.visible}
-          aria-label={item.visible ? `Hide ${heading}` : `Show ${heading}`}
-          title={item.visible ? 'Hide on the page' : 'Show on the page'}
+          aria-label={
+            item.visible ? t('entry.hide', { name: heading }) : t('entry.show', { name: heading })
+          }
+          title={item.visible ? t('nav.hideTitle') : t('nav.showTitle')}
           onClick={() =>
             updateActive((d) => updateItem(d, section.id, item.id, { visible: !item.visible }))
           }
@@ -124,8 +128,8 @@ function ItemCard({
         <Button
           variant="ghost"
           size="sm"
-          aria-label={`Duplicate ${heading}`}
-          title="Duplicate"
+          aria-label={t('entry.duplicate', { name: heading })}
+          title={t('section.duplicate')}
           disabled={section.items.length >= LIMITS.itemsPerSection}
           onClick={() => updateActive((d) => duplicateItem(d, section.id, item.id).doc)}
         >
@@ -134,8 +138,8 @@ function ItemCard({
         <Button
           variant="danger-ghost"
           size="sm"
-          aria-label={`Delete ${heading}`}
-          title="Delete"
+          aria-label={t('entry.delete', { name: heading })}
+          title={t('library.delete')}
           onClick={() => updateActive((d) => removeItem(d, section.id, item.id))}
         >
           <TrashIcon />
@@ -146,7 +150,7 @@ function ItemCard({
         <div className="grid gap-3 border-t border-stone-200 p-3 sm:grid-cols-2">
           <div className="flex items-end gap-2 sm:col-span-2">
             <TextField
-              label={labels.title}
+              label={t(labels.title)}
               className="flex-1"
               value={item.title}
               maxLength={300}
@@ -160,37 +164,37 @@ function ItemCard({
             />
           </div>
           <TextField
-            label={labels.subtitle}
+            label={t(labels.subtitle)}
             className="sm:col-span-2"
             value={item.subtitle}
             maxLength={300}
             onChange={(subtitle) => set({ subtitle }, 'subtitle')}
           />
           <TextField
-            label={labels.dateRange}
+            label={t(labels.dateRange)}
             value={item.dateRange}
             maxLength={100}
-            placeholder="2022 – Present"
+            placeholder={t('entry.datePlaceholder')}
             onChange={(dateRange) => set({ dateRange }, 'dateRange')}
           />
           <TextField
-            label={labels.location}
+            label={t(labels.location)}
             value={item.location}
             maxLength={120}
             onChange={(location) => set({ location }, 'location')}
           />
           <TextField
-            label={labels.url}
+            label={t(labels.url)}
             type="url"
             className="sm:col-span-2"
             value={item.url}
             placeholder="https://"
-            error={urlError(item.url)}
+            error={errorText(t, urlError(item.url))}
             onChange={(url) => set({ url: url.trim() }, 'url')}
           />
           <div className="sm:col-span-2">
             <RichTextField
-              label={labels.description}
+              label={t(labels.description)}
               html={item.descriptionHtml}
               language={doc.language}
               accentColor={doc.layout.accentColor}
@@ -207,12 +211,13 @@ function ItemCard({
 
 /** Edit one section: its title, visibility, page break and entries. */
 export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProps) {
+  const t = useT();
   const updateActive = useResumeStore((s) => s.updateActive);
   const [openItems, setOpenItems] = useState<ReadonlySet<string>>(
     () => new Set(section.items.slice(0, 1).map((i) => i.id)),
   );
   const headingId = `section-${section.id}-heading`;
-  const title = section.title || 'Untitled section';
+  const title = section.title || t('section.untitled');
 
   const toggle = (id: string) =>
     setOpenItems((current) => {
@@ -227,8 +232,8 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
     const removed = section;
     updateActive((d) => removeSection(d, section.id));
     onSelectSection(null);
-    toast.info('Section deleted', `“${title}” was removed.`, {
-      label: 'Undo',
+    toast.info(t('section.deleted'), t('section.deletedBody', { name: title }), {
+      label: t('section.undo'),
       onClick: () => {
         updateActive((d) => insertSection(d, removed, index));
         onSelectSection(removed.id);
@@ -241,7 +246,7 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
       <PanelHeading
         id={headingId}
         title={title}
-        description={`${section.items.length} ${section.items.length === 1 ? 'entry' : 'entries'}${section.visible ? '' : ' · hidden on the page'}`}
+        description={`${t('section.entryCount', { count: section.items.length })}${section.visible ? '' : ` · ${t('section.hiddenNote')}`}`}
         actions={
           <>
             <Button
@@ -257,10 +262,10 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
                 onSelectSection(newId);
               }}
             >
-              <CopyIcon /> Duplicate
+              <CopyIcon /> {t('section.duplicate')}
             </Button>
             <Button size="sm" variant="danger-ghost" onClick={deleteSection}>
-              <TrashIcon /> Delete section
+              <TrashIcon /> {t('section.delete')}
             </Button>
           </>
         }
@@ -269,7 +274,7 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="flex items-end gap-2 sm:col-span-2">
           <TextField
-            label="Section title"
+            label={t('section.titleField')}
             className="flex-1"
             value={section.title}
             maxLength={120}
@@ -295,7 +300,7 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
               updateActive((d) => updateSection(d, section.id, { visible: e.target.checked }))
             }
           />
-          Show on the page
+          {t('section.show')}
         </label>
         <label className="flex items-center gap-2 text-sm">
           <input
@@ -306,20 +311,20 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
               updateActive((d) => updateSection(d, section.id, { breakBefore: e.target.checked }))
             }
           />
-          Start on a new page
+          {t('section.newPage')}
         </label>
       </div>
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-xs font-semibold text-stone-700">Entries</h3>
+        <h3 className="text-xs font-semibold text-stone-700">{t('section.entries')}</h3>
         {section.items.length === 0 ? (
-          <p className="text-sm text-stone-500">No entries yet.</p>
+          <p className="text-sm text-stone-500">{t('section.noEntries')}</p>
         ) : null}
         <SortableList
-          label={`Entries in ${title}`}
+          label={t('section.entriesIn', { name: title })}
           items={section.items}
           getId={(item) => item.id}
-          getLabel={(item) => item.title || 'Untitled entry'}
+          getLabel={(item) => item.title || t('entry.untitled')}
           onMove={(from, to) => updateActive((d) => moveItem(d, section.id, from, to))}
           className="flex flex-col gap-2"
           renderItem={(item, { handleProps, isDragging, isDropTarget }) => (
@@ -363,7 +368,7 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
             if (created) setOpenItems((current) => new Set(current).add(created));
           }}
         >
-          <PlusIcon /> Add entry
+          <PlusIcon /> {t('section.addEntry')}
         </Button>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { formatDateTime, formatTime } from '@/lib/datetime';
 import type { VersionSummary } from '@/lib/versions/repository';
 import type { SaveState } from '@/stores';
+import { useT } from '@/i18n';
 
 interface SaveIndicatorProps {
   readonly state: SaveState;
@@ -9,11 +10,13 @@ interface SaveIndicatorProps {
 
 /** "Saved · version 12 · 19:05:23", with the full date and time on hover. */
 export function SaveIndicator({ state, latest }: SaveIndicatorProps) {
+  const t = useT();
   let text = '';
-  if (state === 'unsaved') text = 'Unsaved changes';
-  else if (state === 'saving') text = 'Saving…';
-  else if (state === 'error') text = 'Not saved';
-  else if (latest) text = `Saved · version ${latest.number} · ${formatTime(latest.savedAt)}`;
+  if (state === 'unsaved') text = t('save.unsaved');
+  else if (state === 'saving') text = t('save.saving');
+  else if (state === 'error') text = t('save.error');
+  else if (latest)
+    text = t('save.saved', { number: latest.number, time: formatTime(latest.savedAt, t.locale) });
 
   return (
     <p
@@ -21,7 +24,10 @@ export function SaveIndicator({ state, latest }: SaveIndicatorProps) {
       aria-live="polite"
       title={
         latest && state !== 'error'
-          ? `Version ${latest.number}, saved ${formatDateTime(latest.savedAt)}`
+          ? t('save.savedTitle', {
+              number: latest.number,
+              when: formatDateTime(latest.savedAt, t.locale),
+            })
           : undefined
       }
       className={

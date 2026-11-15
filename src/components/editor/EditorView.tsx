@@ -17,6 +17,7 @@ import type { PageSlice } from '@/lib/pagination';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeLayout } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
+import { useT } from '@/i18n';
 
 import { EditorHeader } from './EditorHeader';
 import { Navigator, type Panel } from './Navigator';
@@ -32,6 +33,7 @@ import { SectionPanel } from './SectionPanel';
 export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
   const updateActive = useResumeStore((s) => s.updateActive);
   const [panel, setPanel] = useState<Panel>({ kind: 'profile' });
+  const t = useT();
   const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
   const [pages, setPages] = useState<PageSlice[] | null>(null);
   const [printPreview, setPrintPreview] = useState(false);
@@ -72,7 +74,7 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
 
       <div
         role="tablist"
-        aria-label="Editor view"
+        aria-label={t('editor.views')}
         className="flex gap-1 rounded-lg bg-stone-200/70 p-1 xl:hidden"
       >
         {(['edit', 'preview'] as const).map((tab) => (
@@ -87,7 +89,7 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
             )}
             onClick={() => setMobileTab(tab)}
           >
-            {tab === 'edit' ? 'Edit' : 'Preview'}
+            {tab === 'edit' ? t('editor.tabEdit') : t('editor.tabPreview')}
           </button>
         ))}
       </div>
@@ -116,8 +118,8 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
             <section aria-labelledby="page-heading" className="flex flex-col gap-5">
               <PanelHeading
                 id="page-heading"
-                title="Page setup"
-                description="Paper size, direction, fonts and spacing."
+                title={t('page.title')}
+                description={t('page.description')}
               />
               <PageSettings
                 layout={doc.layout}
@@ -141,19 +143,17 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
             <PageStack
               doc={doc}
               pages={pages}
-              label="Page preview"
+              label={t('pages.previewLabel')}
               selectedSectionId={panel.kind === 'section' ? panel.id : undefined}
               onSectionClick={(id) => select({ kind: 'section', id })}
               actions={
                 <Button size="sm" onClick={() => setPrintPreview(true)}>
-                  <PrinterIcon /> Print preview
+                  <PrinterIcon /> {t('pages.printPreview')}
                 </Button>
               }
             />
           </div>
-          <p className="mt-2 text-center text-xs text-stone-500">
-            Click a section on the page to edit it.
-          </p>
+          <p className="mt-2 text-center text-xs text-stone-500">{t('editor.clickToEdit')}</p>
         </div>
       </div>
     </div>

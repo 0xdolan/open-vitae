@@ -46,6 +46,7 @@ import { CODE_LANGUAGES } from '@/lib/highlight';
 import { imageFileToDataUrl, ImageError } from '@/lib/image';
 import { plainToHtml } from '@/lib/plain-text';
 import { cn } from '@/lib/utils';
+import { useT, type MessageKey } from '@/i18n';
 import { toast, useFontStore } from '@/stores';
 
 import type { ImageAlign } from './extensions';
@@ -93,6 +94,34 @@ function Group({ label, children }: { readonly label: string; readonly children:
   );
 }
 
+const BLOCK_LABELS: Readonly<Record<BlockStyleId, MessageKey>> = {
+  paragraph: 'tb.normal',
+  'heading-1': 'tb.heading',
+  'heading-2': 'tb.heading',
+  'heading-3': 'tb.heading',
+  'heading-4': 'tb.heading',
+  blockquote: 'tb.quote',
+  codeBlock: 'tb.codeBlock',
+};
+
+const PRESET_LABELS: Readonly<Record<TextPresetId, MessageKey>> = {
+  accent: 'tb.presetAccent',
+  muted: 'tb.presetMuted',
+  highlight: 'tb.presetHighlight',
+  small: 'tb.presetSmall',
+  large: 'tb.presetLarge',
+  keyword: 'tb.presetKeyword',
+};
+
+const EMOJI_GROUP_LABELS: Readonly<Record<string, MessageKey>> = {
+  work: 'tb.emojiWork',
+  study: 'tb.emojiStudy',
+  tech: 'tb.emojiTech',
+  contact: 'tb.emojiContact',
+  people: 'tb.emojiPeople',
+  symbols: 'tb.emojiSymbols',
+};
+
 const selectClass = 'h-8 rounded-md border border-stone-200 bg-white px-1.5 text-xs';
 
 function currentBlock(editor: Editor): BlockStyleId {
@@ -139,6 +168,7 @@ export function Toolbar({
   findOpen,
   onToggleFind,
 }: ToolbarProps) {
+  const t = useT();
   const [popover, setPopover] = useState<
     null | 'color' | 'highlight' | 'link' | 'table' | 'emoji' | 'image'
   >(null);
@@ -225,7 +255,7 @@ export function Toolbar({
     const textAlign = (editor.getAttributes('paragraph').textAlign as string | undefined) ?? null;
     const captured: PaintedFormat = { marks, textAlign };
     setPainter(captured);
-    toast.info('Formatting copied', 'Select the text to apply it to.');
+    toast.info(t('tb.painterCopied'), t('tb.painterBody'));
     // Apply once, on the next selection made with the mouse or keyboard.
     const dom = editor.view.dom;
     const apply = () => {
@@ -278,8 +308,8 @@ export function Toolbar({
         .run();
     } catch (error) {
       toast.error(
-        'Image not added',
-        error instanceof ImageError ? error.message : 'The image could not be read.',
+        t('tb.imageNotAdded'),
+        error instanceof ImageError ? error.message : t('tb.imageUnreadable'),
       );
     }
   };
@@ -295,10 +325,7 @@ export function Toolbar({
       const text = await navigator.clipboard.readText();
       chain().insertContent(plainToHtml(text)).run();
     } catch {
-      toast.info(
-        'Use the keyboard to paste',
-        `The browser did not allow reading the clipboard. Press ${MOD}+V instead.`,
-      );
+      toast.info(t('tb.pasteTitle'), t('tb.pasteBody', { keys: `${MOD}+V` }));
     }
   };
 
@@ -307,12 +334,12 @@ export function Toolbar({
   return (
     <div
       role="group"
-      aria-label="Formatting"
+      aria-label={t('tb.formatting')}
       className="flex flex-wrap items-center gap-1 border-b border-stone-200 bg-stone-50 p-1.5"
     >
-      <Group label="History">
+      <Group label={t('tb.history')}>
         <ToolButton
-          label="Undo"
+          label={t('tb.undo')}
           shortcut={`${MOD}+Z`}
           disabled={!state.canUndo}
           onClick={() => chain().undo().run()}
@@ -320,7 +347,7 @@ export function Toolbar({
           <UndoIcon />
         </ToolButton>
         <ToolButton
-          label="Redo"
+          label={t('tb.redo')}
           shortcut={`${MOD}+Shift+Z`}
           disabled={!state.canRedo}
           onClick={() => chain().redo().run()}
@@ -329,21 +356,21 @@ export function Toolbar({
         </ToolButton>
       </Group>
 
-      <Group label="Text style">
+      <Group label={t('tb.textStyle')}>
         <select
-          aria-label="Paragraph style"
+          aria-label={t('tb.paragraphStyle')}
           className={selectClass}
           value={state.block}
           onChange={(e) => applyBlock(editor, e.target.value as BlockStyleId)}
         >
           {BLOCK_STYLES.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.label}
+              {t(BLOCK_LABELS[s.id], { level: s.id.slice(-1) })}
             </option>
           ))}
         </select>
         <select
-          aria-label="Font"
+          aria-label={t('tb.font')}
           className={cn(selectClass, 'max-w-32')}
           value={state.fontFamily}
           onChange={(e) =>
@@ -352,7 +379,7 @@ export function Toolbar({
               : chain().unsetFontFamily().run()
           }
         >
-          <option value="">Default font</option>
+          <option value="">{t('tb.defaultFont')}</option>
           {fontChoices.map((family) => (
             <option key={family} value={family}>
               {family}
@@ -360,7 +387,7 @@ export function Toolbar({
           ))}
         </select>
         <select
-          aria-label="Font size"
+          aria-label={t('tb.fontSize')}
           className={selectClass}
           value={state.fontSize}
           onChange={(e) =>
@@ -369,15 +396,15 @@ export function Toolbar({
               : chain().unsetFontSize().run()
           }
         >
-          <option value="">Size</option>
+          <option value="">{t('tb.size')}</option>
           {FONT_SIZES_PT.map((size) => (
             <option key={size} value={`${size}pt`}>
-              {size} pt
+              {t('tb.pt', { size })}
             </option>
           ))}
         </select>
         <select
-          aria-label="Line height"
+          aria-label={t('tb.lineHeight')}
           className={selectClass}
           value={state.lineHeight}
           onChange={(e) =>
@@ -386,7 +413,7 @@ export function Toolbar({
               : chain().unsetLineHeight().run()
           }
         >
-          <option value="">Spacing</option>
+          <option value="">{t('tb.spacing')}</option>
           {LINE_HEIGHTS.map((value) => (
             <option key={value} value={value}>
               {value}
@@ -395,9 +422,9 @@ export function Toolbar({
         </select>
       </Group>
 
-      <Group label="Character formatting">
+      <Group label={t('tb.character')}>
         <ToolButton
-          label="Bold"
+          label={t('tb.bold')}
           shortcut={`${MOD}+B`}
           active={state.bold}
           onClick={() => chain().toggleBold().run()}
@@ -405,7 +432,7 @@ export function Toolbar({
           <strong>B</strong>
         </ToolButton>
         <ToolButton
-          label="Italic"
+          label={t('tb.italic')}
           shortcut={`${MOD}+I`}
           active={state.italic}
           onClick={() => chain().toggleItalic().run()}
@@ -413,7 +440,7 @@ export function Toolbar({
           <em className="font-serif">I</em>
         </ToolButton>
         <ToolButton
-          label="Underline"
+          label={t('tb.underline')}
           shortcut={`${MOD}+U`}
           active={state.underline}
           onClick={() => chain().toggleUnderline().run()}
@@ -421,7 +448,7 @@ export function Toolbar({
           <span className="underline">U</span>
         </ToolButton>
         <ToolButton
-          label="Strikethrough"
+          label={t('tb.strike')}
           shortcut={`${MOD}+Shift+S`}
           active={state.strike}
           onClick={() => chain().toggleStrike().run()}
@@ -429,7 +456,7 @@ export function Toolbar({
           <span className="line-through">S</span>
         </ToolButton>
         <ToolButton
-          label="Subscript"
+          label={t('tb.subscript')}
           shortcut={`${MOD}+,`}
           active={state.sub}
           onClick={() => chain().toggleSubscript().run()}
@@ -439,7 +466,7 @@ export function Toolbar({
           </span>
         </ToolButton>
         <ToolButton
-          label="Superscript"
+          label={t('tb.superscript')}
           shortcut={`${MOD}+.`}
           active={state.sup}
           onClick={() => chain().toggleSuperscript().run()}
@@ -449,7 +476,7 @@ export function Toolbar({
           </span>
         </ToolButton>
         <ToolButton
-          label="Inline code"
+          label={t('tb.inlineCode')}
           shortcut={`${MOD}+E`}
           active={state.code}
           onClick={() => chain().toggleCode().run()}
@@ -458,9 +485,9 @@ export function Toolbar({
         </ToolButton>
       </Group>
 
-      <Group label="Colour">
+      <Group label={t('tb.colour')}>
         <Popover
-          label="Text colour"
+          label={t('tb.textColour')}
           open={popover === 'color'}
           onOpenChange={(o) => setPopover(o ? 'color' : null)}
           trigger={
@@ -484,7 +511,7 @@ export function Toolbar({
           />
         </Popover>
         <Popover
-          label="Highlight colour"
+          label={t('tb.highlightColour')}
           open={popover === 'highlight'}
           onOpenChange={(o) => setPopover(o ? 'highlight' : null)}
           trigger={
@@ -510,64 +537,60 @@ export function Toolbar({
           />
         </Popover>
         <select
-          aria-label="Text presets"
+          aria-label={t('tb.presets')}
           className={selectClass}
           value=""
           onChange={(e) => applyPreset(e.target.value as TextPresetId)}
         >
-          <option value="">Presets</option>
+          <option value="">{t('tb.presetsShort')}</option>
           {TEXT_PRESETS.map((p) => (
             <option key={p.id} value={p.id}>
-              {p.label}
+              {t(PRESET_LABELS[p.id])}
             </option>
           ))}
         </select>
-        <ToolButton
-          label="Copy formatting (format painter)"
-          active={painter !== null}
-          onClick={togglePainter}
-        >
+        <ToolButton label={t('tb.painter')} active={painter !== null} onClick={togglePainter}>
           <BrushIcon />
         </ToolButton>
         <ToolButton
-          label="Clear formatting"
+          label={t('tb.clear')}
           onClick={() => chain().unsetAllMarks().clearNodes().run()}
         >
           <EraserIcon />
         </ToolButton>
       </Group>
 
-      <Group label="Paragraph">
+      <Group label={t('tb.paragraph')}>
         <ToolButton
-          label="Align left"
+          label={t('tb.alignLeft')}
           active={state.align === 'left'}
           onClick={() => chain().setTextAlign('left').run()}
         >
           <AlignLeftIcon />
         </ToolButton>
         <ToolButton
-          label="Centre"
+          label={t('tb.centre')}
           active={state.align === 'center'}
           onClick={() => chain().setTextAlign('center').run()}
         >
           <AlignCenterIcon />
         </ToolButton>
         <ToolButton
-          label="Align right"
+          label={t('tb.alignRight')}
           active={state.align === 'right'}
           onClick={() => chain().setTextAlign('right').run()}
         >
           <AlignRightIcon />
         </ToolButton>
         <ToolButton
-          label="Justify"
+          label={t('tb.justify')}
           active={state.align === 'justify'}
           onClick={() => chain().setTextAlign('justify').run()}
         >
           <AlignJustifyIcon />
         </ToolButton>
         <ToolButton
-          label="Left-to-right paragraph"
+          label={t('tb.ltr')}
           active={state.dir === 'ltr'}
           onClick={() =>
             chain()
@@ -578,7 +601,7 @@ export function Toolbar({
           <span className="text-[10px] font-bold">LTR</span>
         </ToolButton>
         <ToolButton
-          label="Right-to-left paragraph"
+          label={t('tb.rtl')}
           active={state.dir === 'rtl'}
           onClick={() =>
             chain()
@@ -590,9 +613,9 @@ export function Toolbar({
         </ToolButton>
       </Group>
 
-      <Group label="Lists and indent">
+      <Group label={t('tb.lists')}>
         <ToolButton
-          label="Bulleted list"
+          label={t('tb.bullets')}
           shortcut={`${MOD}+Shift+8`}
           active={state.bullet}
           onClick={() => chain().toggleBulletList().run()}
@@ -600,7 +623,7 @@ export function Toolbar({
           <ListIcon />
         </ToolButton>
         <ToolButton
-          label="Numbered list"
+          label={t('tb.numbers')}
           shortcut={`${MOD}+Shift+7`}
           active={state.ordered}
           onClick={() => chain().toggleOrderedList().run()}
@@ -608,30 +631,30 @@ export function Toolbar({
           <ListOrderedIcon />
         </ToolButton>
         <ToolButton
-          label="Decrease indent"
+          label={t('tb.outdent')}
           shortcut="Shift+Tab"
           onClick={() => chain().outdent().run()}
         >
           <OutdentIcon className="rtl:-scale-x-100" />
         </ToolButton>
-        <ToolButton label="Increase indent" shortcut="Tab" onClick={() => chain().indent().run()}>
+        <ToolButton label={t('tb.indent')} shortcut="Tab" onClick={() => chain().indent().run()}>
           <IndentIcon className="rtl:-scale-x-100" />
         </ToolButton>
         <ToolButton
-          label="Quote"
+          label={t('tb.quote')}
           active={state.block === 'blockquote'}
           onClick={() => chain().toggleBlockquote().run()}
         >
           <QuoteIcon />
         </ToolButton>
-        <ToolButton label="Horizontal line" onClick={() => chain().setHorizontalRule().run()}>
+        <ToolButton label={t('tb.rule')} onClick={() => chain().setHorizontalRule().run()}>
           <MinusIcon />
         </ToolButton>
       </Group>
 
-      <Group label="Insert">
+      <Group label={t('tb.insert')}>
         <Popover
-          label={state.link ? 'Edit link' : 'Add link'}
+          label={state.link ? t('tb.editLink') : t('tb.addLink')}
           active={state.link}
           open={popover === 'link'}
           onOpenChange={(o) => {
@@ -648,7 +671,7 @@ export function Toolbar({
             }}
           >
             <label className="text-xs font-semibold" htmlFor="ov-link-url">
-              Link address
+              {t('tb.linkAddress')}
             </label>
             <input
               id="ov-link-url"
@@ -661,7 +684,9 @@ export function Toolbar({
               onChange={(e) => setLinkUrl(e.target.value)}
             />
             {linkUrl && urlError(linkUrl.trim()) ? (
-              <p className="text-xs text-red-700">{urlError(linkUrl.trim())}</p>
+              <p className="text-xs text-red-700">
+                {t(urlError(linkUrl.trim()) ?? 'validation.url')}
+              </p>
             ) : null}
             <div className="flex justify-end gap-2">
               {state.link ? (
@@ -673,21 +698,21 @@ export function Toolbar({
                     close();
                   }}
                 >
-                  Remove link
+                  {t('tb.removeLink')}
                 </button>
               ) : null}
               <button
                 type="submit"
                 className="bg-brand rounded-md px-3 py-1 font-medium text-white"
               >
-                Apply
+                {t('tb.apply')}
               </button>
             </div>
           </form>
         </Popover>
 
         <Popover
-          label="Table"
+          label={t('tb.table')}
           active={state.table}
           open={popover === 'table'}
           onOpenChange={(o) => setPopover(o ? 'table' : null)}
@@ -697,17 +722,17 @@ export function Toolbar({
             <div className="grid grid-cols-2 gap-1">
               {(
                 [
-                  ['Row above', () => chain().addRowBefore().run()],
-                  ['Row below', () => chain().addRowAfter().run()],
-                  ['Column before', () => chain().addColumnBefore().run()],
-                  ['Column after', () => chain().addColumnAfter().run()],
-                  ['Delete row', () => chain().deleteRow().run()],
-                  ['Delete column', () => chain().deleteColumn().run()],
-                  ['Merge cells', () => chain().mergeCells().run()],
-                  ['Split cell', () => chain().splitCell().run()],
-                  ['Header row', () => chain().toggleHeaderRow().run()],
+                  [t('tb.rowAbove'), () => chain().addRowBefore().run()],
+                  [t('tb.rowBelow'), () => chain().addRowAfter().run()],
+                  [t('tb.columnBefore'), () => chain().addColumnBefore().run()],
+                  [t('tb.columnAfter'), () => chain().addColumnAfter().run()],
+                  [t('tb.deleteRow'), () => chain().deleteRow().run()],
+                  [t('tb.deleteColumn'), () => chain().deleteColumn().run()],
+                  [t('tb.mergeCells'), () => chain().mergeCells().run()],
+                  [t('tb.splitCell'), () => chain().splitCell().run()],
+                  [t('tb.headerRow'), () => chain().toggleHeaderRow().run()],
                   [
-                    state.tableBorderless ? 'Show borders' : 'Hide borders',
+                    state.tableBorderless ? t('tb.showBorders') : t('tb.hideBorders'),
                     () =>
                       chain()
                         .updateAttributes('table', { borderless: !state.tableBorderless })
@@ -732,7 +757,7 @@ export function Toolbar({
                   close();
                 }}
               >
-                Delete table
+                {t('tb.deleteTable')}
               </button>
             </div>
           ) : (
@@ -748,7 +773,7 @@ export function Toolbar({
             >
               <div className="flex gap-2">
                 <label className="flex flex-1 flex-col text-xs font-semibold">
-                  Rows
+                  {t('tb.rows')}
                   <input
                     type="number"
                     min={1}
@@ -764,7 +789,7 @@ export function Toolbar({
                   />
                 </label>
                 <label className="flex flex-1 flex-col text-xs font-semibold">
-                  Columns
+                  {t('tb.columns')}
                   <input
                     type="number"
                     min={1}
@@ -784,14 +809,14 @@ export function Toolbar({
                 type="submit"
                 className="bg-brand rounded-md px-3 py-1.5 font-medium text-white"
               >
-                Insert table
+                {t('tb.insertTable')}
               </button>
             </form>
           )}
         </Popover>
 
         <Popover
-          label="Image"
+          label={t('tb.image')}
           active={state.image}
           open={popover === 'image'}
           onOpenChange={(o) => setPopover(o ? 'image' : null)}
@@ -803,14 +828,12 @@ export function Toolbar({
               className="bg-brand rounded-md px-3 py-1.5 font-medium text-white"
               onClick={() => fileInput.current?.click()}
             >
-              Choose an image…
+              {t('tb.chooseImage')}
             </button>
-            <p className="text-xs text-stone-500">
-              PNG, JPEG, WebP or GIF. Large images are shrunk; the file stays on this device.
-            </p>
+            <p className="text-xs text-stone-500">{t('tb.imageHint')}</p>
             {state.image ? (
               <>
-                <p className="text-xs font-semibold">Selected image</p>
+                <p className="text-xs font-semibold">{t('tb.selectedImage')}</p>
                 <div className="flex gap-1">
                   {(['start', 'center', 'end'] as const).map((align) => (
                     <button
@@ -824,7 +847,13 @@ export function Toolbar({
                       )}
                       onClick={() => chain().updateAttributes('image', { align }).run()}
                     >
-                      {align === 'start' ? 'Start' : align === 'center' ? 'Centre' : 'End'}
+                      {t(
+                        align === 'start'
+                          ? 'tb.start'
+                          : align === 'center'
+                            ? 'tb.centre'
+                            : 'tb.end',
+                      )}
                     </button>
                   ))}
                 </div>
@@ -864,7 +893,7 @@ export function Toolbar({
         />
 
         <Popover
-          label="Emoji"
+          label={t('tb.emoji')}
           open={popover === 'emoji'}
           onOpenChange={(o) => setPopover(o ? 'emoji' : null)}
           trigger={<SmileIcon />}
@@ -872,8 +901,8 @@ export function Toolbar({
         >
           <input
             type="search"
-            aria-label="Search emoji"
-            placeholder="Search, e.g. award, cloud, phone"
+            aria-label={t('tb.searchEmoji')}
+            placeholder={t('tb.emojiPlaceholder')}
             autoFocus
             className="mb-2 h-8 w-full rounded-md border border-stone-300 px-2"
             value={emojiQuery}
@@ -881,11 +910,15 @@ export function Toolbar({
           />
           <div className="max-h-60 overflow-auto">
             {(emojis
-              ? [{ id: 'results', label: `${emojis.length} found`, emojis }]
+              ? [{ id: 'results', label: t('tb.emojiFound', { count: emojis.length }), emojis }]
               : EMOJI_GROUPS
             ).map((group) => (
               <div key={group.id} className="mb-2">
-                <p className="mb-1 text-xs font-semibold text-stone-500">{group.label}</p>
+                <p className="mb-1 text-xs font-semibold text-stone-500">
+                  {EMOJI_GROUP_LABELS[group.id]
+                    ? t(EMOJI_GROUP_LABELS[group.id] as MessageKey)
+                    : group.label}
+                </p>
                 <div className="grid grid-cols-8 gap-0.5">
                   {group.emojis.map((emoji) => (
                     <button
@@ -904,12 +937,12 @@ export function Toolbar({
             ))}
           </div>
           <p className="mt-1 text-xs text-stone-500">
-            More emoji: {isMac ? 'Ctrl+⌘+Space' : 'Win+.'}
+            {t('tb.moreEmoji', { keys: isMac ? 'Ctrl+⌘+Space' : 'Win+.' })}
           </p>
         </Popover>
 
         <ToolButton
-          label="Code block"
+          label={t('tb.codeBlock')}
           shortcut={`${MOD}+Alt+C`}
           active={state.codeBlock}
           onClick={() => chain().toggleCodeBlock().run()}
@@ -918,7 +951,7 @@ export function Toolbar({
         </ToolButton>
         {state.codeBlock ? (
           <select
-            aria-label="Code language"
+            aria-label={t('tb.codeLanguage')}
             className={selectClass}
             value={state.codeLanguage}
             onChange={(e) =>
@@ -934,15 +967,19 @@ export function Toolbar({
         ) : null}
       </Group>
 
-      <Group label="Clipboard">
-        <ToolButton label="Cut" shortcut={`${MOD}+X`} onClick={() => void clipboard('cut')}>
+      <Group label={t('tb.clipboard')}>
+        <ToolButton label={t('tb.cut')} shortcut={`${MOD}+X`} onClick={() => void clipboard('cut')}>
           <ScissorsIcon />
         </ToolButton>
-        <ToolButton label="Copy" shortcut={`${MOD}+C`} onClick={() => void clipboard('copy')}>
+        <ToolButton
+          label={t('tb.copy')}
+          shortcut={`${MOD}+C`}
+          onClick={() => void clipboard('copy')}
+        >
           <CopyIcon />
         </ToolButton>
         <ToolButton
-          label="Paste as plain text"
+          label={t('tb.paste')}
           shortcut={`${MOD}+Shift+V`}
           onClick={() => void clipboard('paste')}
         >
@@ -950,16 +987,16 @@ export function Toolbar({
         </ToolButton>
       </Group>
 
-      <Group label="Tools">
+      <Group label={t('tb.tools')}>
         <ToolButton
-          label="Find and replace"
+          label={t('find.label')}
           shortcut={`${MOD}+F`}
           active={findOpen}
           onClick={onToggleFind}
         >
           <SearchIcon />
         </ToolButton>
-        <ToolButton label="Spell check" active={spellcheck} onClick={onToggleSpellcheck}>
+        <ToolButton label={t('tb.spellcheck')} active={spellcheck} onClick={onToggleSpellcheck}>
           <SpellcheckIcon />
         </ToolButton>
       </Group>
@@ -978,6 +1015,7 @@ function ColorChoices({
   readonly onPick: (color: string) => void;
   readonly onClear: () => void;
 }) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-2">
       <div className="grid grid-cols-7 gap-1">
@@ -985,7 +1023,7 @@ function ColorChoices({
           <button
             key={`${color}-${i}`}
             type="button"
-            aria-label={`Colour ${color}`}
+            aria-label={t('tb.colourValue', { value: color })}
             title={color}
             className={cn(
               'size-7 rounded border',
@@ -998,7 +1036,7 @@ function ColorChoices({
       </div>
       <div className="flex items-center gap-2">
         <label className="flex items-center gap-2 text-xs font-semibold">
-          Custom
+          {t('tb.custom')}
           <input
             type="color"
             className="h-8 w-12 cursor-pointer rounded border border-stone-300"
@@ -1011,7 +1049,7 @@ function ColorChoices({
           className="ms-auto rounded px-2 py-1 text-xs hover:bg-stone-100"
           onClick={onClear}
         >
-          Remove colour
+          {t('tb.removeColour')}
         </button>
       </div>
     </div>

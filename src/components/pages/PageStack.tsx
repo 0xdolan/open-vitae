@@ -8,6 +8,7 @@ import { pageWidthPx } from '@/lib/page-geometry';
 import type { PageSlice } from '@/lib/pagination';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument } from '@/schema/resume';
+import { useT } from '@/i18n';
 
 import { PageSheet } from './PageSheet';
 
@@ -32,17 +33,10 @@ function PageNote({
   readonly slice: PageSlice;
   readonly mode: 'smart' | 'manual';
 }) {
+  const t = useT();
   const notes: string[] = [];
-  if (slice.tooTall) {
-    notes.push(
-      'Part of this page is cut off: one block is taller than a page. Shorten it, or use smaller text or margins.',
-    );
-  }
-  if (slice.continued && mode === 'manual') {
-    notes.push(
-      'The previous page was full, so the content continued here. Add a page break where you want the page to end.',
-    );
-  }
+  if (slice.tooTall) notes.push(t('pages.tooTall'));
+  if (slice.continued && mode === 'manual') notes.push(t('pages.continued'));
   if (notes.length === 0) return null;
   return (
     <p className="flex max-w-prose items-start gap-1.5 text-start text-xs text-amber-800">
@@ -67,6 +61,7 @@ export function PageStack({
   selectedSectionId,
   onSectionClick,
 }: PageStackProps) {
+  const t = useT();
   const frameRef = useRef<HTMLDivElement>(null);
   const zoomId = useId();
   const [zoom, setZoom] = useState<Zoom>('fit');
@@ -92,21 +87,21 @@ export function PageStack({
     <div className={cn('flex min-h-0 flex-col gap-3', className)}>
       <div
         role="toolbar"
-        aria-label={`${label} zoom`}
+        aria-label={t('pages.zoomToolbar', { label })}
         className="flex flex-wrap items-center gap-1.5 text-xs text-stone-600"
       >
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Zoom out"
-          title="Zoom out"
+          aria-label={t('pages.zoomOut')}
+          title={t('pages.zoomOut')}
           disabled={effective <= MIN_ZOOM}
           onClick={() => setZoom(stepZoom(effective, -1))}
         >
           <ZoomOutIcon />
         </Button>
         <label htmlFor={zoomId} className="sr-only">
-          Zoom
+          {t('pages.zoom')}
         </label>
         <select
           id={zoomId}
@@ -114,7 +109,7 @@ export function PageStack({
           value={zoom === 'fit' ? 'fit' : String(zoom)}
           onChange={(e) => setZoom(e.target.value === 'fit' ? 'fit' : Number(e.target.value))}
         >
-          <option value="fit">Fit width ({formatZoom(fitZoom)})</option>
+          <option value="fit">{t('pages.fit', { zoom: formatZoom(fitZoom) })}</option>
           {ZOOM_STEPS.includes(effective as (typeof ZOOM_STEPS)[number]) ||
           zoom === 'fit' ? null : (
             <option value={String(effective)}>{formatZoom(effective)}</option>
@@ -128,17 +123,17 @@ export function PageStack({
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Zoom in"
-          title="Zoom in"
+          aria-label={t('pages.zoomIn')}
+          title={t('pages.zoomIn')}
           disabled={effective >= MAX_ZOOM}
           onClick={() => setZoom(stepZoom(effective, 1))}
         >
           <ZoomInIcon />
         </Button>
         <span className="ms-1" aria-live="polite">
-          {total === 1 ? '1 page' : `${total} pages`} · {size.label}{' '}
-          {doc.layout.orientation === 'landscape' ? 'landscape' : ''}
-          {doc.layout.pageBreaks === 'manual' ? ' · manual breaks' : ''}
+          {t('pages.count', { count: total })} · {size.label}
+          {doc.layout.orientation === 'landscape' ? ` ${t('pages.landscape')}` : ''}
+          {doc.layout.pageBreaks === 'manual' ? ` · ${t('pages.manual')}` : ''}
         </span>
         {actions ? <span className="ms-auto flex items-center gap-1.5">{actions}</span> : null}
       </div>
@@ -163,7 +158,7 @@ export function PageStack({
               />
               <div className="flex flex-col items-center gap-1" style={{ zoom: 1 / effective }}>
                 <span className="text-xs text-stone-500">
-                  Page {index + 1} of {total}
+                  {t('pages.pageOf', { number: index + 1, total })}
                 </span>
                 <PageNote slice={slice} mode={doc.layout.pageBreaks} />
               </div>
