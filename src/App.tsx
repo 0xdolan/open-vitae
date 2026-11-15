@@ -5,6 +5,7 @@ import { ResumeLibrary } from '@/components/library/ResumeLibrary';
 import { SampleGallery } from '@/components/library/SampleGallery';
 import { StorageNotice } from '@/components/StorageNotice';
 import { Button } from '@/components/ui/button';
+import { Toaster } from '@/components/ui/Toaster';
 import { Workspace } from '@/components/workspace/Workspace';
 import { selectActiveResume, useResumeStore } from '@/stores';
 
@@ -90,10 +91,12 @@ export function App() {
         </Button>
       </footer>
 
+      <Toaster />
+
       <ConfirmDialog
         open={confirmClear}
         title="Delete all data?"
-        description="Every resume, draft and setting stored by Open Vitae in this browser will be removed. This cannot be undone."
+        description="Every resume, every saved version, every draft and setting stored by Open Vitae in this browser will be removed. This cannot be undone. Export backups first if you might need them."
         confirmLabel="Delete everything"
         onCancel={() => setConfirmClear(false)}
         onConfirm={() => {
