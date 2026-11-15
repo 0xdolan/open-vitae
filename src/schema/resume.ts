@@ -1,7 +1,13 @@
 import { z } from 'zod';
 
 import { TEXT_DIRECTIONS } from '@/config/fonts';
-import { HORIZONTAL_ALIGNS, LIMITS, PAGE_BREAK_MODES, PHOTO_SHAPES } from '@/config/layout';
+import {
+  DIGIT_SYSTEMS,
+  HORIZONTAL_ALIGNS,
+  LIMITS,
+  PAGE_BREAK_MODES,
+  PHOTO_SHAPES,
+} from '@/config/layout';
 import { ORIENTATIONS, PAGE_SIZE_IDS } from '@/config/page-sizes';
 import { SECTION_KINDS } from '@/config/sections';
 
@@ -163,6 +169,8 @@ export const layoutSchema = z.object({
   maxDepth: z.number().int().min(LIMITS.maxDepth.min).max(LIMITS.maxDepth.max).nullable(),
   /** Show small icons before the email, phone, location and links. Optional; off when absent. */
   showContactIcons: z.boolean().optional(),
+  /** Digits the resume is drawn with; absent means "as typed". Links, email and phone are never changed. */
+  digits: z.enum(DIGIT_SYSTEMS).optional(),
 });
 
 /** Collect every id in a document so duplicates can be rejected. */

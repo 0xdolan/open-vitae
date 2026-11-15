@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
+  CalendarIcon,
   ChevronIcon,
   CopyIcon,
   EyeIcon,
@@ -34,6 +35,7 @@ import { toast, useResumeStore } from '@/stores';
 import { IconPicker } from '@/components/icons/IconPicker';
 import { RichTextField } from '@/components/rich-text/RichTextField';
 import { errorText, useT } from '@/i18n';
+import { DateRangeDialog } from './DateRangeDialog';
 import { PanelHeading } from './PanelHeading';
 
 interface SectionPanelProps {
@@ -62,6 +64,7 @@ function ItemCard({
 }) {
   const updateActive = useResumeStore((s) => s.updateActive);
   const t = useT();
+  const [datesOpen, setDatesOpen] = useState(false);
   const labels = itemFieldLabels(section.kind);
   const set = (patch: Partial<Omit<ResumeItem, 'id'>>, field: string) =>
     updateActive((d) => updateItem(d, section.id, item.id, patch), {
@@ -170,13 +173,35 @@ function ItemCard({
             maxLength={300}
             onChange={(subtitle) => set({ subtitle }, 'subtitle')}
           />
-          <TextField
-            label={t(labels.dateRange)}
-            value={item.dateRange}
-            maxLength={100}
-            placeholder={t('entry.datePlaceholder')}
-            onChange={(dateRange) => set({ dateRange }, 'dateRange')}
-          />
+          <div className="flex items-end gap-2">
+            <TextField
+              label={t(labels.dateRange)}
+              className="flex-1"
+              value={item.dateRange}
+              maxLength={100}
+              placeholder={t('entry.datePlaceholder')}
+              onChange={(dateRange) => set({ dateRange }, 'dateRange')}
+            />
+            <Button
+              size="sm"
+              className="mb-0.5 shrink-0"
+              aria-label={t('entry.dateHelper')}
+              title={t('entry.dateHelper')}
+              onClick={() => setDatesOpen(true)}
+            >
+              <CalendarIcon />
+            </Button>
+            <DateRangeDialog
+              open={datesOpen}
+              language={doc.language}
+              digits={doc.layout.digits}
+              onCancel={() => setDatesOpen(false)}
+              onUse={(dateRange) => {
+                setDatesOpen(false);
+                updateActive((d) => updateItem(d, section.id, item.id, { dateRange }));
+              }}
+            />
+          </div>
           <TextField
             label={t(labels.location)}
             value={item.location}

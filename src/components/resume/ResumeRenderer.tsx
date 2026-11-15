@@ -5,6 +5,7 @@ import { SafeHtml } from '@/components/SafeHtml';
 import { CONTACT_ICONS } from '@/config/icon-sets';
 import { fontStack } from '@/config/fonts';
 import { PHOTO_RADIUS } from '@/config/layout';
+import { applyDigits } from '@/lib/digits';
 import { isValidEmail } from '@/lib/field-validation';
 import { isSafeUrl, telUrl } from '@/lib/url';
 import { cn } from '@/lib/utils';
@@ -268,11 +269,13 @@ interface ResumeRendererProps {
  * logical CSS. Every block that pagination may move is marked with data-ov-b.
  */
 export function ResumeRenderer({
-  doc,
+  doc: source,
   selectedSectionId,
   onSectionClick,
   pageBlocks,
 }: ResumeRendererProps) {
+  // Digits are a drawing choice: the stored resume keeps what was typed.
+  const doc = useMemo(() => applyDigits(source), [source]);
   const { layout, profile } = doc;
   const pageKey = pageBlocks?.join('|');
   const filter = useMemo<PageFilter | null>(
