@@ -1,6 +1,6 @@
 # Photos and icons
 
-Previous: [Pages and printing](11-pages-and-printing.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Pages and printing](11-pages-and-printing.md) · Next: [Import and export](13-import-and-export.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -118,4 +118,4 @@ The sets together hold more than 50,000 icons, so they are never all downloaded:
 
 ---
 
-Previous: [Pages and printing](11-pages-and-printing.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Pages and printing](11-pages-and-printing.md) · Next: [Import and export](13-import-and-export.md) · [Docs home](README.md) · [Main README](../README.md)

@@ -4,7 +4,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 7 of 11. A profile photo with cropping, a print-size guide, shape, width and position; more than 50,000 searchable icons from Lucide and react-icons for sections, entries, links and the contact line; real pages with smart or manual page breaks, 13 paper sizes, zoom and a print preview that prints exactly what you see; bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with Persian, Arabic and Kurdish (Sorani) samples; a full rich text editor; drag-and-drop sections with undo; autosave with a full version history; JSON backups. Import and export formats arrive in phase 8. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 8 of 11. Export to PDF, Word, InDesign, PNG, JPG and SVG at the resolution you choose, and import and export JSON, Excel, CSV and Markdown, with downloadable templates; a profile photo with cropping, a print-size guide, shape, width and position; more than 50,000 searchable icons from Lucide and react-icons for sections, entries, links and the contact line; real pages with smart or manual page breaks, 13 paper sizes, zoom and a print preview that prints exactly what you see; bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with Persian, Arabic and Kurdish (Sorani) samples; a full rich text editor; drag-and-drop sections with undo; autosave with a full version history. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -25,7 +25,7 @@ A free, open-source resume builder that runs entirely in your browser. No accoun
 - **Arrange freely.** Drag sections and entries with a mouse, finger or the keyboard.
 - **Real bidirectional text.** Persian, Arabic, Kurdish, Urdu and Hebrew sit next to English correctly.
 - **Print-accurate pages.** A4 by default, plus Letter, A3, A5, B5, Legal, Tabloid and Executive.
-- **Open formats.** Planned import and export: JSON, CSV, Excel, Markdown, PDF, Word, IDML, PNG, JPG, SVG.
+- **Open formats.** Export to PDF, Word, InDesign (ICML), PNG, JPG and SVG; import and export JSON, CSV, Excel and Markdown; templates to fill in.
 - **Installable.** Works offline as a progressive web app.
 
 ## Quick start
@@ -101,6 +101,7 @@ open-vitae/
 11. [Fonts and right-to-left text](docs/10-fonts.md)
 12. [Pages and printing](docs/11-pages-and-printing.md)
 13. [Photos and icons](docs/12-photos-and-icons.md)
+14. [Import and export](docs/13-import-and-export.md)
 
 ## Contributing
 

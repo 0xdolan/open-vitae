@@ -18,6 +18,7 @@
 | 10  | [Fonts and right-to-left text](10-fonts.md) | Bundled, user and Google fonts, missing fonts, RTL resumes |
 | 11  | [Pages and printing](11-pages-and-printing.md) | Paper sizes, zoom, smart and manual page breaks, print preview |
 | 12  | [Photos and icons](12-photos-and-icons.md) | Photo crop and size guide, icon sets, search and licences |
+| 13  | [Import and export](13-import-and-export.md) | PDF, Word, InDesign, images and data formats; import, templates, safety |
 
 ## Conventions used in these pages
 

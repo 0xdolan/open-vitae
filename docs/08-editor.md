@@ -31,7 +31,7 @@ Hash addresses work on GitHub Pages and any static server with no rewrite rules.
 | 1024–1279 px          | Navigator and form side by side; Edit and Preview tabs       |
 | Narrower              | Everything stacked; Edit and Preview tabs                    |
 
-The navigator sits on the reading-start side and the preview on the reading-end side, so in a right-to-left browser the layout mirrors. The header holds the resume name, the save status ("Saved · version 12 · 19:05:23"), undo, redo and **Export JSON**.
+The navigator sits on the reading-start side and the preview on the reading-end side, so in a right-to-left browser the layout mirrors. The header holds the resume name, the save status ("Saved · version 12 · 19:05:23"), undo, redo and **Export** (PDF, Word, InDesign, images and data formats; see [Import and export](13-import-and-export.md)).
 
 Clicking a section in the preview opens it in the form, and the section being edited is outlined on the page. The preview shows real pages with zoom and a print preview; see [Pages and printing](11-pages-and-printing.md).
 

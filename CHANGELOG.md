@@ -8,6 +8,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Export window with PDF, Word (.docx), InDesign (.icml), PNG, JPG, SVG, JSON, Excel (.xlsx), CSV and Markdown.
+- PDF export with pdf-lib: exact paper size, pages as in the preview at 72, 150, 300 (default) or 600 DPI, clickable links, document details and a searchable text layer for Latin script.
+- Word export built from the resume: headings, lists, tables, links, the photo, fonts, colours and right-to-left text.
+- InDesign export as an ICML story with named paragraph and character styles and links.
+- PNG and JPG pages with the resolution stored in the file; several pages download as one zip.
+- Import of JSON backups (any version), CSV, Excel and Markdown resumes, with section kinds guessed from headings in English, Persian, Arabic and Kurdish.
+- Downloadable templates: a blank template or any sample as Excel, CSV, Markdown or JSON.
+- Documentation page for import and export.
 - Profile photo: add from a file or by dragging, crop (move, zoom, turn, Square, Portrait 4:5, Passport 35 × 45 mm or original shape) with mouse, touch or keyboard, and re-crop any time from the original picture.
 - Print-size guide for the photo: pixels needed and the resolution it will print at, rated Sharp, Acceptable or May look soft.
 - Photo shape (square, rounded, circle), width (10 to 80 mm) and position (start, end or centred above the name).
@@ -68,6 +76,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- **Export JSON** in the editor header became **Export**, with every format.
+- Import and export code loads only when used, keeping the first load small.
 - Version history stores the original photo picture once, like the photo itself.
 - Icon sets load on demand, one file per set; only Lucide is kept for offline use from the start.
 - Margins shrink automatically on small paper so at least 20 mm is left for content.
