@@ -2,24 +2,36 @@ import { useEffect, useId, useRef, useState, type DragEvent } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CropIcon, TrashIcon, UploadIcon } from '@/components/ui/icons';
-import { LIMITS, PHOTO_RADIUS, PHOTO_SHAPES, type HorizontalAlign, type PhotoShape } from '@/config/layout';
+import {
+  LIMITS,
+  PHOTO_RADIUS,
+  PHOTO_SHAPES,
+  type HorizontalAlign,
+  type PhotoShape,
+} from '@/config/layout';
 import { removePhoto, setPhoto, updatePhoto } from '@/lib/document-ops';
 import { ImageError } from '@/lib/image';
 import { readPhotoFile, type PhotoSource } from '@/lib/photo-canvas';
 import { cn } from '@/lib/utils';
 import type { PhotoCrop, ResumeDocument } from '@/schema/resume';
+import { useT, type MessageKey } from '@/i18n';
 import { toast, useResumeStore } from '@/stores';
 
 import { PhotoCropDialog } from './PhotoCropDialog';
 import { PhotoSizeGuide } from './PhotoSizeGuide';
 
-const SHAPE_LABELS: Readonly<Record<PhotoShape, string>> = { square: 'Square', rounded: 'Rounded', circle: 'Circle' };
+const SHAPE_LABELS: Readonly<Record<PhotoShape, MessageKey>> = {
+  square: 'photo.square',
+  rounded: 'photo.rounded',
+  circle: 'photo.circle',
+};
 
-function alignLabels(rtl: boolean): Readonly<Record<HorizontalAlign, string>> {
+/** Start and end follow the resume's direction, not the interface's. */
+function alignLabels(rtl: boolean): Readonly<Record<HorizontalAlign, MessageKey>> {
   return {
-    start: rtl ? 'Right of the name' : 'Left of the name',
-    center: 'Centred above the name',
-    end: rtl ? 'Left of the name' : 'Right of the name',
+    start: rtl ? 'photo.rightOfName' : 'photo.leftOfName',
+    center: 'photo.aboveName',
+    end: rtl ? 'photo.leftOfName' : 'photo.rightOfName',
   };
 }
 
@@ -38,6 +50,7 @@ function imageSize(dataUrl: string): Promise<{ width: number; height: number }> 
  * and set its shape, width and position. The picture stays in this browser.
  */
 export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
+  const t = useT();
   const updateActive = useResumeStore((s) => s.updateActive);
   const inputRef = useRef<HTMLInputElement>(null);
   const id = useId();
@@ -67,7 +80,10 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
     try {
       setPending({ source: await readPhotoFile(file) });
     } catch (error) {
-      toast.error('Photo not added', error instanceof ImageError ? error.message : 'This picture could not be read.');
+      toast.error(
+        t('photo.notAdded'),
+        error instanceof ImageError ? error.message : t('photo.unreadable'),
+      );
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -105,7 +121,7 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
 
   return (
     <fieldset className="flex flex-col gap-3">
-      <legend className="mb-1 text-xs font-semibold text-stone-700">Photo</legend>
+      <legend className="mb-1 text-xs font-semibold text-stone-700">{t('photo.legend')}</legend>
       {fileInput}
 
       {!photo ? (
@@ -122,35 +138,32 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
           onDrop={onDrop}
         >
           <Button disabled={busy} onClick={() => inputRef.current?.click()}>
-            <UploadIcon /> {busy ? 'Reading…' : 'Add a photo'}
+            <UploadIcon /> {busy ? t('photo.reading') : t('photo.add')}
           </Button>
-          <p className="text-xs text-stone-500">
-            Or drag a picture here. JPEG, PNG or WebP, at least 600 × 600 pixels for a sharp print. It stays in this
-            browser and is never uploaded. Many employers prefer no photo; leave it out if you are unsure.
-          </p>
+          <p className="text-xs text-stone-500">{t('photo.dropHint')}</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3 rounded-lg border border-stone-200 bg-white p-3">
           <div className="flex flex-wrap items-center gap-3">
             <img
               src={photo.dataUrl}
-              alt="Your photo"
+              alt={t('photo.alt')}
               className="size-20 border border-stone-200 object-cover"
               style={{ borderRadius: PHOTO_RADIUS[photo.shape] }}
             />
             <div className="flex flex-wrap gap-2">
               <Button size="sm" onClick={() => void recrop()}>
-                <CropIcon /> Crop
+                <CropIcon /> {t('photo.crop')}
               </Button>
               <Button size="sm" disabled={busy} onClick={() => inputRef.current?.click()}>
-                <UploadIcon /> Replace
+                <UploadIcon /> {t('photo.replace')}
               </Button>
               <Button
                 size="sm"
                 variant="danger-ghost"
                 onClick={() => updateActive((d) => removePhoto(d))}
               >
-                <TrashIcon /> Remove
+                <TrashIcon /> {t('photo.remove')}
               </Button>
             </div>
           </div>
@@ -158,7 +171,7 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="flex flex-col gap-1">
               <span className="text-xs font-medium text-stone-700" id={`${id}-shape`}>
-                Shape
+                {t('photo.shape')}
               </span>
               <div role="radiogroup" aria-labelledby={`${id}-shape`} className="flex gap-1">
                 {PHOTO_SHAPES.map((shape) => (
@@ -169,11 +182,13 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
                     aria-checked={photo.shape === shape}
                     className={cn(
                       'flex-1 rounded-md border px-2 py-1.5 text-xs',
-                      photo.shape === shape ? 'border-brand bg-brand/10 text-brand' : 'border-stone-300 hover:bg-stone-100',
+                      photo.shape === shape
+                        ? 'border-brand bg-brand/10 text-brand'
+                        : 'border-stone-300 hover:bg-stone-100',
                     )}
                     onClick={() => updateActive((d) => updatePhoto(d, { shape }))}
                   >
-                    {SHAPE_LABELS[shape]}
+                    {t(SHAPE_LABELS[shape])}
                   </button>
                 ))}
               </div>
@@ -181,7 +196,7 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
 
             <div className="flex flex-col gap-1">
               <label htmlFor={`${id}-width`} className="text-xs font-medium text-stone-700">
-                Width: {photo.widthMm} mm
+                {t('photo.width', { mm: photo.widthMm })}
               </label>
               <input
                 id={`${id}-width`}
@@ -192,24 +207,28 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
                 step={1}
                 value={photo.widthMm}
                 onChange={(e) =>
-                  updateActive((d) => updatePhoto(d, { widthMm: Number(e.target.value) }), { group: 'photo.width' })
+                  updateActive((d) => updatePhoto(d, { widthMm: Number(e.target.value) }), {
+                    group: 'photo.width',
+                  })
                 }
               />
             </div>
 
             <div className="flex flex-col gap-1">
               <label htmlFor={`${id}-align`} className="text-xs font-medium text-stone-700">
-                Position
+                {t('photo.position')}
               </label>
               <select
                 id={`${id}-align`}
                 className="h-9 rounded-md border border-stone-300 bg-white px-2 text-sm"
                 value={photo.align}
-                onChange={(e) => updateActive((d) => updatePhoto(d, { align: e.target.value as HorizontalAlign }))}
+                onChange={(e) =>
+                  updateActive((d) => updatePhoto(d, { align: e.target.value as HorizontalAlign }))
+                }
               >
                 {Object.entries(alignLabels(rtl)).map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label}
+                    {t(label)}
                   </option>
                 ))}
               </select>
@@ -229,9 +248,11 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
         onCancel={() => setPending(null)}
         onApply={({ dataUrl, crop }) => {
           const source = pending?.source;
-          updateActive((d) => setPhoto(d, source ? { dataUrl, source: { ...source, crop } } : { dataUrl }));
+          updateActive((d) =>
+            setPhoto(d, source ? { dataUrl, source: { ...source, crop } } : { dataUrl }),
+          );
           setPending(null);
-          toast.success('Photo updated', 'It is saved in this browser only.');
+          toast.success(t('photo.updated'), t('photo.updatedBody'));
         }}
       />
     </fieldset>

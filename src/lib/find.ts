@@ -26,7 +26,11 @@ function escapeRegExp(text: string): string {
  * Whole-word matching uses Unicode letters and digits, so it works for
  * Persian, Arabic and Kurdish as well as English.
  */
-export function findMatches(chunks: readonly TextChunk[], query: string, options: FindOptions = {}): Match[] {
+export function findMatches(
+  chunks: readonly TextChunk[],
+  query: string,
+  options: FindOptions = {},
+): Match[] {
   if (query === '') return [];
   const flags = `gu${options.caseSensitive ? '' : 'i'}`;
   const body = escapeRegExp(query);

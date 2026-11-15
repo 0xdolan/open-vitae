@@ -105,7 +105,11 @@ export function createVersionRepository(store: KeyValueStore): VersionRepository
         if (source) sourceKey = await storeImage(source.dataUrl);
         snapshot = {
           ...doc,
-          photo: { ...doc.photo, dataUrl: '', ...(source ? { source: { ...source, dataUrl: '' } } : {}) },
+          photo: {
+            ...doc.photo,
+            dataUrl: '',
+            ...(source ? { source: { ...source, dataUrl: '' } } : {}),
+          },
         };
       }
 

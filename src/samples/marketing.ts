@@ -50,7 +50,9 @@ export const marketingSample: SampleDefinition = {
             subtitle: 'Alder & Co',
             location: 'Stockholm',
             dateRange: '2015 – 2018',
-            descriptionHtml: bullets('Ran events, newsletters and social channels for a design agency.'),
+            descriptionHtml: bullets(
+              'Ran events, newsletters and social channels for a design agency.',
+            ),
           },
         ],
       },
@@ -59,7 +61,9 @@ export const marketingSample: SampleDefinition = {
         items: [
           {
             title: 'Growth',
-            descriptionHtml: paragraph('A/B testing, lifecycle marketing, conversion rate optimisation'),
+            descriptionHtml: paragraph(
+              'A/B testing, lifecycle marketing, conversion rate optimisation',
+            ),
           },
           {
             title: 'Channels',

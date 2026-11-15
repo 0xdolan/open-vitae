@@ -5,9 +5,16 @@ import { FontPicker } from '@/components/fonts/FontPicker';
 import { DEFAULT_FONT_BY_DIRECTION, type TextDirection } from '@/config/fonts';
 import { findResumeLanguage, RESUME_LANGUAGES } from '@/config/languages';
 import { LIMITS, PAGE_BREAK_MODES, type PageBreakMode } from '@/config/layout';
-import { describePageSize, isPageSizeId, PAGE_SIZE_GROUPS, PAGE_SIZES } from '@/config/page-sizes';
+import {
+  describePageSize,
+  isPageSizeId,
+  PAGE_SIZE_GROUPS,
+  PAGE_SIZES,
+  type PageSizeGroup,
+} from '@/config/page-sizes';
 import { clamp } from '@/lib/format';
 import type { ResumeLayout } from '@/schema/resume';
+import { useT, type MessageKey } from '@/i18n';
 
 interface PageSettingsProps {
   readonly layout: ResumeLayout;
@@ -17,9 +24,15 @@ interface PageSettingsProps {
   readonly onLanguageChange: (language: string) => void;
 }
 
-const BREAK_LABELS: Record<PageBreakMode, string> = {
-  smart: 'Smart (automatic)',
-  manual: 'Manual',
+const BREAK_LABELS: Record<PageBreakMode, MessageKey> = {
+  smart: 'page.breaksSmart',
+  manual: 'page.breaksManual',
+};
+
+const GROUP_LABELS: Record<PageSizeGroup, MessageKey> = {
+  'International (ISO)': 'page.groupIso',
+  'North American': 'page.groupUs',
+  'Japanese (JIS)': 'page.groupJis',
 };
 
 function isPageBreakMode(value: string): value is PageBreakMode {
@@ -27,12 +40,16 @@ function isPageBreakMode(value: string): value is PageBreakMode {
 }
 
 /** Parse a number input and keep it inside the allowed range. */
-function readNumber(raw: string, limits: { readonly min: number; readonly max: number }): number | null {
+function readNumber(
+  raw: string,
+  limits: { readonly min: number; readonly max: number },
+): number | null {
   const value = Number(raw);
   return raw === '' || Number.isNaN(value) ? null : clamp(value, limits.min, limits.max);
 }
 
 export function PageSettings({ layout, onChange, language, onLanguageChange }: PageSettingsProps) {
+  const t = useT();
   const id = useId();
 
   const setDirection = (direction: TextDirection) => {
@@ -46,9 +63,9 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
 
   return (
     <fieldset className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-      <legend className="sr-only">Page settings</legend>
+      <legend className="sr-only">{t('page.settings')}</legend>
 
-      <Field label="Page size" htmlFor={`${id}-size`}>
+      <Field label={t('page.size')} htmlFor={`${id}-size`}>
         <select
           id={`${id}-size`}
           className={controlClass}
@@ -56,7 +73,7 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
           onChange={(e) => isPageSizeId(e.target.value) && onChange({ pageSize: e.target.value })}
         >
           {PAGE_SIZE_GROUPS.map((group) => (
-            <optgroup key={group} label={group}>
+            <optgroup key={group} label={t(GROUP_LABELS[group])}>
               {PAGE_SIZES.filter((size) => size.group === group).map((size) => (
                 <option key={size.id} value={size.id}>
                   {size.label} · {describePageSize(size)}
@@ -67,7 +84,7 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         </select>
       </Field>
 
-      <Field label="Orientation" htmlFor={`${id}-orientation`}>
+      <Field label={t('page.orientation')} htmlFor={`${id}-orientation`}>
         <select
           id={`${id}-orientation`}
           className={controlClass}
@@ -76,24 +93,24 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
             onChange({ orientation: e.target.value === 'landscape' ? 'landscape' : 'portrait' })
           }
         >
-          <option value="portrait">Portrait</option>
-          <option value="landscape">Landscape</option>
+          <option value="portrait">{t('page.portrait')}</option>
+          <option value="landscape">{t('page.landscape')}</option>
         </select>
       </Field>
 
-      <Field label="Direction" htmlFor={`${id}-direction`}>
+      <Field label={t('page.direction')} htmlFor={`${id}-direction`}>
         <select
           id={`${id}-direction`}
           className={controlClass}
           value={layout.direction}
           onChange={(e) => setDirection(e.target.value === 'rtl' ? 'rtl' : 'ltr')}
         >
-          <option value="ltr">Left to right</option>
-          <option value="rtl">Right to left</option>
+          <option value="ltr">{t('page.ltr')}</option>
+          <option value="rtl">{t('page.rtl')}</option>
         </select>
       </Field>
 
-      <Field label="Language" htmlFor={`${id}-language`} hint="Sets section titles, spelling and direction.">
+      <Field label={t('page.language')} htmlFor={`${id}-language`} hint={t('page.languageHint')}>
         <select
           id={`${id}-language`}
           className={controlClass}
@@ -110,7 +127,7 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         </select>
       </Field>
 
-      <Field label="Font" htmlFor={`${id}-font`}>
+      <Field label={t('page.font')} htmlFor={`${id}-font`}>
         <FontPicker
           id={`${id}-font`}
           value={layout.fontFamily}
@@ -119,22 +136,24 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Page breaks" htmlFor={`${id}-breaks`}>
+      <Field label={t('page.breaks')} htmlFor={`${id}-breaks`}>
         <select
           id={`${id}-breaks`}
           className={controlClass}
           value={layout.pageBreaks}
-          onChange={(e) => isPageBreakMode(e.target.value) && onChange({ pageBreaks: e.target.value })}
+          onChange={(e) =>
+            isPageBreakMode(e.target.value) && onChange({ pageBreaks: e.target.value })
+          }
         >
           {PAGE_BREAK_MODES.map((mode) => (
             <option key={mode} value={mode}>
-              {BREAK_LABELS[mode]}
+              {t(BREAK_LABELS[mode])}
             </option>
           ))}
         </select>
       </Field>
 
-      <Field label="Margin (mm)" htmlFor={`${id}-margin`}>
+      <Field label={t('page.margin')} htmlFor={`${id}-margin`}>
         <input
           id={`${id}-margin`}
           type="number"
@@ -151,7 +170,7 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Text size (pt)" htmlFor={`${id}-size-pt`}>
+      <Field label={t('page.textSize')} htmlFor={`${id}-size-pt`}>
         <input
           id={`${id}-size-pt`}
           type="number"
@@ -168,7 +187,7 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Line height" htmlFor={`${id}-line`}>
+      <Field label={t('page.lineHeight')} htmlFor={`${id}-line`}>
         <input
           id={`${id}-line`}
           type="number"
@@ -185,7 +204,7 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Indent size (spaces)" htmlFor={`${id}-indent`} hint="For lists and indented paragraphs.">
+      <Field label={t('page.indent')} htmlFor={`${id}-indent`} hint={t('page.indentHint')}>
         <input
           id={`${id}-indent`}
           type="number"
@@ -202,17 +221,19 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
         />
       </Field>
 
-      <Field label="Nesting levels" htmlFor={`${id}-depth`} hint="How deep lists and indents may go.">
+      <Field label={t('page.depth')} htmlFor={`${id}-depth`} hint={t('page.depthHint')}>
         <select
           id={`${id}-depth`}
           className={controlClass}
           value={layout.maxDepth === null ? 'unlimited' : String(layout.maxDepth)}
-          onChange={(e) => onChange({ maxDepth: e.target.value === 'unlimited' ? null : Number(e.target.value) })}
+          onChange={(e) =>
+            onChange({ maxDepth: e.target.value === 'unlimited' ? null : Number(e.target.value) })
+          }
         >
-          <option value="unlimited">Unlimited</option>
+          <option value="unlimited">{t('page.unlimited')}</option>
           {Array.from({ length: 9 }, (_, i) => i + 1).map((n) => (
             <option key={n} value={n}>
-              {n} {n === 1 ? 'level' : 'levels'}
+              {t('page.levels', { count: n })}
             </option>
           ))}
         </select>
@@ -225,10 +246,10 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
           checked={layout.showContactIcons === true}
           onChange={(e) => onChange({ showContactIcons: e.target.checked })}
         />
-        Icons in the contact line
+        {t('page.contactIcons')}
       </label>
 
-      <Field label="Accent colour" htmlFor={`${id}-accent`}>
+      <Field label={t('page.accent')} htmlFor={`${id}-accent`}>
         <input
           id={`${id}-accent`}
           type="color"

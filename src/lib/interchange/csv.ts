@@ -21,7 +21,9 @@ export function unprotectCell(value: string): string {
 }
 
 function quote(value: string, delimiter: string): string {
-  return /["\r\n]/.test(value) || value.includes(delimiter) ? `"${value.replace(/"/g, '""')}"` : value;
+  return /["\r\n]/.test(value) || value.includes(delimiter)
+    ? `"${value.replace(/"/g, '""')}"`
+    : value;
 }
 
 /**
@@ -29,7 +31,9 @@ function quote(value: string, delimiter: string): string {
  * (Persian, Arabic, Kurdish) correctly, and uses CRLF line ends.
  */
 export function toCsv(rows: Table, delimiter = ','): string {
-  const body = rows.map((row) => row.map((cell) => quote(protectCell(cell), delimiter)).join(delimiter)).join('\r\n');
+  const body = rows
+    .map((row) => row.map((cell) => quote(protectCell(cell), delimiter)).join(delimiter))
+    .join('\r\n');
   return `﻿${body}\r\n`;
 }
 
@@ -59,7 +63,10 @@ export class CsvError extends Error {
  * and line breaks, a byte order mark, and CRLF or LF line ends. Blank lines
  * are skipped. Throws CsvError on an unclosed quote.
  */
-export function parseCsv(text: string, delimiter: string = detectDelimiter(text.replace(/^﻿/, ''))): Table {
+export function parseCsv(
+  text: string,
+  delimiter: string = detectDelimiter(text.replace(/^﻿/, '')),
+): Table {
   const input = text.replace(/^﻿/, '');
   const rows: Table = [];
   let row: string[] = [];

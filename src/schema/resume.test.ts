@@ -43,14 +43,22 @@ describe('resume schema', () => {
 
   it('limits the length of typed text', () => {
     const doc = sample();
-    expect(resumeSchema.safeParse({ ...doc, profile: { ...doc.profile, email: 'a'.repeat(300) } }).success).toBe(false);
+    expect(
+      resumeSchema.safeParse({ ...doc, profile: { ...doc.profile, email: 'a'.repeat(300) } })
+        .success,
+    ).toBe(false);
   });
 
   it('rejects photos that are not PNG, JPEG or WebP data URLs', () => {
     const doc = sample();
     const bad = {
       ...doc,
-      photo: { dataUrl: 'data:image/svg+xml;base64,PHN2Zz4=', align: 'start', shape: 'circle', widthMm: 30 },
+      photo: {
+        dataUrl: 'data:image/svg+xml;base64,PHN2Zz4=',
+        align: 'start',
+        shape: 'circle',
+        widthMm: 30,
+      },
     };
     expect(resumeSchema.safeParse(bad).success).toBe(false);
   });

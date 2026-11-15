@@ -8,7 +8,11 @@ export const PHOTO_SHAPES = ['square', 'rounded', 'circle'] as const;
 export type PhotoShape = (typeof PHOTO_SHAPES)[number];
 
 /** Corner rounding for each photo shape, as CSS border-radius. */
-export const PHOTO_RADIUS: Readonly<Record<PhotoShape, string>> = { square: '0', rounded: '12%', circle: '50%' };
+export const PHOTO_RADIUS: Readonly<Record<PhotoShape, string>> = {
+  square: '0',
+  rounded: '12%',
+  circle: '50%',
+};
 
 /** Validation limits. Shared by the schema and the editor UI. */
 export const LIMITS = {

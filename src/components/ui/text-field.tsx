@@ -18,7 +18,16 @@ interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'on
  * Labelled text input. Text direction follows what is typed (dir="auto"),
  * so Persian, Arabic and English all display correctly in either UI direction.
  */
-export function TextField({ label, value, onChange, error, hint, className, id, ...props }: TextFieldProps) {
+export function TextField({
+  label,
+  value,
+  onChange,
+  error,
+  hint,
+  className,
+  id,
+  ...props
+}: TextFieldProps) {
   const autoId = useId();
   const inputId = id ?? autoId;
   const messageId = `${inputId}-message`;
@@ -40,7 +49,10 @@ export function TextField({ label, value, onChange, error, hint, className, id, 
         {...props}
       />
       {message ? (
-        <p id={messageId} className={cn('text-xs', error ? 'font-medium text-red-700' : 'text-stone-500')}>
+        <p
+          id={messageId}
+          className={cn('text-xs', error ? 'font-medium text-red-700' : 'text-stone-500')}
+        >
           {message}
         </p>
       ) : null}

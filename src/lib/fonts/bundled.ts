@@ -12,17 +12,32 @@ export interface BundledFontFile {
 }
 
 export interface BundledFontManifest {
-  readonly fonts: readonly { readonly family: string; readonly license: string; readonly files: readonly BundledFontFile[] }[];
+  readonly fonts: readonly {
+    readonly family: string;
+    readonly license: string;
+    readonly files: readonly BundledFontFile[];
+  }[];
 }
 
 function isManifest(value: unknown): value is BundledFontManifest {
-  if (typeof value !== 'object' || value === null || !Array.isArray((value as BundledFontManifest).fonts)) return false;
+  if (
+    typeof value !== 'object' ||
+    value === null ||
+    !Array.isArray((value as BundledFontManifest).fonts)
+  )
+    return false;
   return (value as BundledFontManifest).fonts.every(
     (font) =>
       typeof font.family === 'string' &&
       /^[\p{L}\p{N} ._-]{1,60}$/u.test(font.family) &&
       Array.isArray(font.files) &&
-      font.files.every((f) => typeof f.file === 'string' && /^[\w./-]+\.woff2$/.test(f.file) && !f.file.includes('..') && /^\d{3}( \d{3})?$/.test(f.weight)),
+      font.files.every(
+        (f) =>
+          typeof f.file === 'string' &&
+          /^[\w./-]+\.woff2$/.test(f.file) &&
+          !f.file.includes('..') &&
+          /^\d{3}( \d{3})?$/.test(f.weight),
+      ),
   );
 }
 

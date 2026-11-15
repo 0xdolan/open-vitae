@@ -32,7 +32,8 @@ export function createBrowserRegistrar(): FontRegistrar {
     removeFamily(family) {
       for (const face of faces.get(family) ?? []) document.fonts.delete(face);
       faces.delete(family);
-      for (let i = added.length - 1; i >= 0; i -= 1) if (added[i]?.family === family) added.splice(i, 1);
+      for (let i = added.length - 1; i >= 0; i -= 1)
+        if (added[i]?.family === family) added.splice(i, 1);
     },
     sources: () => added,
     addStylesheet(key, css) {
@@ -64,7 +65,8 @@ export function createMemoryRegistrar(): MemoryRegistrar {
     },
     removeFamily(family) {
       families.delete(family);
-      for (let i = added.length - 1; i >= 0; i -= 1) if (added[i]?.family === family) added.splice(i, 1);
+      for (let i = added.length - 1; i >= 0; i -= 1)
+        if (added[i]?.family === family) added.splice(i, 1);
     },
     sources: () => added,
     addStylesheet(key, css) {

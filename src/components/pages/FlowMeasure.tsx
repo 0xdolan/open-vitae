@@ -34,7 +34,9 @@ export function FlowMeasure({ doc, onPages }: FlowMeasureProps) {
     const rootRect = root.getBoundingClientRect();
     // Guard against an ancestor being zoomed or scaled.
     const scale = root.offsetHeight > 0 ? rootRect.height / root.offsetHeight : 1;
-    const measured: MeasuredBlock[] = Array.from(root.querySelectorAll<HTMLElement>('[data-ov-b]')).map((node) => {
+    const measured: MeasuredBlock[] = Array.from(
+      root.querySelectorAll<HTMLElement>('[data-ov-b]'),
+    ).map((node) => {
       const rect = node.getBoundingClientRect();
       return {
         key: node.dataset.ovB ?? '',
@@ -42,7 +44,10 @@ export function FlowMeasure({ doc, onPages }: FlowMeasureProps) {
         bottom: (rect.bottom - rootRect.top) / scale,
       };
     });
-    const pages = paginate(describeBlocks(docRef.current, measured), { pageHeight: pageHeightPx, mode });
+    const pages = paginate(describeBlocks(docRef.current, measured), {
+      pageHeight: pageHeightPx,
+      mode,
+    });
     const signature = JSON.stringify(pages);
     if (signature !== lastResult.current) {
       lastResult.current = signature;
@@ -74,7 +79,10 @@ export function FlowMeasure({ doc, onPages }: FlowMeasureProps) {
   }, [measure]);
 
   return (
-    <div className="pointer-events-none fixed top-0 start-0 h-0 w-0 overflow-hidden" aria-hidden="true">
+    <div
+      className="pointer-events-none fixed top-0 start-0 h-0 w-0 overflow-hidden"
+      aria-hidden="true"
+    >
       <div
         ref={ref}
         inert

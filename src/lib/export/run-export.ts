@@ -64,14 +64,21 @@ async function allFontCss(job: ExportJob, first: HTMLElement): Promise<string> {
 export async function pagesReady(pages: readonly HTMLElement[]): Promise<void> {
   await document.fonts.ready;
   const images = pages.flatMap((page) => Array.from(page.querySelectorAll('img')));
-  await Promise.all(images.map((img) => (img.complete ? Promise.resolve() : img.decode().catch(() => undefined))));
+  await Promise.all(
+    images.map((img) => (img.complete ? Promise.resolve() : img.decode().catch(() => undefined))),
+  );
 }
 
 export async function runExport(job: ExportJob): Promise<BuiltFile> {
   const { doc, options, version, now } = job;
   const savedAt = version ? new Date(version.savedAt) : now;
   const base = (extension: string, page?: number) =>
-    exportFileName(doc.profile.fullName || doc.name, version?.number ?? null, savedAt, extension).replace(
+    exportFileName(
+      doc.profile.fullName || doc.name,
+      version?.number ?? null,
+      savedAt,
+      extension,
+    ).replace(
       new RegExp(`\\.${extension}$`),
       page === undefined ? `.${extension}` : `-page-${page}.${extension}`,
     );
@@ -79,7 +86,12 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
   const zipName = (extension: string) => base('zip').replace(/\.zip$/, `-${extension}.zip`);
   const progress = job.onProgress ?? (() => undefined);
 
-  if (options.format === 'json' || options.format === 'csv' || options.format === 'xlsx' || options.format === 'markdown') {
+  if (
+    options.format === 'json' ||
+    options.format === 'csv' ||
+    options.format === 'xlsx' ||
+    options.format === 'markdown'
+  ) {
     return buildDataFile(doc, options.format, { version, appVersion: job.appVersion, now });
   }
 
@@ -94,14 +106,19 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
     return {
       fileName: base('icml'),
       blob: new Blob([buildIcml(doc)], { type: 'application/vnd.adobe.incopy-icml+xml' }),
-      warnings: ['In InDesign, use File › Place to put the story into a text frame. Place the photo separately.'],
+      warnings: [
+        'In InDesign, use File › Place to put the story into a text frame. Place the photo separately.',
+      ],
     };
   }
 
   // Picture formats.
   const all = job.pageElements;
   if (all.length === 0) throw new Error('There are no pages to export.');
-  const selected = options.pages === 'all' || options.format === 'pdf' ? all : all.slice(options.pages - 1, options.pages);
+  const selected =
+    options.pages === 'all' || options.format === 'pdf'
+      ? all
+      : all.slice(options.pages - 1, options.pages);
   const first = selected[0] as HTMLElement;
   await pagesReady(selected);
   progress('Preparing fonts…');
@@ -112,10 +129,20 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
     const files: { name: string; blob: Blob }[] = [];
     for (const [index, page] of selected.entries()) {
       progress(`Drawing page ${index + 1} of ${selected.length}…`);
-      files.push({ name: base('svg', index + 1), blob: new Blob([await renderPageSvg(page, fontCSS)], { type: 'image/svg+xml' }) });
+      files.push({
+        name: base('svg', index + 1),
+        blob: new Blob([await renderPageSvg(page, fontCSS)], { type: 'image/svg+xml' }),
+      });
     }
-    warnings.push('SVG pages show correctly in web browsers. Design apps such as Illustrator and Inkscape may not show the text, so use PDF for them.');
-    return packFiles(files, zipName('svg'), warnings, selected.length === 1 ? base('svg') : undefined);
+    warnings.push(
+      'SVG pages show correctly in web browsers. Design apps such as Illustrator and Inkscape may not show the text, so use PDF for them.',
+    );
+    return packFiles(
+      files,
+      zipName('svg'),
+      warnings,
+      selected.length === 1 ? base('svg') : undefined,
+    );
   }
 
   // Exact page size from the paper size (the laid-out page is rounded to whole pixels).
@@ -124,10 +151,15 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
   const heightPx = (paper.heightMm / 25.4) * 96;
   const fit = pixelRatioFor(options.dpi, widthPx, heightPx);
   // Scale so the picture is exactly the paper size at the chosen resolution (2480 px for A4 at 300 DPI).
-  const ratio = fit.limited ? fit.ratio : Math.round((paper.widthMm / 25.4) * options.dpi) / first.offsetWidth;
+  const ratio = fit.limited
+    ? fit.ratio
+    : Math.round((paper.widthMm / 25.4) * options.dpi) / first.offsetWidth;
   const limited = fit.limited;
   const effectiveDpi = limited ? Math.round(fit.ratio * 96) : options.dpi;
-  if (limited) warnings.push(`The resolution was lowered to about ${Math.round(ratio * 96)} DPI, the most this browser can draw for this page size.`);
+  if (limited)
+    warnings.push(
+      `The resolution was lowered to about ${Math.round(ratio * 96)} DPI, the most this browser can draw for this page size.`,
+    );
 
   if (options.format === 'pdf') {
     const { buildPdf } = await import('./pdf');
@@ -149,7 +181,10 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
       title: doc.profile.fullName ? `${doc.profile.fullName} – Resume` : doc.name,
       author: doc.profile.fullName,
       subject: doc.profile.headline,
-      keywords: doc.sections.filter((s) => s.kind === 'skills').flatMap((s) => s.items.map((i) => i.title)).filter(Boolean),
+      keywords: doc.sections
+        .filter((s) => s.kind === 'skills')
+        .flatMap((s) => s.items.map((i) => i.title))
+        .filter(Boolean),
       language: doc.language,
       createdAt: now,
     });
@@ -160,7 +195,11 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
           : 'This PDF looks exactly like the preview, but its text cannot be selected or searched. For selectable text in this script, use Print preview › Save as PDF.',
       );
     }
-    return { fileName: base('pdf'), blob: new Blob([result.bytes as BlobPart], { type: 'application/pdf' }), warnings };
+    return {
+      fileName: base('pdf'),
+      blob: new Blob([result.bytes as BlobPart], { type: 'application/pdf' }),
+      warnings,
+    };
   }
 
   // PNG or JPEG.
@@ -172,14 +211,20 @@ export async function runExport(job: ExportJob): Promise<BuiltFile> {
     const canvas = await renderPageCanvas(page, { pixelRatio: ratio, fontEmbedCSS: fontCSS });
     const number = options.pages === 'all' ? index + 1 : options.pages;
     const bytes = await blobToBytes(await canvasToBlob(canvas, type, options.jpegQuality));
-    const tagged = type === 'image/png' ? setPngDpi(bytes, effectiveDpi) : setJpegDpi(bytes, effectiveDpi);
+    const tagged =
+      type === 'image/png' ? setPngDpi(bytes, effectiveDpi) : setJpegDpi(bytes, effectiveDpi);
     files.push({ name: base(extension, number), blob: new Blob([tagged as BlobPart], { type }) });
   }
   return packFiles(files, zipName(extension), warnings);
 }
 
 /** One file as it is; several in a zip. */
-async function packFiles(files: readonly { name: string; blob: Blob }[], zipName: string, warnings: string[], singleName?: string): Promise<BuiltFile> {
+async function packFiles(
+  files: readonly { name: string; blob: Blob }[],
+  zipName: string,
+  warnings: string[],
+  singleName?: string,
+): Promise<BuiltFile> {
   if (files.length === 1) {
     const only = files[0] as { name: string; blob: Blob };
     return { fileName: singleName ?? only.name, blob: only.blob, warnings };
@@ -187,5 +232,9 @@ async function packFiles(files: readonly { name: string; blob: Blob }[], zipName
   const zip = new JSZip();
   for (const file of files) zip.file(file.name, file.blob);
   const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/zip' });
-  return { fileName: zipName, blob, warnings: [...warnings, `${files.length} pages in one zip file.`] };
+  return {
+    fileName: zipName,
+    blob,
+    warnings: [...warnings, `${files.length} pages in one zip file.`],
+  };
 }

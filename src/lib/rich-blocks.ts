@@ -40,9 +40,24 @@ function parse(html: string): DocumentFragment {
 function isInline(node: Node): boolean {
   if (node.nodeType === Node.TEXT_NODE) return true;
   if (!(node instanceof Element)) return false;
-  return ['A', 'B', 'BDI', 'BR', 'CODE', 'EM', 'I', 'IMG', 'MARK', 'S', 'SMALL', 'SPAN', 'STRONG', 'SUB', 'SUP', 'U'].includes(
-    node.tagName,
-  );
+  return [
+    'A',
+    'B',
+    'BDI',
+    'BR',
+    'CODE',
+    'EM',
+    'I',
+    'IMG',
+    'MARK',
+    'S',
+    'SMALL',
+    'SPAN',
+    'STRONG',
+    'SUB',
+    'SUP',
+    'U',
+  ].includes(node.tagName);
 }
 
 function listStart(list: Element): number {
@@ -87,7 +102,11 @@ export function splitRichHtml(html: string, prefix: string): RichPiece[] {
       const first = listStart(node);
       const items = Array.from(node.children).filter((child) => child.tagName === 'LI');
       items.forEach((item, index) => {
-        add(item.cloneNode(true) as Element, { id: listId, shell: shell.outerHTML, number: first + index });
+        add(item.cloneNode(true) as Element, {
+          id: listId,
+          shell: shell.outerHTML,
+          number: first + index,
+        });
       });
       continue;
     }

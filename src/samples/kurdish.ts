@@ -13,7 +13,13 @@ export const kurdishSample: SampleDefinition = {
   input: {
     name: 'ئەندازیاری ئاسایشی سایبەری',
     language: 'ckb',
-    layout: { direction: 'rtl', fontFamily: 'Estedad', accentColor: '#15803d', baseFontSizePt: 10.5, lineHeight: 1.65 },
+    layout: {
+      direction: 'rtl',
+      fontFamily: 'Estedad',
+      accentColor: '#15803d',
+      baseFontSizePt: 10.5,
+      lineHeight: 1.65,
+    },
     profile: {
       fullName: 'ئاوات کەریم',
       headline: 'ئەندازیاری ئاسایشی سایبەری · Cloud و DevSecOps',
@@ -77,7 +83,11 @@ export const kurdishSample: SampleDefinition = {
         kind: 'certifications',
         items: [
           { title: 'CISSP', subtitle: 'ISC2', dateRange: '٢٠٢٣' },
-          { title: 'AWS Certified Security – Specialty', subtitle: 'Amazon Web Services', dateRange: '٢٠٢٢' },
+          {
+            title: 'AWS Certified Security – Specialty',
+            subtitle: 'Amazon Web Services',
+            dateRange: '٢٠٢٢',
+          },
         ],
       },
       {

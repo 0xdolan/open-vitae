@@ -20,6 +20,7 @@ import {
 import { loadRotatedSource, renderCrop, type PhotoSource } from '@/lib/photo-canvas';
 import { cn } from '@/lib/utils';
 import type { PhotoCrop } from '@/schema/resume';
+import { useT, type MessageKey } from '@/i18n';
 
 import { PhotoSizeGuide } from './PhotoSizeGuide';
 
@@ -34,6 +35,13 @@ interface PhotoCropDialogProps {
   readonly onApply: (result: { dataUrl: string; crop: PhotoCrop }) => void;
 }
 
+const ASPECT_LABELS: Readonly<Record<PhotoAspect['id'], MessageKey>> = {
+  square: 'photo.aspectSquare',
+  portrait: 'photo.aspectPortrait',
+  passport: 'photo.aspectPassport',
+  original: 'photo.aspectOriginal',
+};
+
 const VIEW_HEIGHT = 320;
 const FRAME_PADDING = 28;
 
@@ -41,7 +49,9 @@ function aspectFor(crop: PhotoCrop | undefined, width: number, height: number): 
   const fallback = PHOTO_ASPECTS[0] as PhotoAspect;
   if (!crop) return fallback;
   const ratio = crop.width / crop.height;
-  return PHOTO_ASPECTS.find((a) => Math.abs(resolveRatio(a, width, height) - ratio) < 0.01) ?? fallback;
+  return (
+    PHOTO_ASPECTS.find((a) => Math.abs(resolveRatio(a, width, height) - ratio) < 0.01) ?? fallback
+  );
 }
 
 /**
@@ -49,7 +59,16 @@ function aspectFor(crop: PhotoCrop | undefined, width: number, height: number): 
  * + and − keys, turn it a quarter at a time, and pick a shape. The frame shows
  * the shape it will have on the page. The size guide says how sharp it will print.
  */
-export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCancel, onApply }: PhotoCropDialogProps) {
+export function PhotoCropDialog({
+  open,
+  source,
+  initial,
+  shape,
+  widthMm,
+  onCancel,
+  onApply,
+}: PhotoCropDialogProps) {
+  const t = useT();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const viewRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -102,12 +121,14 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
         } else {
           usedInitial.current = true;
           setCrop((current) => {
-            const ratio = current ? current.width / current.height : resolveRatio(aspect, canvas.width, canvas.height);
+            const ratio = current
+              ? current.width / current.height
+              : resolveRatio(aspect, canvas.width, canvas.height);
             return initialCrop(canvas.width, canvas.height, ratio, rotation);
           });
         }
       })
-      .catch(() => setError('The photo could not be read.'));
+      .catch(() => setError(t('photo.unreadable')));
     return () => {
       cancelled = true;
     };
@@ -137,7 +158,10 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
   const imageWidth = rotated?.width ?? 1;
   const imageHeight = rotated?.height ?? 1;
   const ratio = crop ? crop.width / crop.height : 1;
-  const frameWidth = Math.max(40, Math.min(viewWidth - FRAME_PADDING * 2, (VIEW_HEIGHT - FRAME_PADDING * 2) * ratio));
+  const frameWidth = Math.max(
+    40,
+    Math.min(viewWidth - FRAME_PADDING * 2, (VIEW_HEIGHT - FRAME_PADDING * 2) * ratio),
+  );
   const frameHeight = frameWidth / ratio;
   const scale = crop ? frameWidth / crop.width : 1;
   const frameLeft = (viewWidth - frameWidth) / 2;
@@ -145,7 +169,8 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
 
   const zoom = crop ? cropZoom(crop, imageWidth, imageHeight) : 1;
   const zoomLimit = crop ? maxZoom(crop, imageWidth, imageHeight) : 1;
-  const setZoom = (value: number) => crop && setCrop(zoomCrop(crop, value, imageWidth, imageHeight));
+  const setZoom = (value: number) =>
+    crop && setCrop(zoomCrop(crop, value, imageWidth, imageHeight));
 
   // Wheel zoom needs a non-passive listener to stop the page scrolling.
   useEffect(() => {
@@ -156,7 +181,12 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
       setCrop((current) => {
         if (!current) return current;
         const factor = event.deltaY < 0 ? 1.08 : 1 / 1.08;
-        return zoomCrop(current, cropZoom(current, imageWidth, imageHeight) * factor, imageWidth, imageHeight);
+        return zoomCrop(
+          current,
+          cropZoom(current, imageWidth, imageHeight) * factor,
+          imageWidth,
+          imageHeight,
+        );
       });
     };
     view.addEventListener('wheel', onWheel, { passive: false });
@@ -202,7 +232,9 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
 
   const chooseAspect = (next: PhotoAspect) => {
     setAspect(next);
-    setCrop(initialCrop(imageWidth, imageHeight, resolveRatio(next, imageWidth, imageHeight), rotation));
+    setCrop(
+      initialCrop(imageWidth, imageHeight, resolveRatio(next, imageWidth, imageHeight), rotation),
+    );
   };
 
   const apply = () => {
@@ -210,7 +242,7 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
     try {
       onApply({ dataUrl: renderCrop(rotated, crop), crop: { ...crop, rotation } });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'The photo could not be saved.');
+      setError(err instanceof Error ? err.message : t('photo.saveFailed'));
     }
   };
 
@@ -227,14 +259,14 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
       {open ? (
         <div className="flex flex-col gap-4 p-5">
           <h2 id={titleId} className="text-lg font-semibold">
-            Crop photo
+            {t('photo.cropTitle')}
           </h2>
 
           <div
             ref={viewRef}
             role="group"
             tabIndex={0}
-            aria-label="Photo position"
+            aria-label={t('photo.positionLabel')}
             aria-describedby={helpId}
             className="relative cursor-grab touch-none overflow-hidden rounded-lg bg-stone-800 outline-offset-2 select-none active:cursor-grabbing"
             style={{ height: VIEW_HEIGHT }}
@@ -272,13 +304,12 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
             />
           </div>
           <p id={helpId} className="-mt-2 text-xs text-stone-500">
-            Drag to move. Zoom with the slider, the mouse wheel, or + and −. With the keyboard, use the arrow keys
-            (hold Shift for bigger steps).
+            {t('photo.cropHelp')}
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
             <label htmlFor={zoomId} className="text-sm font-medium">
-              Zoom
+              {t('photo.zoom')}
             </label>
             <input
               id={zoomId}
@@ -290,16 +321,26 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
             />
-            <Button size="sm" aria-label="Turn left" title="Turn left" onClick={() => setRotation(nextRotation(rotation, -1))}>
+            <Button
+              size="sm"
+              aria-label={t('photo.turnLeft')}
+              title={t('photo.turnLeft')}
+              onClick={() => setRotation(nextRotation(rotation, -1))}
+            >
               <RotateLeftIcon />
             </Button>
-            <Button size="sm" aria-label="Turn right" title="Turn right" onClick={() => setRotation(nextRotation(rotation, 1))}>
+            <Button
+              size="sm"
+              aria-label={t('photo.turnRight')}
+              title={t('photo.turnRight')}
+              onClick={() => setRotation(nextRotation(rotation, 1))}
+            >
               <RotateRightIcon />
             </Button>
           </div>
 
           <fieldset className="flex flex-wrap gap-1.5">
-            <legend className="mb-1.5 text-sm font-medium">Shape of the crop</legend>
+            <legend className="mb-1.5 text-sm font-medium">{t('photo.aspect')}</legend>
             {PHOTO_ASPECTS.map((option) => (
               <button
                 key={option.id}
@@ -307,11 +348,13 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
                 aria-pressed={option.id === aspect.id}
                 className={cn(
                   'rounded-md border px-2.5 py-1 text-xs',
-                  option.id === aspect.id ? 'border-brand bg-brand/10 text-brand' : 'border-stone-300 hover:bg-stone-100',
+                  option.id === aspect.id
+                    ? 'border-brand bg-brand/10 text-brand'
+                    : 'border-stone-300 hover:bg-stone-100',
                 )}
                 onClick={() => chooseAspect(option)}
               >
-                {option.label}
+                {t(ASPECT_LABELS[option.id])}
               </button>
             ))}
           </fieldset>
@@ -324,9 +367,9 @@ export function PhotoCropDialog({ open, source, initial, shape, widthMm, onCance
           ) : null}
 
           <div className="flex justify-end gap-2">
-            <Button onClick={onCancel}>Cancel</Button>
+            <Button onClick={onCancel}>{t('photo.cancel')}</Button>
             <Button variant="primary" disabled={!crop || !rotated} onClick={apply}>
-              Use this photo
+              {t('photo.use')}
             </Button>
           </div>
         </div>

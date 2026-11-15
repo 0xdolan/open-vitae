@@ -11,20 +11,28 @@ import { useResumeStore } from '@/stores';
 import { IconPicker } from '@/components/icons/IconPicker';
 import { PhotoField } from '@/components/photo/PhotoField';
 import { RichTextField } from '@/components/rich-text/RichTextField';
+import { errorText, useT, type MessageKey } from '@/i18n';
 import { PanelHeading } from './PanelHeading';
 
 type ProfileTextField = 'fullName' | 'headline' | 'email' | 'phone' | 'location' | 'website';
 
-const FIELDS: readonly { key: ProfileTextField; label: string; type?: string; autoComplete?: string; wide?: boolean }[] = [
-  { key: 'fullName', label: 'Full name', autoComplete: 'name', wide: true },
-  { key: 'headline', label: 'Headline', wide: true },
-  { key: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
-  { key: 'phone', label: 'Phone', type: 'tel', autoComplete: 'tel' },
-  { key: 'location', label: 'Location', autoComplete: 'address-level2' },
-  { key: 'website', label: 'Website', type: 'url', autoComplete: 'url' },
+const FIELDS: readonly {
+  key: ProfileTextField;
+  label: MessageKey;
+  type?: string;
+  autoComplete?: string;
+  wide?: boolean;
+}[] = [
+  { key: 'fullName', label: 'profile.fullName', autoComplete: 'name', wide: true },
+  { key: 'headline', label: 'profile.headline', wide: true },
+  { key: 'email', label: 'profile.email', type: 'email', autoComplete: 'email' },
+  { key: 'phone', label: 'profile.phone', type: 'tel', autoComplete: 'tel' },
+  { key: 'location', label: 'profile.location', autoComplete: 'address-level2' },
+  { key: 'website', label: 'profile.website', type: 'url', autoComplete: 'url' },
 ];
 
 export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
+  const t = useT();
   const updateActive = useResumeStore((s) => s.updateActive);
   const { profile } = doc;
 
@@ -33,18 +41,29 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
 
   return (
     <section aria-labelledby="profile-heading" className="flex flex-col gap-5">
-      <PanelHeading id="profile-heading" title="Profile" description="Your name, contact details and a short summary." />
+      <PanelHeading
+        id="profile-heading"
+        title={t('profile.title')}
+        description={t('profile.description')}
+      />
 
       <div className="grid gap-3 sm:grid-cols-2">
         {FIELDS.map((field) => (
           <TextField
             key={field.key}
-            label={field.label}
+            label={t(field.label)}
             type={field.type ?? 'text'}
             autoComplete={field.autoComplete}
             className={field.wide ? 'sm:col-span-2' : undefined}
             value={profile[field.key]}
-            error={field.key === 'email' ? emailError(profile.email) : field.key === 'website' ? urlError(profile.website) : null}
+            error={errorText(
+              t,
+              field.key === 'email'
+                ? emailError(profile.email)
+                : field.key === 'website'
+                  ? urlError(profile.website)
+                  : null,
+            )}
             placeholder={field.key === 'website' ? 'https://' : undefined}
             onChange={(value) => setField(field.key, value)}
           />
@@ -54,12 +73,12 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
       <PhotoField doc={doc} />
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="mb-1 text-xs font-semibold text-stone-700">Links</legend>
+        <legend className="mb-1 text-xs font-semibold text-stone-700">{t('profile.links')}</legend>
         {profile.links.length === 0 ? (
-          <p className="text-sm text-stone-500">Add LinkedIn, GitHub, a portfolio or anything else.</p>
+          <p className="text-sm text-stone-500">{t('profile.linksEmpty')}</p>
         ) : null}
         <SortableList
-          label="Profile links"
+          label={t('profile.linksList')}
           items={profile.links}
           getId={(link) => link.id}
           getLabel={(link) => link.label || link.url || 'link'}
@@ -69,25 +88,37 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
             <div
               className={`flex items-start gap-2 rounded-lg border bg-white p-2 ${isDragging ? 'border-brand shadow-lg' : isDropTarget ? 'border-brand border-dashed' : 'border-stone-200'}`}
             >
-              <button type="button" className="mt-6 rounded p-1 text-stone-400 hover:text-ink" {...handleProps}>
+              <button
+                type="button"
+                className="mt-6 rounded p-1 text-stone-400 hover:text-ink"
+                {...handleProps}
+              >
                 <GripIcon />
               </button>
               <TextField
-                label="Label"
+                label={t('profile.linkLabel')}
                 className="w-36 shrink-0"
                 value={link.label}
                 maxLength={80}
                 placeholder="GitHub"
-                onChange={(label) => updateActive((d) => updateLink(d, link.id, { label }), { group: `link.${link.id}.label` })}
+                onChange={(label) =>
+                  updateActive((d) => updateLink(d, link.id, { label }), {
+                    group: `link.${link.id}.label`,
+                  })
+                }
               />
               <TextField
-                label="URL"
+                label={t('profile.linkUrl')}
                 type="url"
                 className="flex-1"
                 value={link.url}
                 placeholder="https://"
-                error={urlError(link.url)}
-                onChange={(url) => updateActive((d) => updateLink(d, link.id, { url: url.trim() }), { group: `link.${link.id}.url` })}
+                error={errorText(t, urlError(link.url))}
+                onChange={(url) =>
+                  updateActive((d) => updateLink(d, link.id, { url: url.trim() }), {
+                    group: `link.${link.id}.url`,
+                  })
+                }
               />
               <IconPicker
                 className="mt-5 shrink-0"
@@ -99,7 +130,7 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
                 variant="danger-ghost"
                 size="sm"
                 className="mt-5"
-                aria-label={`Remove link ${link.label || link.url}`}
+                aria-label={t('profile.removeLink', { name: link.label || link.url })}
                 onClick={() => updateActive((d) => removeLink(d, link.id))}
               >
                 <TrashIcon />
@@ -113,19 +144,21 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
           disabled={profile.links.length >= LIMITS.links}
           onClick={() => updateActive((d) => addLink(d).doc)}
         >
-          <PlusIcon /> Add link
+          <PlusIcon /> {t('profile.addLink')}
         </Button>
       </fieldset>
 
       <RichTextField
-        label="Summary"
+        label={t('profile.summary')}
         html={profile.summaryHtml}
-        placeholder="Two or three sentences about what you do and what you are looking for."
+        placeholder={t('profile.summaryPlaceholder')}
         language={doc.language}
         accentColor={doc.layout.accentColor}
         indentCh={doc.layout.indentCh}
         maxDepth={doc.layout.maxDepth}
-        onChange={(summaryHtml) => updateActive((d) => updateProfile(d, { summaryHtml }), { group: 'profile.summary' })}
+        onChange={(summaryHtml) =>
+          updateActive((d) => updateProfile(d, { summaryHtml }), { group: 'profile.summary' })
+        }
       />
     </section>
   );

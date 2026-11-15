@@ -67,7 +67,10 @@ const BOUNDARY_COST: Readonly<Record<BlockKind, number>> = {
 const WASTE_WEIGHT = 10;
 
 /** Work out what kind each measured block is and which keep and break rules apply. */
-export function describeBlocks(doc: ResumeDocument, measured: readonly MeasuredBlock[]): FlowBlock[] {
+export function describeBlocks(
+  doc: ResumeDocument,
+  measured: readonly MeasuredBlock[],
+): FlowBlock[] {
   const sectionOfItem = new Map<string, string>();
   const sectionBreaks = new Set<string>();
   const itemBreaks = new Set<string>();
@@ -102,7 +105,8 @@ export function describeBlocks(doc: ResumeDocument, measured: readonly MeasuredB
     const firstOfItem = block.itemId !== undefined && previous?.itemId !== block.itemId;
     const keepWithNext =
       next !== undefined &&
-      (block.kind === 'section-title' || (block.kind === 'item-head' && next.itemId === block.itemId));
+      (block.kind === 'section-title' ||
+        (block.kind === 'item-head' && next.itemId === block.itemId));
     const breakBefore =
       index > 0 &&
       ((firstOfSection && sectionBreaks.has(block.sectionId ?? '')) ||
@@ -192,5 +196,7 @@ export function paginate(blocks: readonly FlowBlock[], options: PaginateOptions)
     start = last + 1;
   }
 
-  return pages.length > 0 ? pages : [{ keys: [], manualStart: false, tooTall: false, continued: false }];
+  return pages.length > 0
+    ? pages
+    : [{ keys: [], manualStart: false, tooTall: false, continued: false }];
 }

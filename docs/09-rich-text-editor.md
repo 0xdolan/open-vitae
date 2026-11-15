@@ -27,35 +27,35 @@ Every entry description and the profile summary. It is built on [TipTap 3](https
 
 Controls are grouped and wrap on narrow screens. Every control has a label and tooltip, and shows its keyboard shortcut where it has one.
 
-| Group               | Controls                                                                          |
-| ------------------- | --------------------------------------------------------------------------------- |
-| History             | Undo, redo (the editor's own history, separate from the resume-level undo)        |
-| Text style          | Paragraph style (normal, headings 1–4, quote, code block), font, size in points, line spacing |
-| Character           | Bold, italic, underline, strikethrough, subscript (H₂O), superscript (x²), inline code |
-| Colour              | Text colour and highlight (swatches, the resume's accent colour, any custom colour, remove), presets, format painter, clear formatting |
-| Paragraph           | Align left, centre, right, justify; left-to-right or right-to-left paragraph      |
-| Lists and indent    | Bulleted and numbered lists, decrease and increase indent, quote, horizontal line  |
-| Insert              | Link, table, image, emoji, code block with language                               |
-| Clipboard           | Cut, copy, paste as plain text                                                     |
-| Tools               | Find and replace, spell check on or off                                           |
+| Group            | Controls                                                                                                                               |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| History          | Undo, redo (the editor's own history, separate from the resume-level undo)                                                             |
+| Text style       | Paragraph style (normal, headings 1–4, quote, code block), font, size in points, line spacing                                          |
+| Character        | Bold, italic, underline, strikethrough, subscript (H₂O), superscript (x²), inline code                                                 |
+| Colour           | Text colour and highlight (swatches, the resume's accent colour, any custom colour, remove), presets, format painter, clear formatting |
+| Paragraph        | Align left, centre, right, justify; left-to-right or right-to-left paragraph                                                           |
+| Lists and indent | Bulleted and numbered lists, decrease and increase indent, quote, horizontal line                                                      |
+| Insert           | Link, table, image, emoji, code block with language                                                                                    |
+| Clipboard        | Cut, copy, paste as plain text                                                                                                         |
+| Tools            | Find and replace, spell check on or off                                                                                                |
 
 Word and character counts appear under each editor, with a warning when the text gets close to the size limit (2 MB, mostly relevant for images).
 
 ## Keyboard shortcuts
 
-| Shortcut (Ctrl on Windows and Linux, ⌘ on macOS) | Action                         |
-| ------------------------------------------------ | ------------------------------ |
-| Ctrl + B / I / U                                 | Bold / italic / underline      |
-| Ctrl + Shift + S                                 | Strikethrough                  |
-| Ctrl + , / Ctrl + .                              | Subscript / superscript        |
-| Ctrl + E                                         | Inline code                    |
-| Ctrl + Alt + C                                   | Code block                     |
-| Ctrl + Shift + 8 / 7                             | Bulleted / numbered list       |
-| Tab / Shift + Tab                                | Indent / outdent (lists nest)  |
-| Esc, then Tab                                    | Leave the editor               |
-| Ctrl + Z / Ctrl + Shift + Z                      | Undo / redo inside the editor  |
-| Ctrl + F                                         | Find and replace               |
-| Ctrl + Shift + V                                 | Paste as plain text            |
+| Shortcut (Ctrl on Windows and Linux, ⌘ on macOS) | Action                        |
+| ------------------------------------------------ | ----------------------------- |
+| Ctrl + B / I / U                                 | Bold / italic / underline     |
+| Ctrl + Shift + S                                 | Strikethrough                 |
+| Ctrl + , / Ctrl + .                              | Subscript / superscript       |
+| Ctrl + E                                         | Inline code                   |
+| Ctrl + Alt + C                                   | Code block                    |
+| Ctrl + Shift + 8 / 7                             | Bulleted / numbered list      |
+| Tab / Shift + Tab                                | Indent / outdent (lists nest) |
+| Esc, then Tab                                    | Leave the editor              |
+| Ctrl + Z / Ctrl + Shift + Z                      | Undo / redo inside the editor |
+| Ctrl + F                                         | Find and replace              |
+| Ctrl + Shift + V                                 | Paste as plain text           |
 
 Typing shortcuts also work: `- ` or `* ` starts a bulleted list, `1. ` a numbered list, `> ` a quote, `## ` a heading and ` ``` ` a code block.
 
@@ -118,13 +118,13 @@ Choose the language from the menu that appears inside a code block: plain text, 
 
 The editor stores HTML. Pasted content is first reduced to what the editor supports. Whenever text is shown, it goes through the sanitiser, which keeps:
 
-| Kept                                  | Rule                                                                      |
-| ------------------------------------- | ------------------------------------------------------------------------- |
-| Tags                                  | Paragraphs, headings, lists, links, quotes, code, tables, images, emphasis |
-| Inline styles                         | Only colour, background colour, font size, font family, line height, text alignment, width and the indent level, each with a strict value pattern |
-| Classes                               | Only code highlighting (`hljs-*`), code language (`language-*`) and Open Vitae's own image and table classes |
-| Images                                | Only embedded PNG, JPEG, WebP and GIF data                                 |
-| Links                                 | Only `http`, `https`, `mailto` and `tel`; they open in a new tab with no access back to the app |
+| Kept          | Rule                                                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tags          | Paragraphs, headings, lists, links, quotes, code, tables, images, emphasis                                                                        |
+| Inline styles | Only colour, background colour, font size, font family, line height, text alignment, width and the indent level, each with a strict value pattern |
+| Classes       | Only code highlighting (`hljs-*`), code language (`language-*`) and Open Vitae's own image and table classes                                      |
+| Images        | Only embedded PNG, JPEG, WebP and GIF data                                                                                                        |
+| Links         | Only `http`, `https`, `mailto` and `tel`; they open in a new tab with no access back to the app                                                   |
 
 Everything else is removed, including scripts, event handlers, iframes, forms, SVG, positioning, `url(...)` and remote images. Code is highlighted between two sanitiser passes. The rules live in [`src/lib/css-filter.ts`](../src/lib/css-filter.ts) and [`src/lib/sanitize.ts`](../src/lib/sanitize.ts), with tests for each.
 
@@ -136,18 +136,18 @@ Everything else is removed, including scripts, event handlers, iframes, forms, S
 
 ## Code map
 
-| File                                        | Responsibility                                          |
-| ------------------------------------------- | ------------------------------------------------------- |
-| `src/components/rich-text/RichTextField.tsx` | The editor field: label, toolbar, find bar, counts      |
-| `src/components/rich-text/Toolbar.tsx`       | All toolbar controls and popovers                       |
-| `src/components/rich-text/FindBar.tsx`       | Find and replace bar                                    |
-| `src/components/rich-text/extensions.ts`     | TipTap set-up and the custom extensions                 |
-| `src/config/editor.ts`                       | Sizes, spacing, styles, presets and swatches            |
-| `src/lib/css-filter.ts`                      | Style, class and image allowlists                       |
-| `src/lib/highlight.ts`                       | Code highlighting with highlight.js                     |
-| `src/lib/find.ts`                            | Match finding (Unicode-aware whole words)               |
-| `src/lib/image.ts`                           | Image shrinking and compression                         |
-| `src/lib/emoji.ts`                           | Curated emoji with search                               |
+| File                                         | Responsibility                                     |
+| -------------------------------------------- | -------------------------------------------------- |
+| `src/components/rich-text/RichTextField.tsx` | The editor field: label, toolbar, find bar, counts |
+| `src/components/rich-text/Toolbar.tsx`       | All toolbar controls and popovers                  |
+| `src/components/rich-text/FindBar.tsx`       | Find and replace bar                               |
+| `src/components/rich-text/extensions.ts`     | TipTap set-up and the custom extensions            |
+| `src/config/editor.ts`                       | Sizes, spacing, styles, presets and swatches       |
+| `src/lib/css-filter.ts`                      | Style, class and image allowlists                  |
+| `src/lib/highlight.ts`                       | Code highlighting with highlight.js                |
+| `src/lib/find.ts`                            | Match finding (Unicode-aware whole words)          |
+| `src/lib/image.ts`                           | Image shrinking and compression                    |
+| `src/lib/emoji.ts`                           | Curated emoji with search                          |
 
 ---
 

@@ -17,12 +17,12 @@ Previous: [Rich text editor](09-rich-text-editor.md) · Next: [Pages and printin
 
 ## Where fonts come from
 
-| Source  | Fonts                                         | Network                         | Kept where                       |
-| ------- | --------------------------------------------- | ------------------------------- | -------------------------------- |
-| Bundled | Manrope (Latin, from the `@fontsource-variable/manrope` package); Sahel and Estedad (Persian and Arabic) | None, shipped with the app | The app's own files |
-| System  | Arial, Times New Roman                        | None                            | The visitor's computer; Arimo and Tinos are used where they are missing |
-| Yours   | Any TTF, OTF, WOFF or WOFF2 file you load     | None, never uploaded            | This browser (IndexedDB)         |
-| Google  | A curated catalogue of Google Fonts, or any family by name | Google, after you agree | Your choice is remembered; files are cached by the browser |
+| Source  | Fonts                                                                                                    | Network                    | Kept where                                                              |
+| ------- | -------------------------------------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------------- |
+| Bundled | Manrope (Latin, from the `@fontsource-variable/manrope` package); Sahel and Estedad (Persian and Arabic) | None, shipped with the app | The app's own files                                                     |
+| System  | Arial, Times New Roman                                                                                   | None                       | The visitor's computer; Arimo and Tinos are used where they are missing |
+| Yours   | Any TTF, OTF, WOFF or WOFF2 file you load                                                                | None, never uploaded       | This browser (IndexedDB)                                                |
+| Google  | A curated catalogue of Google Fonts, or any family by name                                               | Google, after you agree    | Your choice is remembered; files are cached by the browser              |
 
 Manrope is the default for left-to-right resumes and Sahel for right-to-left ones.
 
@@ -86,20 +86,20 @@ For every font the app builds a CSS stack: the chosen family, then Sahel when th
 
 ## Code map
 
-| File                                     | Purpose                                                    |
-| ---------------------------------------- | ---------------------------------------------------------- |
-| `src/config/fonts.ts`                    | Bundled and system fonts, defaults, the font stack         |
-| `src/config/google-fonts.ts`             | The Google Fonts catalogue and script coverage             |
-| `src/lib/fonts/font-file.ts`             | File checks: size, format by signature, family names       |
-| `src/lib/fonts/google.ts`                | Google Fonts URLs, stylesheet download and validation      |
-| `src/lib/fonts/registrar.ts`             | Registering font faces and stylesheets with the browser    |
-| `src/lib/fonts/bundled.ts`               | Loading and validating `public/fonts/manifest.json`        |
-| `src/lib/fonts/usage.ts`                 | Which fonts a resume uses                                  |
-| `src/stores/font-store.ts`               | Font state: bundled, yours, Google, consent, status        |
-| `src/components/fonts/`                  | Font picker, fonts panel, consent box, missing-font notice |
-| `scripts/fetch-fonts.mjs`                | Downloads Sahel and Estedad and writes the manifest        |
-| `src/samples/persian.ts`, `arabic.ts`, `kurdish.ts` | The right-to-left sample resumes                |
-| `src/config/languages.ts`                | Resume languages and their direction                       |
+| File                                                | Purpose                                                    |
+| --------------------------------------------------- | ---------------------------------------------------------- |
+| `src/config/fonts.ts`                               | Bundled and system fonts, defaults, the font stack         |
+| `src/config/google-fonts.ts`                        | The Google Fonts catalogue and script coverage             |
+| `src/lib/fonts/font-file.ts`                        | File checks: size, format by signature, family names       |
+| `src/lib/fonts/google.ts`                           | Google Fonts URLs, stylesheet download and validation      |
+| `src/lib/fonts/registrar.ts`                        | Registering font faces and stylesheets with the browser    |
+| `src/lib/fonts/bundled.ts`                          | Loading and validating `public/fonts/manifest.json`        |
+| `src/lib/fonts/usage.ts`                            | Which fonts a resume uses                                  |
+| `src/stores/font-store.ts`                          | Font state: bundled, yours, Google, consent, status        |
+| `src/components/fonts/`                             | Font picker, fonts panel, consent box, missing-font notice |
+| `scripts/fetch-fonts.mjs`                           | Downloads Sahel and Estedad and writes the manifest        |
+| `src/samples/persian.ts`, `arabic.ts`, `kurdish.ts` | The right-to-left sample resumes                           |
+| `src/config/languages.ts`                           | Resume languages and their direction                       |
 
 ---
 

@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useToastStore, type Toast } from '@/stores/toast-store';
+import { useT } from '@/i18n';
 
 function SuccessIcon() {
   return (
@@ -20,6 +21,7 @@ function ErrorIcon() {
 }
 
 function ToastItem({ toast }: { readonly toast: Toast }) {
+  const t = useT();
   const dismiss = useToastStore((s) => s.dismiss);
 
   return (
@@ -38,7 +40,9 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       <div className="min-w-0">
         <p className="font-semibold text-ink">{toast.title}</p>
         {toast.description ? (
-          <p className="mt-0.5 text-sm break-words text-stone-600" dir="auto">{toast.description}</p>
+          <p className="mt-0.5 text-sm break-words text-stone-600" dir="auto">
+            {toast.description}
+          </p>
         ) : null}
         {toast.action ? (
           <button
@@ -57,7 +61,7 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
         type="button"
         onClick={() => dismiss(toast.id)}
         className="absolute end-2 top-2 rounded-md px-2 py-1 text-stone-500 hover:bg-stone-100 hover:text-ink"
-        aria-label="Dismiss notification"
+        aria-label={t('toast.dismiss')}
       >
         ×
       </button>
@@ -67,7 +71,11 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
         aria-hidden="true"
         className={cn(
           'ov-toast-progress absolute inset-x-0 bottom-0 h-1 origin-[left]',
-          toast.tone === 'success' ? 'bg-emerald-500' : toast.tone === 'error' ? 'bg-red-500' : 'bg-stone-400',
+          toast.tone === 'success'
+            ? 'bg-emerald-500'
+            : toast.tone === 'error'
+              ? 'bg-red-500'
+              : 'bg-stone-400',
         )}
         style={{ animationDuration: `${toast.durationMs}ms` }}
         onAnimationEnd={() => dismiss(toast.id)}
@@ -78,10 +86,11 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
 
 /** Notifications in the bottom corner on the reading-end side (right in LTR, left in RTL). */
 export function Toaster() {
+  const t = useT();
   const toasts = useToastStore((s) => s.toasts);
   return (
     <ol
-      aria-label="Notifications"
+      aria-label={t('toast.region')}
       className="pointer-events-none fixed end-4 bottom-4 z-50 flex flex-col items-end gap-2"
     >
       {toasts.map((t) => (

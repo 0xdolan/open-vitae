@@ -7,14 +7,15 @@ import { parseRetention, RETENTION_OPTIONS } from '@/config/versions';
 import { formatDateTime, formatRelative } from '@/lib/datetime';
 import { formatBytes } from '@/lib/format';
 import type { VersionReason, VersionSummary } from '@/lib/versions/repository';
+import { useT, type MessageKey } from '@/i18n';
 import { toast, useResumeStore } from '@/stores';
 
-const REASON_LABELS: Record<VersionReason, string> = {
-  created: 'Created',
-  autosave: 'Autosave',
-  manual: 'Named version',
-  restore: 'Restored',
-  import: 'Imported',
+const REASON_LABELS: Readonly<Record<VersionReason, MessageKey>> = {
+  created: 'versions.created',
+  autosave: 'versions.autosave',
+  manual: 'versions.manual',
+  restore: 'versions.restore',
+  import: 'versions.import',
 };
 
 const INITIAL_ROWS = 15;
@@ -42,23 +43,28 @@ function VersionRow({
   readonly onRestore: () => void;
   readonly onDownload: () => void;
 }) {
+  const t = useT();
   return (
     <li className="flex flex-wrap items-start justify-between gap-2 border-b border-stone-200 py-2.5 last:border-b-0">
       <div className="min-w-0">
         <p className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="font-semibold">Version {version.number}</span>
+          <span className="font-semibold">{t('versions.version', { number: version.number })}</span>
           <span className="rounded bg-stone-100 px-1.5 py-0.5 text-xs text-stone-700">
-            {REASON_LABELS[version.reason]}
+            {t(REASON_LABELS[version.reason])}
           </span>
           {isLatest ? (
-            <span className="bg-brand-soft text-brand rounded px-1.5 py-0.5 text-xs font-medium">Current</span>
+            <span className="bg-brand-soft text-brand rounded px-1.5 py-0.5 text-xs font-medium">
+              {t('versions.current')}
+            </span>
           ) : null}
           {version.exportedAt ? (
             <span
               className="rounded bg-emerald-50 px-1.5 py-0.5 text-xs text-emerald-800"
-              title={`Exported ${formatDateTime(version.exportedAt)}`}
+              title={t('versions.exportedAt', {
+                when: formatDateTime(version.exportedAt, t.locale),
+              })}
             >
-              Exported
+              {t('versions.exported')}
             </span>
           ) : null}
         </p>
@@ -68,20 +74,29 @@ function VersionRow({
           </p>
         ) : null}
         <p className="mt-0.5 text-xs text-stone-600">
-          <time dateTime={version.savedAt}>{formatDateTime(version.savedAt)}</time>
+          <time dateTime={version.savedAt}>{formatDateTime(version.savedAt, t.locale)}</time>
           <span className="text-stone-400"> · </span>
-          {formatRelative(version.savedAt, now)}
+          {formatRelative(version.savedAt, now, t.locale)}
           <span className="text-stone-400"> · </span>
           {formatBytes(version.bytes)}
         </p>
       </div>
       <div className="flex gap-1">
-        <Button size="sm" variant="ghost" onClick={onDownload} aria-label={`Download version ${version.number} as JSON`}>
-          Download
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onDownload}
+          aria-label={t('versions.downloadLabel', { number: version.number })}
+        >
+          {t('versions.download')}
         </Button>
         {!isLatest ? (
-          <Button size="sm" onClick={onRestore} aria-label={`Restore version ${version.number}`}>
-            Restore
+          <Button
+            size="sm"
+            onClick={onRestore}
+            aria-label={t('versions.restoreLabel', { number: version.number })}
+          >
+            {t('versions.restoreButton')}
           </Button>
         ) : null}
       </div>
@@ -95,6 +110,7 @@ function VersionRow({
  * current state because it is already a version itself.
  */
 export function VersionHistory() {
+  const t = useT();
   const id = useId();
   const now = useNow();
   const versions = useResumeStore((s) => s.versions);
@@ -116,41 +132,45 @@ export function VersionHistory() {
     const version = await saveNamedVersion(note);
     if (version) {
       setNote('');
-      toast.success(`Version ${version.number} saved`, formatDateTime(version.savedAt));
+      toast.success(
+        t('versions.saved', { number: version.number }),
+        formatDateTime(version.savedAt, t.locale),
+      );
     }
   };
 
   const download = async (version: VersionSummary) => {
     const result = await exportJson(version.id);
-    if (result) toast.success('Export complete', `${result.fileName} is in your downloads.`);
+    if (result) toast.success(t('export.done'), t('export.doneBody', { file: result.fileName }));
   };
 
   return (
     <details className="group rounded-xl border border-stone-200 bg-white" open>
       <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3">
         <span className="font-semibold">
-          Version history <span className="font-normal text-stone-500">({versions.length})</span>
+          {t('versions.title')}{' '}
+          <span className="font-normal text-stone-500">({t.num(versions.length)})</span>
         </span>
-        <span className="text-xs text-stone-500 group-open:hidden">Show</span>
-        <span className="hidden text-xs text-stone-500 group-open:inline">Hide</span>
+        <span className="text-xs text-stone-500 group-open:hidden">{t('versions.show')}</span>
+        <span className="hidden text-xs text-stone-500 group-open:inline">
+          {t('versions.hide')}
+        </span>
       </summary>
 
       <div className="flex flex-col gap-4 border-t border-stone-200 px-4 py-3">
         <p className="text-sm text-stone-600">
-          Every save is kept as a version with its date and time, so you can always go back.
-          We recommend keeping all versions: they stay on this device and take little space
-          ({formatBytes(totalBytes)} so far).
+          {t('versions.intro', { size: formatBytes(totalBytes) })}
         </p>
 
         <div className="flex flex-wrap items-end gap-3">
-          <Field label="Name this version (optional)" htmlFor={`${id}-note`} className="min-w-48 flex-1">
+          <Field label={t('versions.name')} htmlFor={`${id}-note`} className="min-w-48 flex-1">
             <input
               id={`${id}-note`}
               className={controlClass}
               value={note}
               maxLength={200}
               dir="auto"
-              placeholder="e.g. Sent to Larkspur Labs"
+              placeholder={t('versions.namePlaceholder')}
               onChange={(e) => setNote(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') void saveNamed();
@@ -158,17 +178,17 @@ export function VersionHistory() {
             />
           </Field>
           <Button variant="primary" onClick={() => void saveNamed()}>
-            Save version
+            {t('versions.save')}
           </Button>
         </div>
 
         <Field
-          label="How many versions to keep"
+          label={t('versions.keep')}
           htmlFor={`${id}-retention`}
           hint={
             retention === 'all'
-              ? 'Nothing is ever deleted automatically.'
-              : `Older autosaves beyond ${retention} are deleted. Named versions are always kept.`
+              ? t('versions.keepAllHint')
+              : t('versions.keepSomeHint', { count: retention })
           }
           className="max-w-xs"
         >
@@ -180,16 +200,18 @@ export function VersionHistory() {
           >
             {RETENTION_OPTIONS.map((option) => (
               <option key={String(option.value)} value={String(option.value)}>
-                {option.label}
+                {option.value === 'all'
+                  ? t('versions.retainAll')
+                  : t('versions.retainLatest', { count: option.value })}
               </option>
             ))}
           </select>
         </Field>
 
         {versions.length === 0 ? (
-          <p className="text-sm text-stone-500">No versions yet. Your first save creates one.</p>
+          <p className="text-sm text-stone-500">{t('versions.none')}</p>
         ) : (
-          <ol aria-label="Versions, newest first">
+          <ol aria-label={t('versions.list')}>
             {shown.map((version) => (
               <VersionRow
                 key={version.id}
@@ -204,19 +226,25 @@ export function VersionHistory() {
         )}
 
         {versions.length > INITIAL_ROWS ? (
-          <Button variant="ghost" size="sm" className="self-start" onClick={() => setShowAll((v) => !v)}>
-            {showAll ? 'Show fewer' : `Show all ${versions.length} versions`}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="self-start"
+            onClick={() => setShowAll((v) => !v)}
+          >
+            {showAll ? t('versions.showFewer') : t('versions.showAll', { count: versions.length })}
           </Button>
         ) : null}
       </div>
 
       <ConfirmDialog
         open={pendingRestore !== null}
-        title={`Restore version ${pendingRestore?.number ?? ''}?`}
-        description={`The resume will go back to how it was on ${
-          pendingRestore ? formatDateTime(pendingRestore.savedAt) : ''
-        }. Your current state is already saved as version ${latest?.number ?? ''}, so you can return to it at any time.`}
-        confirmLabel="Restore"
+        title={t('versions.restoreTitle', { number: pendingRestore?.number ?? '' })}
+        description={t('versions.restoreBody', {
+          when: pendingRestore ? formatDateTime(pendingRestore.savedAt, t.locale) : '',
+          current: latest?.number ?? '',
+        })}
+        confirmLabel={t('versions.restoreButton')}
         tone="primary"
         onCancel={() => setPendingRestore(null)}
         onConfirm={() => {
@@ -225,7 +253,10 @@ export function VersionHistory() {
           if (!target) return;
           void restoreVersion(target.id).then((version) => {
             if (version) {
-              toast.success(`Version ${target.number} restored`, `Saved as version ${version.number}.`);
+              toast.success(
+                t('versions.restored', { number: target.number }),
+                t('versions.restoredBody', { number: version.number }),
+              );
             }
           });
         }}

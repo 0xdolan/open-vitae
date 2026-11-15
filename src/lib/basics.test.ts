@@ -6,12 +6,14 @@ import { omitKey } from './object';
 import { isSafeUrl, telUrl } from './url';
 
 describe('isSafeUrl', () => {
-  it.each(['https://example.com', 'http://example.com/a?b=c', 'mailto:a@example.com', 'tel:+15550100'])(
-    'accepts %s',
-    (url) => {
-      expect(isSafeUrl(url)).toBe(true);
-    },
-  );
+  it.each([
+    'https://example.com',
+    'http://example.com/a?b=c',
+    'mailto:a@example.com',
+    'tel:+15550100',
+  ])('accepts %s', (url) => {
+    expect(isSafeUrl(url)).toBe(true);
+  });
 
   it.each([
     'javascript:alert(1)',

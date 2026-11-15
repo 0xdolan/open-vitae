@@ -74,12 +74,12 @@ The shadcn/ui skill reads `components.json`. The UI/UX Pro Max skill goes in `.c
 
 ## Troubleshooting
 
-| Symptom                                | Fix                                                            |
-| -------------------------------------- | -------------------------------------------------------------- |
-| `npm ci` fails with "no lockfile"      | Run `npm install` once and commit `package-lock.json`          |
-| Blank page on GitHub Pages             | The repository name must match the `VITE_BASE` path in the workflow (it is read automatically) |
-| Old version keeps showing              | The service worker cached it. Close all tabs of the app and reopen |
-| Port 5173 or 8080 already in use       | Stop the other process, or change the port in `vite.config.ts` / `docker-compose.yml` |
+| Symptom                           | Fix                                                                                            |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `npm ci` fails with "no lockfile" | Run `npm install` once and commit `package-lock.json`                                          |
+| Blank page on GitHub Pages        | The repository name must match the `VITE_BASE` path in the workflow (it is read automatically) |
+| Old version keeps showing         | The service worker cached it. Close all tabs of the app and reopen                             |
+| Port 5173 or 8080 already in use  | Stop the other process, or change the port in `vite.config.ts` / `docker-compose.yml`          |
 
 ---
 

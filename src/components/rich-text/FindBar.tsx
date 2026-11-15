@@ -2,6 +2,8 @@ import type { Editor } from '@tiptap/react';
 import { useEditorState } from '@tiptap/react';
 import { useEffect, useId, useRef, useState } from 'react';
 
+import { useT } from '@/i18n';
+
 import { getFindState } from './extensions';
 
 interface FindBarProps {
@@ -11,6 +13,7 @@ interface FindBarProps {
 
 /** Find and replace inside one editor. Enter finds the next match, Shift+Enter the previous. */
 export function FindBar({ editor, onClose }: FindBarProps) {
+  const t = useT();
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
@@ -37,12 +40,17 @@ export function FindBar({ editor, onClose }: FindBarProps) {
     editor.commands.setFindQuery(query, { caseSensitive, wholeWord });
   }, [editor, query, caseSensitive, wholeWord]);
 
-  const status = query === '' ? '' : total === 0 ? 'No matches' : `${current + 1} of ${total}`;
+  const status =
+    query === ''
+      ? ''
+      : total === 0
+        ? t('find.none')
+        : t('find.position', { current: current + 1, total });
 
   return (
     <div
       role="search"
-      aria-label="Find and replace"
+      aria-label={t('find.label')}
       className="flex flex-wrap items-center gap-2 border-b border-stone-200 bg-amber-50/60 p-2 text-sm"
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
@@ -53,14 +61,14 @@ export function FindBar({ editor, onClose }: FindBarProps) {
       }}
     >
       <label htmlFor={`${id}-find`} className="sr-only">
-        Find
+        {t('find.find')}
       </label>
       <input
         ref={input}
         id={`${id}-find`}
         type="search"
         dir="auto"
-        placeholder="Find"
+        placeholder={t('find.find')}
         className="h-8 w-40 rounded-md border border-stone-300 bg-white px-2"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -75,38 +83,77 @@ export function FindBar({ editor, onClose }: FindBarProps) {
       <span role="status" aria-live="polite" className="min-w-20 text-xs text-stone-600">
         {status}
       </span>
-      <button type="button" className="ov-tool" aria-label="Previous match" title="Previous (Shift+Enter)" disabled={total === 0} onClick={() => editor.commands.findPrevious()}>
+      <button
+        type="button"
+        className="ov-tool"
+        aria-label={t('find.previous')}
+        title={t('find.previousTitle')}
+        disabled={total === 0}
+        onClick={() => editor.commands.findPrevious()}
+      >
         ↑
       </button>
-      <button type="button" className="ov-tool" aria-label="Next match" title="Next (Enter)" disabled={total === 0} onClick={() => editor.commands.findNext()}>
+      <button
+        type="button"
+        className="ov-tool"
+        aria-label={t('find.next')}
+        title={t('find.nextTitle')}
+        disabled={total === 0}
+        onClick={() => editor.commands.findNext()}
+      >
         ↓
       </button>
       <label className="flex items-center gap-1 text-xs">
-        <input type="checkbox" className="accent-brand" checked={caseSensitive} onChange={(e) => setCaseSensitive(e.target.checked)} />
-        Match case
+        <input
+          type="checkbox"
+          className="accent-brand"
+          checked={caseSensitive}
+          onChange={(e) => setCaseSensitive(e.target.checked)}
+        />
+        {t('find.matchCase')}
       </label>
       <label className="flex items-center gap-1 text-xs">
-        <input type="checkbox" className="accent-brand" checked={wholeWord} onChange={(e) => setWholeWord(e.target.checked)} />
-        Whole words
+        <input
+          type="checkbox"
+          className="accent-brand"
+          checked={wholeWord}
+          onChange={(e) => setWholeWord(e.target.checked)}
+        />
+        {t('find.wholeWords')}
       </label>
       <label htmlFor={`${id}-replace`} className="sr-only">
-        Replace with
+        {t('find.replaceWith')}
       </label>
       <input
         id={`${id}-replace`}
         dir="auto"
-        placeholder="Replace with"
+        placeholder={t('find.replaceWith')}
         className="h-8 w-40 rounded-md border border-stone-300 bg-white px-2"
         value={replacement}
         onChange={(e) => setReplacement(e.target.value)}
       />
-      <button type="button" className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs" disabled={total === 0} onClick={() => editor.commands.replaceCurrent(replacement)}>
-        Replace
+      <button
+        type="button"
+        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs"
+        disabled={total === 0}
+        onClick={() => editor.commands.replaceCurrent(replacement)}
+      >
+        {t('find.replace')}
       </button>
-      <button type="button" className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs" disabled={total === 0} onClick={() => editor.commands.replaceAll(replacement)}>
-        Replace all
+      <button
+        type="button"
+        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs"
+        disabled={total === 0}
+        onClick={() => editor.commands.replaceAll(replacement)}
+      >
+        {t('find.replaceAll')}
       </button>
-      <button type="button" className="ov-tool ms-auto" aria-label="Close find and replace" onClick={onClose}>
+      <button
+        type="button"
+        className="ov-tool ms-auto"
+        aria-label={t('find.close')}
+        onClick={onClose}
+      >
         ×
       </button>
     </div>

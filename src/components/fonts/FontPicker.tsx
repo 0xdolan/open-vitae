@@ -1,9 +1,11 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { BUNDLED_FONTS, fontStack, SYSTEM_FONTS } from '@/config/fonts';
-import { findGoogleFont, GOOGLE_FONTS } from '@/config/google-fonts';
+import { findGoogleFont, GOOGLE_FONTS, type FontCategory } from '@/config/google-fonts';
 import { cleanFamilyName } from '@/lib/fonts/font-file';
 import { cn } from '@/lib/utils';
+import { useT } from '@/i18n';
+import type { MessageKey } from '@/i18n/messages/en';
 import { toast, useFontStore } from '@/stores';
 
 import { GoogleConsent } from './GoogleConsent';
@@ -16,6 +18,16 @@ interface FontPickerProps {
   readonly preferArabic?: boolean;
 }
 
+const CATEGORY_LABELS: Readonly<Record<FontCategory, MessageKey>> = {
+  'sans-serif': 'fonts.catSans',
+  serif: 'fonts.catSerif',
+  monospace: 'fonts.catMono',
+  display: 'fonts.catDisplay',
+  handwriting: 'fonts.catHandwriting',
+};
+
+type GroupId = 'bundled' | 'system' | 'user' | 'google';
+
 interface Option {
   readonly family: string;
   readonly note?: string;
@@ -27,6 +39,7 @@ interface Option {
  * added by typing its exact name.
  */
 export function FontPicker({ id, value, onChange, preferArabic = false }: FontPickerProps) {
+  const t = useT();
   const autoId = useId();
   const buttonId = id ?? autoId;
   const listId = `${buttonId}-list`;
@@ -57,18 +70,48 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
   const groups = useMemo(() => {
     const google = [...GOOGLE_FONTS]
       .sort((a, b) => (preferArabic ? Number(Boolean(b.arabic)) - Number(Boolean(a.arabic)) : 0))
-      .map((g): Option => ({ family: g.family, note: g.arabic ? 'Arabic script' : g.hebrew ? 'Hebrew' : g.category }));
-    const recent = googleFamilies.filter((f) => !findGoogleFont(f)).map((family): Option => ({ family, note: 'Google' }));
+      .map(
+        (g): Option => ({
+          family: g.family,
+          note: t(
+            g.arabic
+              ? 'fonts.noteArabic'
+              : g.hebrew
+                ? 'fonts.noteHebrew'
+                : CATEGORY_LABELS[g.category],
+          ),
+        }),
+      );
+    const recent = googleFamilies
+      .filter((f) => !findGoogleFont(f))
+      .map((family): Option => ({ family, note: 'Google' }));
     return [
-      { label: 'Bundled (work offline)', options: BUNDLED_FONTS.map((f): Option => ({ family: f.family, note: f.arabicScript ? 'Persian and Arabic' : undefined })) },
-      { label: 'Installed on your computer', options: SYSTEM_FONTS.map((f): Option => ({ family: f.family })) },
-      { label: 'Your fonts (this browser)', options: userFonts.map((f): Option => ({ family: f.family, note: f.fileName })) },
-      { label: 'Google Fonts', options: [...recent, ...google] },
+      {
+        id: 'bundled' as GroupId,
+        label: t('fonts.groupBundled'),
+        options: BUNDLED_FONTS.map(
+          (f): Option => ({
+            family: f.family,
+            note: f.arabicScript ? t('fonts.notePersianArabic') : undefined,
+          }),
+        ),
+      },
+      {
+        id: 'system' as GroupId,
+        label: t('fonts.groupSystem'),
+        options: SYSTEM_FONTS.map((f): Option => ({ family: f.family })),
+      },
+      {
+        id: 'user' as GroupId,
+        label: t('fonts.groupUser'),
+        options: userFonts.map((f): Option => ({ family: f.family, note: f.fileName })),
+      },
+      { id: 'google' as GroupId, label: t('fonts.google'), options: [...recent, ...google] },
     ]
       .map((g) => ({ ...g, options: g.options.filter((o) => match(o.family)) }))
       .filter((g) => g.options.length > 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- match depends only on q
-  }, [q, userFonts, googleFamilies, preferArabic]);
+  }, [q, userFonts, googleFamilies, preferArabic, t]);
 
   const allFamilies = groups.flatMap((g) => g.options.map((o) => o.family.toLowerCase()));
   const typed = cleanFamilyName(query);
@@ -80,7 +123,7 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
       try {
         await loadGoogleFont(family);
       } catch (error) {
-        toast.error('Font not loaded', error instanceof Error ? error.message : undefined);
+        toast.error(t('fonts.notLoaded'), error instanceof Error ? error.message : undefined);
         return;
       }
     }
@@ -88,8 +131,6 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
     setOpen(false);
     setQuery('');
   };
-
-  const isGoogleGroup = (label: string) => label === 'Google Fonts';
 
   return (
     <div ref={root} className="relative">
@@ -104,7 +145,9 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
         onClick={() => setOpen((v) => !v)}
       >
         <span className="truncate">{value}</span>
-        <span aria-hidden="true" className="text-stone-400">▾</span>
+        <span aria-hidden="true" className="text-stone-400">
+          ▾
+        </span>
       </button>
 
       {open ? (
@@ -121,19 +164,24 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
             ref={search}
             type="search"
             dir="auto"
-            aria-label="Search fonts"
-            placeholder="Search fonts or type a Google font name"
+            aria-label={t('fonts.search')}
+            placeholder={t('fonts.searchPlaceholder')}
             className="mb-2 h-8 w-full rounded-md border border-stone-300 px-2 text-sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <div id={listId} role="listbox" aria-label="Fonts" className="max-h-72 overflow-auto">
+          <div
+            id={listId}
+            role="listbox"
+            aria-label={t('fonts.title')}
+            className="max-h-72 overflow-auto"
+          >
             {groups.map((group) => (
-              <div key={group.label} role="group" aria-label={group.label} className="mb-2">
+              <div key={group.id} role="group" aria-label={group.label} className="mb-2">
                 <p className="px-2 py-1 text-xs font-semibold text-stone-500">{group.label}</p>
-                {isGoogleGroup(group.label) && !googleConsent ? <GoogleConsent compact /> : null}
+                {group.id === 'google' && !googleConsent ? <GoogleConsent compact /> : null}
                 {group.options.map((option) => {
-                  const google = isGoogleGroup(group.label);
+                  const google = group.id === 'google';
                   const state = googleState[option.family]?.state;
                   return (
                     <button
@@ -146,12 +194,16 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
                         'flex w-full items-baseline justify-between gap-2 rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100 disabled:opacity-50',
                         option.family === value && 'bg-brand-soft',
                       )}
-                      style={!google || state === 'ready' ? { fontFamily: fontStack(option.family) } : undefined}
+                      style={
+                        !google || state === 'ready'
+                          ? { fontFamily: fontStack(option.family) }
+                          : undefined
+                      }
                       onClick={() => void choose(option.family, google)}
                     >
                       <span className="truncate">{option.family}</span>
                       <span className="shrink-0 font-sans text-xs text-stone-400">
-                        {state === 'loading' ? 'Loading…' : option.note}
+                        {state === 'loading' ? t('fonts.loading') : option.note}
                       </span>
                     </button>
                   );
@@ -161,15 +213,23 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
             {offerByName && typed ? (
               <div className="border-t border-stone-200 pt-2">
                 {googleConsent ? (
-                  <button type="button" className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100" onClick={() => void choose(typed, true)}>
-                    Load “{typed}” from Google Fonts
+                  <button
+                    type="button"
+                    className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100"
+                    onClick={() => void choose(typed, true)}
+                  >
+                    {t('fonts.loadByName', { name: typed })}
                   </button>
                 ) : (
-                  <p className="px-2 text-xs text-stone-500">Allow Google Fonts above to load “{typed}”.</p>
+                  <p className="px-2 text-xs text-stone-500">
+                    {t('fonts.allowToLoad', { name: typed })}
+                  </p>
                 )}
               </div>
             ) : null}
-            {groups.length === 0 && !offerByName ? <p className="px-2 py-3 text-sm text-stone-500">No fonts match.</p> : null}
+            {groups.length === 0 && !offerByName ? (
+              <p className="px-2 py-3 text-sm text-stone-500">{t('fonts.noMatch')}</p>
+            ) : null}
           </div>
         </div>
       ) : null}

@@ -22,18 +22,18 @@ Everything happens in the browser; nothing is uploaded.
 
 ## Which format to choose
 
-| Format              | What you get                                                                                         | Import again |
-| ------------------- | ---------------------------------------------------------------------------------------------------- | ------------ |
-| **PDF**             | Every page exactly as in the preview, with clickable links, document details and searchable text for Latin script | No |
-| **Word** (.docx)    | An editable document: headings, paragraphs, bullet and numbered lists, tables, links and the photo, in your fonts, sizes, colours and direction | No |
-| **InDesign** (.icml) | A text story with named paragraph and character styles; in InDesign use File › Place          | No           |
-| **PNG**             | A sharp picture of each page, the resolution stored in the file                                      | No           |
-| **JPG**             | A smaller picture of each page, with a quality setting                                               | No           |
-| **SVG**             | A scalable picture of each page for web browsers                                                     | No           |
-| **JSON**            | A complete backup: every setting, style, icon and the photo                                          | Yes          |
-| **Excel** (.xlsx)   | One row per setting, profile field, link, section and entry                                          | Yes          |
-| **CSV**             | The same table as plain text                                                                         | Yes          |
-| **Markdown** (.md)  | Plain text with headings and lists                                                                   | Yes          |
+| Format               | What you get                                                                                                                                    | Import again |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| **PDF**              | Every page exactly as in the preview, with clickable links, document details and searchable text for Latin script                               | No           |
+| **Word** (.docx)     | An editable document: headings, paragraphs, bullet and numbered lists, tables, links and the photo, in your fonts, sizes, colours and direction | No           |
+| **InDesign** (.icml) | A text story with named paragraph and character styles; in InDesign use File › Place                                                            | No           |
+| **PNG**              | A sharp picture of each page, the resolution stored in the file                                                                                 | No           |
+| **JPG**              | A smaller picture of each page, with a quality setting                                                                                          | No           |
+| **SVG**              | A scalable picture of each page for web browsers                                                                                                | No           |
+| **JSON**             | A complete backup: every setting, style, icon and the photo                                                                                     | Yes          |
+| **Excel** (.xlsx)    | One row per setting, profile field, link, section and entry                                                                                     | Yes          |
+| **CSV**              | The same table as plain text                                                                                                                    | Yes          |
+| **Markdown** (.md)   | Plain text with headings and lists                                                                                                              | Yes          |
 
 Picture formats with more than one page download as a zip, or choose a single page.
 
@@ -51,12 +51,12 @@ PDF, PNG and JPG offer 72 DPI (screen), 150 (draft), **300 (print, the default)*
 
 On the **My resumes** screen choose **Import** and pick a file. The new resume opens straight away; the original file is not changed.
 
-| File                               | How it is read                                                                     |
-| ---------------------------------- | ---------------------------------------------------------------------------------- |
-| JSON (`.json`)                     | An Open Vitae backup from any version, upgraded to the current format              |
-| CSV (`.csv`, `.tsv`)               | The table format below; commas, semicolons and tabs all work                       |
-| Excel (`.xlsx`)                    | The first sheet, in the table format below                                         |
-| Markdown (`.md`, `.markdown`, `.txt`) | The Markdown format below                                                       |
+| File                                  | How it is read                                                        |
+| ------------------------------------- | --------------------------------------------------------------------- |
+| JSON (`.json`)                        | An Open Vitae backup from any version, upgraded to the current format |
+| CSV (`.csv`, `.tsv`)                  | The table format below; commas, semicolons and tabs all work          |
+| Excel (`.xlsx`)                       | The first sheet, in the table format below                            |
+| Markdown (`.md`, `.markdown`, `.txt`) | The Markdown format below                                             |
 
 Rows or fields that cannot be used are skipped, and the message says how many. Imported resumes get new ids, so importing the same file twice gives two separate resumes.
 
@@ -66,18 +66,18 @@ Rows or fields that cannot be used are skipped, and the message says how many. I
 
 ## The table format (CSV and Excel)
 
-| Column   | Use                                                                               |
-| -------- | --------------------------------------------------------------------------------- |
-| Type     | `setting`, `profile`, `link`, `section` or `entry`                                |
-| Section  | The section heading (section and entry rows)                                      |
+| Column   | Use                                                                                     |
+| -------- | --------------------------------------------------------------------------------------- |
+| Type     | `setting`, `profile`, `link`, `section` or `entry`                                      |
+| Section  | The section heading (section and entry rows)                                            |
 | Kind     | `experience`, `education`, `skills`, `projects`, … (optional: guessed from the heading) |
-| Title    | Setting or profile field name, link label, or entry title                         |
-| Subtitle | Company, school or issuer                                                         |
-| Dates    | Any text, such as `2021 – Present`                                                |
-| Location | City or "Remote"                                                                  |
-| URL      | Link address (link and entry rows)                                                |
-| Details  | Setting or field value, or the entry description in Markdown                      |
-| Hidden   | `yes` to hide a section or entry on the page                                      |
+| Title    | Setting or profile field name, link label, or entry title                               |
+| Subtitle | Company, school or issuer                                                               |
+| Dates    | Any text, such as `2021 – Present`                                                      |
+| Location | City or "Remote"                                                                        |
+| URL      | Link address (link and entry rows)                                                      |
+| Details  | Setting or field value, or the entry description in Markdown                            |
+| Hidden   | `yes` to hide a section or entry on the page                                            |
 
 Settings are Name, Language, Direction, Page size, Orientation, Font and Accent colour. Profile fields are Full name, Headline, Email, Phone, Location, Website and Summary.
 
@@ -99,7 +99,8 @@ A short summary.
 ## Experience
 
 ### Job title — Company
-*City · 2021 – Present*
+
+_City · 2021 – Present_
 
 - What you achieved
 ```
@@ -118,27 +119,27 @@ A short summary.
 
 ## Code map
 
-| File                                     | Purpose                                                        |
-| ---------------------------------------- | -------------------------------------------------------------- |
-| `src/config/export.ts`                   | Formats, resolutions and accepted file types                   |
-| `src/components/export/ExportDialog.tsx` | The export window and the off-screen pages it draws            |
-| `src/lib/export/run-export.ts`           | Runs an export in any format                                   |
-| `src/lib/export/page-capture.ts`         | Pictures of pages, link areas and text positions               |
-| `src/lib/export/fonts-embed.ts`          | Inlines the fonts a resume uses into page pictures             |
-| `src/lib/export/pdf.ts`                  | PDF with pdf-lib: pages, links, text layer, document details   |
-| `src/lib/export/dpi-metadata.ts`         | Stores the resolution in PNG and JPEG files                    |
-| `src/lib/export/docx.ts`                 | Word documents with the docx library                           |
-| `src/lib/export/icml.ts`                 | InDesign (ICML) stories                                        |
-| `src/lib/export/data-formats.ts`         | JSON, CSV, Excel and Markdown files                            |
-| `src/lib/interchange/csv.ts`             | CSV reading and writing, formula protection                    |
-| `src/lib/interchange/xlsx.ts`            | Excel reading and writing with jszip                           |
-| `src/lib/interchange/table.ts`           | The table format                                               |
-| `src/lib/interchange/markdown.ts`        | Rich text to Markdown and back                                 |
-| `src/lib/interchange/markdown-resume.ts` | Markdown resumes                                               |
-| `src/lib/interchange/section-kind.ts`    | Guessing section kinds from headings                           |
-| `src/lib/interchange/import-file.ts`     | Detecting and importing any supported file                     |
-| `src/lib/interchange/template.ts`        | The blank template                                             |
-| `src/components/library/ImportAndTemplates.tsx` | Import and Templates on the My resumes screen           |
+| File                                            | Purpose                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------ |
+| `src/config/export.ts`                          | Formats, resolutions and accepted file types                 |
+| `src/components/export/ExportDialog.tsx`        | The export window and the off-screen pages it draws          |
+| `src/lib/export/run-export.ts`                  | Runs an export in any format                                 |
+| `src/lib/export/page-capture.ts`                | Pictures of pages, link areas and text positions             |
+| `src/lib/export/fonts-embed.ts`                 | Inlines the fonts a resume uses into page pictures           |
+| `src/lib/export/pdf.ts`                         | PDF with pdf-lib: pages, links, text layer, document details |
+| `src/lib/export/dpi-metadata.ts`                | Stores the resolution in PNG and JPEG files                  |
+| `src/lib/export/docx.ts`                        | Word documents with the docx library                         |
+| `src/lib/export/icml.ts`                        | InDesign (ICML) stories                                      |
+| `src/lib/export/data-formats.ts`                | JSON, CSV, Excel and Markdown files                          |
+| `src/lib/interchange/csv.ts`                    | CSV reading and writing, formula protection                  |
+| `src/lib/interchange/xlsx.ts`                   | Excel reading and writing with jszip                         |
+| `src/lib/interchange/table.ts`                  | The table format                                             |
+| `src/lib/interchange/markdown.ts`               | Rich text to Markdown and back                               |
+| `src/lib/interchange/markdown-resume.ts`        | Markdown resumes                                             |
+| `src/lib/interchange/section-kind.ts`           | Guessing section kinds from headings                         |
+| `src/lib/interchange/import-file.ts`            | Detecting and importing any supported file                   |
+| `src/lib/interchange/template.ts`               | The blank template                                           |
+| `src/components/library/ImportAndTemplates.tsx` | Import and Templates on the My resumes screen                |
 
 ---
 

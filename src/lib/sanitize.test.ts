@@ -5,7 +5,8 @@ import { sanitizeHtml } from './sanitize';
 
 describe('sanitizeHtml', () => {
   it('keeps formatting', () => {
-    const html = '<p><strong>Bold</strong> <em>italic</em> H<sub>2</sub>O x<sup>2</sup></p><ul><li>One</li></ul>';
+    const html =
+      '<p><strong>Bold</strong> <em>italic</em> H<sub>2</sub>O x<sup>2</sup></p><ul><li>One</li></ul>';
     expect(sanitizeHtml(html)).toBe(html);
   });
 
@@ -16,7 +17,9 @@ describe('sanitizeHtml', () => {
   });
 
   it('removes iframes, forms and inline styles', () => {
-    expect(sanitizeHtml('<iframe src="https://example.com"></iframe><form><input></form>')).toBe('');
+    expect(sanitizeHtml('<iframe src="https://example.com"></iframe><form><input></form>')).toBe(
+      '',
+    );
     expect(sanitizeHtml('<p style="position:fixed">x</p>')).toBe('<p>x</p>');
   });
 
@@ -40,11 +43,14 @@ describe('sanitizeHtml', () => {
   });
 
   it('drops data: and vbscript: links', () => {
-    expect(sanitizeHtml('<a href="data:text/html,x">a</a><a href="vbscript:x">b</a>')).toBe('<a>a</a><a>b</a>');
+    expect(sanitizeHtml('<a href="data:text/html,x">a</a><a href="vbscript:x">b</a>')).toBe(
+      '<a>a</a><a>b</a>',
+    );
   });
 
   it('keeps the inline formatting the editor produces', () => {
-    const html = '<p style="text-align: center"><span style="color: #b91c1c; font-size: 12pt">Red</span></p>';
+    const html =
+      '<p style="text-align: center"><span style="color: #b91c1c; font-size: 12pt">Red</span></p>';
     expect(sanitizeHtml(html)).toBe(html);
   });
 
@@ -58,15 +64,20 @@ describe('sanitizeHtml', () => {
   it('keeps embedded images and drops remote ones', () => {
     const embedded = '<img src="data:image/png;base64,iVBORw0KGgo=" alt="Logo">';
     expect(sanitizeHtml(embedded)).toBe(embedded);
-    expect(sanitizeHtml('<p>a<img src="https://tracker.example/p.gif" alt="x">b</p>')).toBe('<p>ab</p>');
+    expect(sanitizeHtml('<p>a<img src="https://tracker.example/p.gif" alt="x">b</p>')).toBe(
+      '<p>ab</p>',
+    );
   });
 
   it('keeps headings, code blocks and indent levels', () => {
-    const html = '<h2>Title</h2><pre><code class="language-ts">const a = 1;</code></pre><p style="--ov-level: 2">Indented</p>';
+    const html =
+      '<h2>Title</h2><pre><code class="language-ts">const a = 1;</code></pre><p style="--ov-level: 2">Indented</p>';
     expect(sanitizeHtml(html)).toBe(html);
   });
 
   it('removes SVG and MathML entirely', () => {
-    expect(sanitizeHtml('<svg><script>alert(1)</script></svg><math><mi>x</mi></math>ok')).toBe('ok');
+    expect(sanitizeHtml('<svg><script>alert(1)</script></svg><math><mi>x</mi></math>ok')).toBe(
+      'ok',
+    );
   });
 });

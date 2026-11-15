@@ -54,7 +54,12 @@ export function createJsonExport(
 
   const savedAt = version ? new Date(version.savedAt) : now;
   return {
-    fileName: exportFileName(doc.profile.fullName || doc.name, version?.number ?? null, savedAt, 'json'),
+    fileName: exportFileName(
+      doc.profile.fullName || doc.name,
+      version?.number ?? null,
+      savedAt,
+      'json',
+    ),
     mimeType: 'application/json',
     content: `${JSON.stringify(envelope, null, 2)}\n`,
   };

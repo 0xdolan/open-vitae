@@ -1,7 +1,12 @@
 import { useEffect, useSyncExternalStore } from 'react';
 
 import { isIconSetId, type IconSetId } from '@/config/icon-sets';
-import { getIconSet, loadIconSet, subscribeIconSets, type LoadedIconSet } from '@/lib/icons/registry';
+import {
+  getIconSet,
+  loadIconSet,
+  subscribeIconSets,
+  type LoadedIconSet,
+} from '@/lib/icons/registry';
 import { cn } from '@/lib/utils';
 import type { IconRef } from '@/schema/resume';
 

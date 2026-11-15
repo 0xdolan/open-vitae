@@ -33,17 +33,17 @@ OV_UID=$(id -u) OV_GID=$(id -g) docker compose --profile dev up dev
 
 ## How the containers are hardened
 
-| Measure                          | Where                         | Why                                         |
-| -------------------------------- | ----------------------------- | ------------------------------------------- |
-| Non-root user                    | `nginx-unprivileged` image; `user:` in the dev service | A break-out does not start as root |
-| Read-only root filesystem        | `read_only: true` (app)       | Nothing in the image can be modified at run time |
-| Temporary files in memory        | `tmpfs: /tmp`                 | nginx needs a writable `/tmp`; it is wiped on stop |
-| All capabilities dropped         | `cap_drop: [ALL]`             | The process needs none; port 8080 is unprivileged |
-| No privilege escalation          | `no-new-privileges:true`      | setuid binaries cannot raise privileges     |
-| Localhost-only ports             | `127.0.0.1:8080:8080`         | Not reachable from other machines on your network |
-| Resource limits                  | `mem_limit`, `pids_limit`     | Contains runaway processes                  |
-| Security headers                 | `docker/security-headers.inc` | Content Security Policy, no framing, no referrer |
-| Minimal build context            | `.dockerignore`               | `.git`, `.env` files and docs never enter the image |
+| Measure                   | Where                                                  | Why                                                 |
+| ------------------------- | ------------------------------------------------------ | --------------------------------------------------- |
+| Non-root user             | `nginx-unprivileged` image; `user:` in the dev service | A break-out does not start as root                  |
+| Read-only root filesystem | `read_only: true` (app)                                | Nothing in the image can be modified at run time    |
+| Temporary files in memory | `tmpfs: /tmp`                                          | nginx needs a writable `/tmp`; it is wiped on stop  |
+| All capabilities dropped  | `cap_drop: [ALL]`                                      | The process needs none; port 8080 is unprivileged   |
+| No privilege escalation   | `no-new-privileges:true`                               | setuid binaries cannot raise privileges             |
+| Localhost-only ports      | `127.0.0.1:8080:8080`                                  | Not reachable from other machines on your network   |
+| Resource limits           | `mem_limit`, `pids_limit`                              | Contains runaway processes                          |
+| Security headers          | `docker/security-headers.inc`                          | Content Security Policy, no framing, no referrer    |
+| Minimal build context     | `.dockerignore`                                        | `.git`, `.env` files and docs never enter the image |
 
 ## Checking it yourself
 

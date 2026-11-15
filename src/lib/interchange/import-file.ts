@@ -60,7 +60,12 @@ export function detectImportFormat(fileName: string, head: Uint8Array): ImportFo
 }
 
 function baseName(fileName: string): string {
-  return fileName.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'Imported resume';
+  return (
+    fileName
+      .replace(/\.[^.]+$/, '')
+      .replace(/[-_]+/g, ' ')
+      .trim() || 'Imported resume'
+  );
 }
 
 function build(input: Parameters<typeof buildResume>[0]): ResumeDocument {
@@ -80,7 +85,10 @@ function fromJson(text: string): ResumeDocument {
     throw new ImportError('This file is not valid JSON.');
   }
   const envelope = raw as { format?: unknown; resume?: unknown };
-  const candidate = envelope && typeof envelope === 'object' && envelope.format === EXPORT_FORMAT ? envelope.resume : raw;
+  const candidate =
+    envelope && typeof envelope === 'object' && envelope.format === EXPORT_FORMAT
+      ? envelope.resume
+      : raw;
   const parsed = parseResume(candidate);
   if (!parsed.ok) throw new ImportError(`This is not an Open Vitae resume: ${parsed.error}`);
   // New ids, so importing the same file twice never clashes with an existing resume.
@@ -101,7 +109,11 @@ export async function importResumeFile(file: File): Promise<ImportResult> {
       case 'json':
         return { doc: fromJson(new TextDecoder().decode(bytes)), format, warnings: [] };
       case 'csv': {
-        const { input, warnings } = tableToResume(parseCsv(new TextDecoder().decode(bytes)), MARKDOWN_CODEC, name);
+        const { input, warnings } = tableToResume(
+          parseCsv(new TextDecoder().decode(bytes)),
+          MARKDOWN_CODEC,
+          name,
+        );
         return { doc: build(input), format, warnings };
       }
       case 'xlsx': {
@@ -109,11 +121,16 @@ export async function importResumeFile(file: File): Promise<ImportResult> {
         return { doc: build(input), format, warnings };
       }
       case 'markdown':
-        return { doc: build(markdownToResume(new TextDecoder().decode(bytes), name)), format, warnings: [] };
+        return {
+          doc: build(markdownToResume(new TextDecoder().decode(bytes), name)),
+          format,
+          warnings: [],
+        };
     }
   } catch (error) {
     if (error instanceof ImportError) throw error;
-    if (error instanceof CsvError || error instanceof XlsxError) throw new ImportError(error.message);
+    if (error instanceof CsvError || error instanceof XlsxError)
+      throw new ImportError(error.message);
     throw new ImportError('This file could not be read.');
   }
 }

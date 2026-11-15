@@ -16,20 +16,20 @@ Previous: [Data and storage](07-data-and-storage.md) · Next: [Rich text editor]
 
 ## Screens
 
-| Address        | Screen                                                    |
-| -------------- | --------------------------------------------------------- |
-| `#/`           | Library: your resumes, the five samples, delete all data  |
-| `#/edit/<id>`  | Editor for one resume                                     |
+| Address       | Screen                                                   |
+| ------------- | -------------------------------------------------------- |
+| `#/`          | Library: your resumes, the five samples, delete all data |
+| `#/edit/<id>` | Editor for one resume                                    |
 
 Hash addresses work on GitHub Pages and any static server with no rewrite rules. Reloading, bookmarking and the browser's back button all work. An address for a resume that is not in this browser shows a short explanation and a link back.
 
 ## Layout
 
-| Width                 | Layout                                                       |
-| --------------------- | ------------------------------------------------------------ |
-| 1280 px and wider     | Navigator · form · live preview, side by side                |
-| 1024–1279 px          | Navigator and form side by side; Edit and Preview tabs       |
-| Narrower              | Everything stacked; Edit and Preview tabs                    |
+| Width             | Layout                                                 |
+| ----------------- | ------------------------------------------------------ |
+| 1280 px and wider | Navigator · form · live preview, side by side          |
+| 1024–1279 px      | Navigator and form side by side; Edit and Preview tabs |
+| Narrower          | Everything stacked; Edit and Preview tabs              |
 
 The navigator sits on the reading-start side and the preview on the reading-end side, so in a right-to-left browser the layout mirrors. The header holds the resume name, the save status ("Saved · version 12 · 19:05:23"), undo, redo and **Export** (PDF, Word, InDesign, images and data formats; see [Import and export](13-import-and-export.md)).
 
@@ -49,11 +49,11 @@ Each entry row also has a page-break button to start that entry on a new page; a
 
 Sections, entries inside a section, and profile links all use the same reorderable list ([`src/components/ui/sortable.tsx`](../src/components/ui/sortable.tsx)). It has no drag-and-drop library behind it.
 
-| Input            | How                                                                                   |
-| ---------------- | ------------------------------------------------------------------------------------- |
-| Mouse or touch   | Press the ⋮⋮ handle and drag. Other items move out of the way. Release to drop, Escape to cancel. |
-| Keyboard         | Tab to the handle. Space or Enter picks the item up. Arrow keys, Home and End choose the place, which is outlined. Space or Enter drops, Escape or Tab cancels. |
-| Screen reader    | Each step is announced: "Picked up Experience, position 1 of 5", "Experience, position 3 of 5", "Experience dropped at position 3 of 5". |
+| Input          | How                                                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mouse or touch | Press the ⋮⋮ handle and drag. Other items move out of the way. Release to drop, Escape to cancel.                                                               |
+| Keyboard       | Tab to the handle. Space or Enter picks the item up. Arrow keys, Home and End choose the place, which is outlined. Space or Enter drops, Escape or Tab cancels. |
+| Screen reader  | Each step is announced: "Picked up Experience, position 1 of 5", "Experience, position 3 of 5", "Experience dropped at position 3 of 5".                        |
 
 After a keyboard drop, focus stays on the moved item's handle so it can be moved again.
 
@@ -75,11 +75,11 @@ The whole document has an undo history (up to 100 steps per open resume, kept in
 
 ## Keyboard shortcuts
 
-| Shortcut                          | Action                                                     |
-| --------------------------------- | ---------------------------------------------------------- |
-| Ctrl/⌘ + Z                        | Undo (inside a text field, the field's own undo runs)      |
-| Ctrl/⌘ + Shift + Z, Ctrl/⌘ + Y    | Redo                                                       |
-| Ctrl/⌘ + S                        | Save now and show the saved version and time               |
+| Shortcut                       | Action                                                |
+| ------------------------------ | ----------------------------------------------------- |
+| Ctrl/⌘ + Z                     | Undo (inside a text field, the field's own undo runs) |
+| Ctrl/⌘ + Shift + Z, Ctrl/⌘ + Y | Redo                                                  |
+| Ctrl/⌘ + S                     | Save now and show the saved version and time          |
 
 ## Field checks never block saving
 
@@ -89,19 +89,19 @@ Values that could affect the page itself (colours, font names, ids, photos) are 
 
 ## Code map
 
-| File                                         | Responsibility                                  |
-| -------------------------------------------- | ----------------------------------------------- |
-| `src/hooks/useHashRoute.ts`                  | Library and editor addresses                    |
-| `src/components/editor/EditorView.tsx`       | Layout, panel selection, mobile tabs            |
-| `src/components/editor/EditorHeader.tsx`     | Name, save status, undo, redo, export           |
-| `src/components/editor/Navigator.tsx`        | Side panel                                      |
-| `src/components/editor/ProfilePanel.tsx`     | Profile form and links                          |
-| `src/components/editor/SectionPanel.tsx`     | Section form and entries                        |
-| `src/components/ui/sortable.tsx`             | Accessible reorderable list                     |
-| `src/lib/document-ops.ts`                    | Pure edits: add, move, duplicate, remove        |
-| `src/lib/plain-text.ts`                      | Simple rich text ⇄ plain text                   |
-| `src/lib/field-validation.ts`                | Warnings for emails and links                   |
-| `src/hooks/useEditorShortcuts.ts`            | Keyboard shortcuts                              |
+| File                                     | Responsibility                           |
+| ---------------------------------------- | ---------------------------------------- |
+| `src/hooks/useHashRoute.ts`              | Library and editor addresses             |
+| `src/components/editor/EditorView.tsx`   | Layout, panel selection, mobile tabs     |
+| `src/components/editor/EditorHeader.tsx` | Name, save status, undo, redo, export    |
+| `src/components/editor/Navigator.tsx`    | Side panel                               |
+| `src/components/editor/ProfilePanel.tsx` | Profile form and links                   |
+| `src/components/editor/SectionPanel.tsx` | Section form and entries                 |
+| `src/components/ui/sortable.tsx`         | Accessible reorderable list              |
+| `src/lib/document-ops.ts`                | Pure edits: add, move, duplicate, remove |
+| `src/lib/plain-text.ts`                  | Simple rich text ⇄ plain text            |
+| `src/lib/field-validation.ts`            | Warnings for emails and links            |
+| `src/hooks/useEditorShortcuts.ts`        | Keyboard shortcuts                       |
 
 ---
 

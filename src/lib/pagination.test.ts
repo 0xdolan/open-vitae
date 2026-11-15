@@ -45,7 +45,8 @@ function doc(overrides: { sectionBreak?: boolean; itemBreak?: string } = {}): Re
   };
 }
 
-const keysOf = (pages: readonly { keys: readonly string[] }[]) => pages.map((p) => p.keys.join(' '));
+const keysOf = (pages: readonly { keys: readonly string[] }[]) =>
+  pages.map((p) => p.keys.join(' '));
 
 describe('describeBlocks', () => {
   it('recognises block kinds and keeps headings with what follows', () => {
@@ -80,13 +81,9 @@ describe('describeBlocks', () => {
       ['head:b', 10],
       ['body:b:0', 10],
     ]);
-    expect(describeBlocks(doc({ sectionBreak: true }), measured).map((b) => b.breakBefore)).toEqual([
-      false,
-      true,
-      false,
-      false,
-      false,
-    ]);
+    expect(describeBlocks(doc({ sectionBreak: true }), measured).map((b) => b.breakBefore)).toEqual(
+      [false, true, false, false, false],
+    );
     expect(describeBlocks(doc({ itemBreak: 'b' }), measured).map((b) => b.breakBefore)).toEqual([
       false,
       false,
@@ -96,7 +93,7 @@ describe('describeBlocks', () => {
     ]);
   });
 
-  it('moves a break before a section\'s first entry to before its heading', () => {
+  it("moves a break before a section's first entry to before its heading", () => {
     const blocks = describeBlocks(
       doc({ itemBreak: 'a' }),
       stack([
@@ -110,7 +107,13 @@ describe('describeBlocks', () => {
   });
 
   it('never asks for a break before the very first block', () => {
-    const blocks = describeBlocks(doc({ sectionBreak: true }), stack([['title:s1', 10], ['head:a', 10]]));
+    const blocks = describeBlocks(
+      doc({ sectionBreak: true }),
+      stack([
+        ['title:s1', 10],
+        ['head:a', 10],
+      ]),
+    );
     expect(blocks[0]?.breakBefore).toBe(false);
   });
 });
@@ -120,10 +123,17 @@ describe('paginate', () => {
     describeBlocks(d, stack(entries));
 
   it('keeps everything on one page when it fits', () => {
-    const pages = paginate(blocksFor([['header', 30], ['title:s1', 10], ['head:a', 10]]), {
-      pageHeight: 100,
-      mode: 'smart',
-    });
+    const pages = paginate(
+      blocksFor([
+        ['header', 30],
+        ['title:s1', 10],
+        ['head:a', 10],
+      ]),
+      {
+        pageHeight: 100,
+        mode: 'smart',
+      },
+    );
     expect(keysOf(pages)).toEqual(['header title:s1 head:a']);
     expect(pages[0]).toMatchObject({ manualStart: false, tooTall: false, continued: false });
   });
@@ -136,10 +146,17 @@ describe('paginate', () => {
 
   it('never leaves a section heading or entry title alone at the bottom of a page', () => {
     // Page holds 100px. The heading would fit at 90-100 but its entry would not.
-    const pages = paginate(blocksFor([['header', 90], ['title:s1', 10], ['head:a', 10]]), {
-      pageHeight: 100,
-      mode: 'smart',
-    });
+    const pages = paginate(
+      blocksFor([
+        ['header', 90],
+        ['title:s1', 10],
+        ['head:a', 10],
+      ]),
+      {
+        pageHeight: 100,
+        mode: 'smart',
+      },
+    );
     expect(keysOf(pages)).toEqual(['header', 'title:s1 head:a']);
 
     const entry = paginate(
@@ -203,10 +220,20 @@ describe('paginate', () => {
   });
 
   it('honours manual breaks in smart mode', () => {
-    const pages = paginate(blocksFor([['header', 10], ['title:s1', 10], ['head:a', 10]], doc({ sectionBreak: true })), {
-      pageHeight: 1000,
-      mode: 'smart',
-    });
+    const pages = paginate(
+      blocksFor(
+        [
+          ['header', 10],
+          ['title:s1', 10],
+          ['head:a', 10],
+        ],
+        doc({ sectionBreak: true }),
+      ),
+      {
+        pageHeight: 1000,
+        mode: 'smart',
+      },
+    );
     expect(keysOf(pages)).toEqual(['header', 'title:s1 head:a']);
     expect(pages[1]?.manualStart).toBe(true);
   });
@@ -223,7 +250,10 @@ describe('paginate', () => {
     expect(keysOf(manual)).toEqual(['header title:s1', 'head:a head:b']);
     expect(manual.map((p) => p.continued)).toEqual([false, true]);
 
-    const withBreak = paginate(blocksFor(entries, doc({ itemBreak: 'b' })), { pageHeight: 1000, mode: 'manual' });
+    const withBreak = paginate(blocksFor(entries, doc({ itemBreak: 'b' })), {
+      pageHeight: 1000,
+      mode: 'manual',
+    });
     expect(keysOf(withBreak)).toEqual(['header title:s1 head:a', 'head:b']);
     expect(withBreak.map((p) => [p.manualStart, p.continued])).toEqual([
       [false, false],
@@ -232,16 +262,29 @@ describe('paginate', () => {
   });
 
   it('puts a block taller than a page on its own page and flags it', () => {
-    const pages = paginate(blocksFor([['header', 10], ['head:a', 250], ['head:b', 10]]), {
-      pageHeight: 100,
-      mode: 'smart',
-    });
+    const pages = paginate(
+      blocksFor([
+        ['header', 10],
+        ['head:a', 250],
+        ['head:b', 10],
+      ]),
+      {
+        pageHeight: 100,
+        mode: 'smart',
+      },
+    );
     expect(keysOf(pages)).toEqual(['header', 'head:a', 'head:b']);
     expect(pages.map((p) => p.tooTall)).toEqual([false, true, false]);
   });
 
   it('tolerates sub-pixel rounding', () => {
-    const pages = paginate(blocksFor([['header', 50], ['head:a', 50.3]]), { pageHeight: 100, mode: 'smart' });
+    const pages = paginate(
+      blocksFor([
+        ['header', 50],
+        ['head:a', 50.3],
+      ]),
+      { pageHeight: 100, mode: 'smart' },
+    );
     expect(pages).toHaveLength(1);
   });
 });

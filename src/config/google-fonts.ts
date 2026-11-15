@@ -8,7 +8,11 @@ export interface GoogleFont {
   readonly hebrew?: boolean;
 }
 
-const f = (family: string, category: FontCategory, scripts: { arabic?: boolean; hebrew?: boolean } = {}): GoogleFont => ({
+const f = (
+  family: string,
+  category: FontCategory,
+  scripts: { arabic?: boolean; hebrew?: boolean } = {},
+): GoogleFont => ({
   family,
   category,
   ...scripts,

@@ -5,12 +5,14 @@ import { PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { fontStack } from '@/config/fonts';
 import { formatBytes } from '@/lib/format';
 import { FORMAT_LABELS } from '@/lib/fonts/registrar';
+import { useT } from '@/i18n';
 import { FontFileError, toast, useFontStore } from '@/stores';
 
 import { GoogleConsent } from './GoogleConsent';
 
 /** Your own fonts and the Google Fonts setting, shown under Page setup. */
 export function FontsManager() {
+  const t = useT();
   const userFonts = useFontStore((s) => s.userFonts);
   const googleConsent = useFontStore((s) => s.googleConsent);
   const googleFamilies = useFontStore((s) => s.googleFamilies);
@@ -28,32 +30,37 @@ export function FontsManager() {
     for (const file of files) {
       try {
         const font = await addUserFont(file);
-        toast.success('Font added', `“${font.family}” is ready to use in this browser.`);
+        toast.success(t('fonts.added'), t('fonts.addedBody', { name: font.family }));
       } catch (error) {
-        toast.error(`${file.name} was not added`, error instanceof FontFileError ? error.message : 'The file could not be read.');
+        toast.error(
+          t('fonts.notAdded', { file: file.name }),
+          error instanceof FontFileError ? error.message : t('fonts.unreadable'),
+        );
       }
     }
     setBusy(false);
   };
 
   return (
-    <section aria-labelledby="fonts-heading" className="flex flex-col gap-4 border-t border-stone-200 pt-5">
+    <section
+      aria-labelledby="fonts-heading"
+      className="flex flex-col gap-4 border-t border-stone-200 pt-5"
+    >
       <h3 id="fonts-heading" className="font-semibold">
-        Fonts
+        {t('fonts.title')}
       </h3>
 
       {bundledLoaded.length < 2 ? (
         <p className="rounded-md bg-stone-100 p-2.5 text-xs text-stone-600">
-          The bundled Persian and Arabic fonts (Sahel, Estedad) are not installed in this copy of the app,
-          so a similar system font is used. Whoever runs the app can add them with <code>npm run fonts:fetch</code>.
+          {t('fonts.bundledMissing')} <code dir="ltr">npm run fonts:fetch</code>
         </p>
       ) : null}
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-medium">Your fonts</p>
+          <p className="text-sm font-medium">{t('fonts.yours')}</p>
           <Button size="sm" onClick={() => input.current?.click()} disabled={busy}>
-            <PlusIcon /> {busy ? 'Adding…' : 'Load a font file'}
+            <PlusIcon /> {busy ? t('fonts.adding') : t('fonts.load')}
           </Button>
           <input
             ref={input}
@@ -70,18 +77,19 @@ export function FontsManager() {
           />
         </div>
         <p className="rounded-md border border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-950">
-          Fonts you load stay in this browser only and are never uploaded. They are kept until you clear
-          this site’s data or your browser cache; after that, load them again. Open Vitae collects nothing,
-          so it cannot restore them for you. Only load fonts you are allowed to use.
+          {t('fonts.privacy')}
         </p>
         {userFonts.length === 0 ? (
-          <p className="text-sm text-stone-500">No fonts loaded yet. TTF, OTF, WOFF and WOFF2 files work.</p>
+          <p className="text-sm text-stone-500">{t('fonts.none')}</p>
         ) : (
           <ul className="flex flex-col gap-1.5">
             {userFonts.map((font) => (
-              <li key={font.id} className="flex flex-wrap items-center gap-2 rounded-md border border-stone-200 bg-white p-2">
+              <li
+                key={font.id}
+                className="flex flex-wrap items-center gap-2 rounded-md border border-stone-200 bg-white p-2"
+              >
                 <input
-                  aria-label={`Name of ${font.fileName}`}
+                  aria-label={t('fonts.nameOf', { file: font.fileName })}
                   className="h-8 min-w-32 flex-1 rounded border border-transparent px-1.5 hover:border-stone-300 focus-visible:border-brand"
                   defaultValue={font.family}
                   style={{ fontFamily: fontStack(font.family) }}
@@ -90,7 +98,12 @@ export function FontsManager() {
                 <span className="text-xs text-stone-500">
                   {FORMAT_LABELS[font.format]} · {formatBytes(font.bytes)}
                 </span>
-                <Button variant="danger-ghost" size="sm" aria-label={`Remove ${font.family}`} onClick={() => void removeUserFont(font.id)}>
+                <Button
+                  variant="danger-ghost"
+                  size="sm"
+                  aria-label={t('fonts.remove', { name: font.family })}
+                  onClick={() => void removeUserFont(font.id)}
+                >
                   <TrashIcon />
                 </Button>
               </li>
@@ -100,15 +113,19 @@ export function FontsManager() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Google Fonts</p>
+        <p className="text-sm font-medium">{t('fonts.google')}</p>
         {googleConsent ? (
           <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
             <p className="text-stone-600">
-              Allowed.{' '}
-              {googleFamilies.length > 0 ? `Used: ${googleFamilies.slice(0, 6).join(', ')}${googleFamilies.length > 6 ? '…' : ''}` : 'Pick one in the font menu.'}
+              {t('fonts.googleAllowed')}{' '}
+              {googleFamilies.length > 0
+                ? t('fonts.googleUsed', {
+                    list: `${googleFamilies.slice(0, 6).join(', ')}${googleFamilies.length > 6 ? '…' : ''}`,
+                  })
+                : t('fonts.googlePick')}
             </p>
             <Button size="sm" variant="ghost" onClick={() => setGoogleConsent(false)}>
-              Stop using Google Fonts
+              {t('fonts.googleStop')}
             </Button>
           </div>
         ) : (

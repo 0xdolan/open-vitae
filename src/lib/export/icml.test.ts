@@ -15,23 +15,37 @@ describe('ICML export', () => {
     expect(dom.getElementsByTagName('parsererror')).toHaveLength(0);
     expect(xml).toContain('<?aid SnippetType="InCopyInterchange"?>');
 
-    const styles = Array.from(dom.getElementsByTagName('ParagraphStyleRange')).map((p) => p.getAttribute('AppliedParagraphStyle'));
+    const styles = Array.from(dom.getElementsByTagName('ParagraphStyleRange')).map((p) =>
+      p.getAttribute('AppliedParagraphStyle'),
+    );
     expect(styles[0]).toBe('ParagraphStyle/Name');
     expect(styles).toContain('ParagraphStyle/Section title');
     expect(styles).toContain('ParagraphStyle/Bullet 1');
 
-    const content = Array.from(dom.getElementsByTagName('Content')).map((c) => c.textContent).join('');
+    const content = Array.from(dom.getElementsByTagName('Content'))
+      .map((c) => c.textContent)
+      .join('');
     expect(content).toContain(doc.profile.fullName);
     expect(content).toContain(doc.sections[0]?.title ?? '');
 
     // Every hyperlink points at a destination that exists, and every source exists in the story.
-    const destinations = new Set(Array.from(dom.getElementsByTagName('HyperlinkURLDestination')).map((d) => d.getAttribute('Self')));
-    const sources = new Set(Array.from(dom.getElementsByTagName('HyperlinkTextSource')).map((s) => s.getAttribute('Self')));
+    const destinations = new Set(
+      Array.from(dom.getElementsByTagName('HyperlinkURLDestination')).map((d) =>
+        d.getAttribute('Self'),
+      ),
+    );
+    const sources = new Set(
+      Array.from(dom.getElementsByTagName('HyperlinkTextSource')).map((s) =>
+        s.getAttribute('Self'),
+      ),
+    );
     const links = Array.from(dom.getElementsByTagName('Hyperlink'));
     expect(links.length).toBeGreaterThan(0);
     for (const link of links) {
       expect(sources.has(link.getAttribute('Source'))).toBe(true);
-      expect(destinations.has(link.getElementsByTagName('Destination')[0]?.textContent ?? '')).toBe(true);
+      expect(destinations.has(link.getElementsByTagName('Destination')[0]?.textContent ?? '')).toBe(
+        true,
+      );
     }
   });
 

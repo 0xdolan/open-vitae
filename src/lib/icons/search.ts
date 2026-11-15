@@ -67,8 +67,16 @@ export interface IconSearchResult {
  * Whole-word matches rank first, then word starts, then shorter names.
  * An empty query returns the set in order.
  */
-export function searchIcons(names: readonly string[], query: string, prefix: string, limit = 120): IconSearchResult {
-  const tokens = query.toLowerCase().split(/[\s,_-]+/).filter(Boolean);
+export function searchIcons(
+  names: readonly string[],
+  query: string,
+  prefix: string,
+  limit = 120,
+): IconSearchResult {
+  const tokens = query
+    .toLowerCase()
+    .split(/[\s,_-]+/)
+    .filter(Boolean);
   if (tokens.length === 0) return { names: names.slice(0, limit), total: names.length };
 
   const scored: { name: string; score: number; length: number }[] = [];

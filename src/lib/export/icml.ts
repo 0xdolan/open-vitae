@@ -33,13 +33,28 @@ const PARAGRAPH_STYLES = [
 ] as const;
 type ParagraphStyle = (typeof PARAGRAPH_STYLES)[number];
 
-const CHARACTER_STYLES = ['Bold', 'Italic', 'Bold Italic', 'Underline', 'Strikethrough', 'Superscript', 'Subscript', 'Code', 'Link'] as const;
+const CHARACTER_STYLES = [
+  'Bold',
+  'Italic',
+  'Bold Italic',
+  'Underline',
+  'Strikethrough',
+  'Superscript',
+  'Subscript',
+  'Code',
+  'Link',
+] as const;
 type CharacterStyle = (typeof CHARACTER_STYLES)[number];
 
 // eslint-disable-next-line no-control-regex -- XML 1.0 forbids these characters
 const INVALID_XML = /[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g;
 const esc = (text: string) =>
-  text.replace(INVALID_XML, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  text
+    .replace(INVALID_XML, '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 
 interface Run {
   readonly text: string;
@@ -52,7 +67,15 @@ interface Para {
   readonly runs: readonly Run[];
 }
 
-function styleFor(flags: { bold: boolean; italic: boolean; underline: boolean; strike: boolean; sup: boolean; sub: boolean; code: boolean }): CharacterStyle | null {
+function styleFor(flags: {
+  bold: boolean;
+  italic: boolean;
+  underline: boolean;
+  strike: boolean;
+  sup: boolean;
+  sub: boolean;
+  code: boolean;
+}): CharacterStyle | null {
   if (flags.code) return 'Code';
   if (flags.sup) return 'Superscript';
   if (flags.sub) return 'Subscript';
@@ -65,7 +88,15 @@ function styleFor(flags: { bold: boolean; italic: boolean; underline: boolean; s
 }
 
 type Flags = Parameters<typeof styleFor>[0];
-const NO_FLAGS: Flags = { bold: false, italic: false, underline: false, strike: false, sup: false, sub: false, code: false };
+const NO_FLAGS: Flags = {
+  bold: false,
+  italic: false,
+  underline: false,
+  strike: false,
+  sup: false,
+  sub: false,
+  code: false,
+};
 
 function runsOf(node: Node, flags: Flags, link?: string): Run[] {
   if (node.nodeType === Node.TEXT_NODE) {
@@ -123,7 +154,8 @@ function listParas(list: Element, level: number): Para[] {
     const runs: Run[] = [];
     const nested: Element[] = [];
     for (const child of Array.from(item.childNodes)) {
-      if (child instanceof Element && (child.tagName === 'UL' || child.tagName === 'OL')) nested.push(child);
+      if (child instanceof Element && (child.tagName === 'UL' || child.tagName === 'OL'))
+        nested.push(child);
       else runs.push(...runsOf(child, NO_FLAGS));
     }
     out.push({ style, runs });
@@ -155,7 +187,8 @@ function parasOf(html: string): Para[] {
         out.push({ style: 'Heading', runs: runsOf(node, NO_FLAGS) });
         break;
       case 'PRE':
-        for (const line of (node.textContent ?? '').replace(/\n$/, '').split('\n')) out.push({ style: 'Code', runs: [{ text: line, style: null }] });
+        for (const line of (node.textContent ?? '').replace(/\n$/, '').split('\n'))
+          out.push({ style: 'Code', runs: [{ text: line, style: null }] });
         break;
       case 'BLOCKQUOTE':
         out.push(...parasOf(node.innerHTML).map((p) => ({ ...p, style: 'Quote' as const })));
@@ -195,8 +228,14 @@ function storyOf(doc: ResumeDocument): Para[] {
   if (profile.email) add({ text: profile.email, style: 'Link', link: `mailto:${profile.email}` });
   if (profile.phone) add(plain(profile.phone));
   if (profile.location) add(plain(profile.location));
-  if (profile.website && isSafeUrl(profile.website)) add({ text: profile.website.replace(/^https?:\/\//, ''), style: 'Link', link: profile.website });
-  for (const link of profile.links.filter((l) => l.url && isSafeUrl(l.url))) add({ text: link.label || link.url, style: 'Link', link: link.url });
+  if (profile.website && isSafeUrl(profile.website))
+    add({
+      text: profile.website.replace(/^https?:\/\//, ''),
+      style: 'Link',
+      link: profile.website,
+    });
+  for (const link of profile.links.filter((l) => l.url && isSafeUrl(l.url)))
+    add({ text: link.label || link.url, style: 'Link', link: link.url });
   if (contacts.length > 0) paras.push({ style: 'Contact', runs: contacts });
   paras.push(...parasOf(profile.summaryHtml));
 
@@ -204,8 +243,14 @@ function storyOf(doc: ResumeDocument): Para[] {
     paras.push({ style: 'Section title', runs: [plain(section.title)] });
     for (const item of section.items.filter((i) => i.visible)) {
       if (item.title || item.dateRange) {
-        const title: Run = item.url && isSafeUrl(item.url) ? { text: item.title, style: 'Link', link: item.url } : plain(item.title);
-        paras.push({ style: 'Entry title', runs: item.dateRange ? [title, plain('\t'), plain(item.dateRange)] : [title] });
+        const title: Run =
+          item.url && isSafeUrl(item.url)
+            ? { text: item.title, style: 'Link', link: item.url }
+            : plain(item.title);
+        paras.push({
+          style: 'Entry title',
+          runs: item.dateRange ? [title, plain('\t'), plain(item.dateRange)] : [title],
+        });
       }
       const details = [item.subtitle, item.location].filter(Boolean).join(' · ');
       if (details) paras.push({ style: 'Entry details', runs: [plain(details)] });
@@ -215,7 +260,8 @@ function storyOf(doc: ResumeDocument): Para[] {
   return paras.filter((p) => p.runs.length > 0);
 }
 
-const styleRef = (kind: 'ParagraphStyle' | 'CharacterStyle', name: string) => `${kind}/${esc(name)}`;
+const styleRef = (kind: 'ParagraphStyle' | 'CharacterStyle', name: string) =>
+  `${kind}/${esc(name)}`;
 const NO_CHAR = 'CharacterStyle/$ID/[No character style]';
 
 /** The ICML file for a resume. */
@@ -224,20 +270,37 @@ export function buildIcml(doc: ResumeDocument): string {
   const rtl = layout.direction === 'rtl';
   const base = layout.baseFontSizePt;
   const font = esc(layout.fontFamily);
-  const direction = rtl ? ' ParagraphDirection="RightToLeftDirection" CharacterDirection="RightToLeftDirection"' : '';
+  const direction = rtl
+    ? ' ParagraphDirection="RightToLeftDirection" CharacterDirection="RightToLeftDirection"'
+    : '';
 
   const paragraphStyle = (name: ParagraphStyle) => {
-    const sizes: Partial<Record<ParagraphStyle, number>> = { Name: base * 2.2, Headline: base * 1.1, 'Section title': base * 1.1, Contact: base * 0.9, 'Entry details': base * 0.9, Code: base * 0.9 };
+    const sizes: Partial<Record<ParagraphStyle, number>> = {
+      Name: base * 2.2,
+      Headline: base * 1.1,
+      'Section title': base * 1.1,
+      Contact: base * 0.9,
+      'Entry details': base * 0.9,
+      Code: base * 0.9,
+    };
     const bold = ['Name', 'Section title', 'Entry title', 'Heading'].includes(name);
     const level = /\s(\d)$/.exec(name)?.[1];
-    const list = name.startsWith('Bullet') ? 'BulletList' : name.startsWith('Numbered') ? 'NumberedList' : null;
+    const list = name.startsWith('Bullet')
+      ? 'BulletList'
+      : name.startsWith('Numbered')
+        ? 'NumberedList'
+        : null;
     const indent = level ? Number(level) * 12 : 0;
     const extras = [
       `PointSize="${(sizes[name] ?? base).toFixed(1)}"`,
       bold ? 'FontStyle="Bold"' : '',
-      name === 'Section title' ? 'Capitalization="AllCaps" SpaceBefore="12" SpaceAfter="4" RuleBelow="true" RuleBelowWeight="0.75" RuleBelowOffset="3"' : '',
+      name === 'Section title'
+        ? 'Capitalization="AllCaps" SpaceBefore="12" SpaceAfter="4" RuleBelow="true" RuleBelowWeight="0.75" RuleBelowOffset="3"'
+        : '',
       name === 'Entry title' ? 'SpaceBefore="6" KeepWithNext="2"' : '',
-      list ? `BulletsAndNumberingListType="${list}" LeftIndent="${indent}" FirstLineIndent="-12"` : '',
+      list
+        ? `BulletsAndNumberingListType="${list}" LeftIndent="${indent}" FirstLineIndent="-12"`
+        : '',
       name === 'Quote' ? 'LeftIndent="12" FontStyle="Italic"' : '',
     ]
       .filter(Boolean)
@@ -258,7 +321,10 @@ export function buildIcml(doc: ResumeDocument): string {
       Code: '',
       Link: 'Underline="true"',
     };
-    const properties = name === 'Code' ? '<Properties><AppliedFont type="string">Courier New</AppliedFont></Properties>' : '';
+    const properties =
+      name === 'Code'
+        ? '<Properties><AppliedFont type="string">Courier New</AppliedFont></Properties>'
+        : '';
     return `<CharacterStyle Self="${styleRef('CharacterStyle', name)}" Name="${esc(name)}" ${attributes[name]}>${properties}</CharacterStyle>`;
   };
 
@@ -276,7 +342,8 @@ export function buildIcml(doc: ResumeDocument): string {
             .split(' ')
             .map((part) => `<Content>${esc(part)}</Content>`)
             .join('<Br/>');
-          if (!run.link) return `<CharacterStyleRange AppliedCharacterStyle="${applied}">${content}</CharacterStyleRange>`;
+          if (!run.link)
+            return `<CharacterStyleRange AppliedCharacterStyle="${applied}">${content}</CharacterStyleRange>`;
           linkCount += 1;
           const sourceId = `htss-${linkCount}`;
           let destinationId = destinations.get(run.link);
@@ -295,7 +362,10 @@ export function buildIcml(doc: ResumeDocument): string {
     .join('\n');
 
   const destinationXml = [...destinations.entries()]
-    .map(([url, id], index) => `<HyperlinkURLDestination Self="${id}" Name="${esc(url)}" DestinationURL="${esc(url)}" DestinationUniqueKey="${index + 1}"/>`)
+    .map(
+      ([url, id], index) =>
+        `<HyperlinkURLDestination Self="${id}" Name="${esc(url)}" DestinationURL="${esc(url)}" DestinationUniqueKey="${index + 1}"/>`,
+    )
     .join('\n');
 
   return [

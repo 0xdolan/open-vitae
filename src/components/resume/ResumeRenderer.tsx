@@ -8,7 +8,13 @@ import { PHOTO_RADIUS } from '@/config/layout';
 import { isValidEmail } from '@/lib/field-validation';
 import { isSafeUrl, telUrl } from '@/lib/url';
 import { cn } from '@/lib/utils';
-import type { IconRef, ResumeDocument, ResumeItem, ResumeSection, TextStyle } from '@/schema/resume';
+import type {
+  IconRef,
+  ResumeDocument,
+  ResumeItem,
+  ResumeSection,
+  TextStyle,
+} from '@/schema/resume';
 
 /** Values are already constrained by the schema (hex colours, safe font names). */
 function toCss(style: TextStyle | undefined): CSSProperties | undefined {
@@ -23,7 +29,12 @@ function toCss(style: TextStyle | undefined): CSSProperties | undefined {
 function SafeLink({ href, children }: { readonly href: string; readonly children: ReactNode }) {
   if (!isSafeUrl(href)) return <>{children}</>;
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline-offset-2 hover:underline"
+    >
       {children}
     </a>
   );
@@ -34,11 +45,18 @@ function displayUrl(url: string): string {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
 
-function ContactLine({ doc, centred = false }: { readonly doc: ResumeDocument; readonly centred?: boolean }) {
+function ContactLine({
+  doc,
+  centred = false,
+}: {
+  readonly doc: ResumeDocument;
+  readonly centred?: boolean;
+}) {
   const { email, phone, location, website, links } = doc.profile;
   const withIcons = doc.layout.showContactIcons === true;
   const parts: ReactNode[] = [];
-  const icon = (ref: IconRef | undefined) => (withIcons && ref ? <ResumeIcon icon={ref} className="me-[0.35em]" /> : null);
+  const icon = (ref: IconRef | undefined) =>
+    withIcons && ref ? <ResumeIcon icon={ref} className="me-[0.35em]" /> : null;
 
   // <bdi> keeps emails, numbers and URLs in their own direction inside RTL text.
   if (email) {
@@ -48,7 +66,15 @@ function ContactLine({ doc, centred = false }: { readonly doc: ResumeDocument; r
         <bdi>{email}</bdi>
       </>
     );
-    parts.push(isValidEmail(email) ? <SafeLink key="email" href={`mailto:${email}`}>{content}</SafeLink> : <span key="email">{content}</span>);
+    parts.push(
+      isValidEmail(email) ? (
+        <SafeLink key="email" href={`mailto:${email}`}>
+          {content}
+        </SafeLink>
+      ) : (
+        <span key="email">{content}</span>
+      ),
+    );
   }
   if (phone) {
     parts.push(
@@ -76,7 +102,11 @@ function ContactLine({ doc, centred = false }: { readonly doc: ResumeDocument; r
   }
   for (const link of links.filter((l) => l.url !== '')) {
     // A link's own icon always shows; the generic link icon only with contact icons on.
-    const linkIcon = link.icon ? <ResumeIcon icon={link.icon} className="me-[0.35em]" /> : icon(CONTACT_ICONS.link);
+    const linkIcon = link.icon ? (
+      <ResumeIcon icon={link.icon} className="me-[0.35em]" />
+    ) : (
+      icon(CONTACT_ICONS.link)
+    );
     parts.push(
       <SafeLink key={link.id} href={link.url}>
         {linkIcon}
@@ -87,10 +117,19 @@ function ContactLine({ doc, centred = false }: { readonly doc: ResumeDocument; r
 
   if (parts.length === 0) return null;
   return (
-    <p className={cn('mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[0.9em] text-stone-600', centred && 'justify-center')}>
+    <p
+      className={cn(
+        'mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[0.9em] text-stone-600',
+        centred && 'justify-center',
+      )}
+    >
       {parts.map((part, i) => (
         <span key={i} className="inline-flex items-center gap-3">
-          {i > 0 ? <span aria-hidden="true" className="text-stone-300">•</span> : null}
+          {i > 0 ? (
+            <span aria-hidden="true" className="text-stone-300">
+              •
+            </span>
+          ) : null}
           {part}
         </span>
       ))}
@@ -173,19 +212,22 @@ function Section({ section, accent, selected, onClick, filter }: SectionProps) {
   const titleKey = `title:${section.id}`;
   const items = section.items.filter(
     (item) =>
-      item.visible && (!filter || filter.keys.has(`head:${item.id}`) || hasPrefix(filter, `body:${item.id}:`)),
+      item.visible &&
+      (!filter || filter.keys.has(`head:${item.id}`) || hasPrefix(filter, `body:${item.id}:`)),
   );
   const showTitle = Boolean(section.title) && (!filter || filter.keys.has(titleKey));
   if (filter && !showTitle && items.length === 0) return null;
   const firstOnPage =
     filter !== null &&
-    (filter.first === titleKey || section.items.some((item) => filter.first.split(':')[1] === item.id));
+    (filter.first === titleKey ||
+      section.items.some((item) => filter.first.split(':')[1] === item.id));
 
   return (
     <section
       className={cn(
         firstOnPage ? 'mt-0' : 'mt-5',
-        onClick && '-mx-2 cursor-pointer rounded px-2 outline-offset-2 hover:outline hover:outline-1 hover:outline-stone-300',
+        onClick &&
+          '-mx-2 cursor-pointer rounded px-2 outline-offset-2 hover:outline hover:outline-1 hover:outline-stone-300',
         selected && 'outline outline-2 outline-brand/60',
       )}
       aria-label={section.title || section.kind}
@@ -225,11 +267,19 @@ interface ResumeRendererProps {
  * the PDF and image exporters, so it uses only physical units (pt, em) and
  * logical CSS. Every block that pagination may move is marked with data-ov-b.
  */
-export function ResumeRenderer({ doc, selectedSectionId, onSectionClick, pageBlocks }: ResumeRendererProps) {
+export function ResumeRenderer({
+  doc,
+  selectedSectionId,
+  onSectionClick,
+  pageBlocks,
+}: ResumeRendererProps) {
   const { layout, profile } = doc;
   const pageKey = pageBlocks?.join('|');
   const filter = useMemo<PageFilter | null>(
-    () => (pageKey === undefined ? null : { keys: new Set(pageKey.split('|')), first: pageKey.split('|')[0] ?? '' }),
+    () =>
+      pageKey === undefined
+        ? null
+        : { keys: new Set(pageKey.split('|')), first: pageKey.split('|')[0] ?? '' },
     [pageKey],
   );
   const showHeader = !filter || filter.keys.has('header');
@@ -247,36 +297,42 @@ export function ResumeRenderer({ doc, selectedSectionId, onSectionClick, pageBlo
       }}
     >
       {showHeader ? (
-      <header
-        data-ov-b="header"
-        className={cn(
-          doc.photo && 'flex gap-5',
-          doc.photo?.align === 'center' && 'flex-col items-center text-center',
-          doc.photo?.align === 'end' && 'flex-row-reverse justify-between',
-        )}
-      >
-        {doc.photo ? (
-          <img
-            src={doc.photo.dataUrl}
-            alt={profile.fullName ? `Photo of ${profile.fullName}` : 'Photo'}
-            className="shrink-0 object-cover"
-            style={{ width: `${doc.photo.widthMm}mm`, borderRadius: PHOTO_RADIUS[doc.photo.shape] }}
-          />
-        ) : null}
-        <div className={cn('min-w-0', doc.photo?.align !== 'center' && doc.photo && 'flex-1')}>
-        {profile.fullName ? (
-          <h1 className="text-[2.2em] leading-tight font-bold" style={toCss(profile.nameStyle)}>
-            {profile.fullName}
-          </h1>
-        ) : null}
-        {profile.headline ? (
-          <p className="mt-1 text-[1.1em]" style={{ color: layout.accentColor, ...toCss(profile.headlineStyle) }}>
-            {profile.headline}
-          </p>
-        ) : null}
-        <ContactLine doc={doc} centred={doc.photo?.align === 'center'} />
-        </div>
-      </header>
+        <header
+          data-ov-b="header"
+          className={cn(
+            doc.photo && 'flex gap-5',
+            doc.photo?.align === 'center' && 'flex-col items-center text-center',
+            doc.photo?.align === 'end' && 'flex-row-reverse justify-between',
+          )}
+        >
+          {doc.photo ? (
+            <img
+              src={doc.photo.dataUrl}
+              alt={profile.fullName ? `Photo of ${profile.fullName}` : 'Photo'}
+              className="shrink-0 object-cover"
+              style={{
+                width: `${doc.photo.widthMm}mm`,
+                borderRadius: PHOTO_RADIUS[doc.photo.shape],
+              }}
+            />
+          ) : null}
+          <div className={cn('min-w-0', doc.photo?.align !== 'center' && doc.photo && 'flex-1')}>
+            {profile.fullName ? (
+              <h1 className="text-[2.2em] leading-tight font-bold" style={toCss(profile.nameStyle)}>
+                {profile.fullName}
+              </h1>
+            ) : null}
+            {profile.headline ? (
+              <p
+                className="mt-1 text-[1.1em]"
+                style={{ color: layout.accentColor, ...toCss(profile.headlineStyle) }}
+              >
+                {profile.headline}
+              </p>
+            ) : null}
+            <ContactLine doc={doc} centred={doc.photo?.align === 'center'} />
+          </div>
+        </header>
       ) : null}
 
       <SafeHtml

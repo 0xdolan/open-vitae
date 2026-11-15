@@ -43,7 +43,14 @@ declare module '@tiptap/core' {
 
 // ---------------------------------------------------------------- direction
 
-const DIRECTION_TYPES = ['paragraph', 'heading', 'blockquote', 'listItem', 'tableCell', 'tableHeader'];
+const DIRECTION_TYPES = [
+  'paragraph',
+  'heading',
+  'blockquote',
+  'listItem',
+  'tableCell',
+  'tableHeader',
+];
 
 /** Per-paragraph direction, for an English line inside a Persian resume or the reverse. */
 export const BlockDirectionExtension = Extension.create({
@@ -70,7 +77,9 @@ export const BlockDirectionExtension = Extension.create({
       setBlockDirection:
         (direction) =>
         ({ commands }) =>
-          DIRECTION_TYPES.map((type) => commands.updateAttributes(type, { dir: direction })).some(Boolean),
+          DIRECTION_TYPES.map((type) => commands.updateAttributes(type, { dir: direction })).some(
+            Boolean,
+          ),
     };
   },
 });
@@ -222,7 +231,8 @@ export const FindReplaceExtension = Extension.create({
             if (!meta && !tr.docChanged) return previous;
             const next = { ...previous, ...meta };
             const matches = findMatches(textChunks(newState.doc), next.query, next.options);
-            const current = matches.length === 0 ? -1 : Math.max(0, Math.min(next.current, matches.length - 1));
+            const current =
+              matches.length === 0 ? -1 : Math.max(0, Math.min(next.current, matches.length - 1));
             return { ...next, matches, current };
           },
         },
@@ -233,7 +243,9 @@ export const FindReplaceExtension = Extension.create({
             return DecorationSet.create(
               state.doc,
               find.matches.map((m, i) =>
-                Decoration.inline(m.from, m.to, { class: i === find.current ? 'ov-find-current' : 'ov-find-match' }),
+                Decoration.inline(m.from, m.to, {
+                  class: i === find.current ? 'ov-find-current' : 'ov-find-match',
+                }),
               ),
             );
           },
@@ -242,7 +254,8 @@ export const FindReplaceExtension = Extension.create({
     ];
   },
   addCommands() {
-    const select = (step: 1 | -1) =>
+    const select =
+      (step: 1 | -1) =>
       ({ state, tr, dispatch }: CommandProps): boolean => {
         const find = findPluginKey.getState(state);
         if (!find || find.matches.length === 0) return false;
@@ -307,12 +320,15 @@ export const ResumeImage = Image.extend({
       width: {
         default: null,
         parseHTML: (element) => element.style.width || null,
-        renderHTML: (attributes) => (attributes.width ? { style: `width: ${attributes.width as string}` } : {}),
+        renderHTML: (attributes) =>
+          attributes.width ? { style: `width: ${attributes.width as string}` } : {},
       },
       align: {
         default: 'center',
         parseHTML: (element) =>
-          (['start', 'center', 'end'] as const).find((a) => element.classList.contains(`ov-img-${a}`)) ?? 'center',
+          (['start', 'center', 'end'] as const).find((a) =>
+            element.classList.contains(`ov-img-${a}`),
+          ) ?? 'center',
         renderHTML: (attributes) => ({ class: `ov-img-${attributes.align as ImageAlign}` }),
       },
     };
@@ -360,7 +376,10 @@ export function buildExtensions({ placeholder, maxDepth }: ExtensionOptions): An
       },
     }),
     TextStyleKit,
-    TextAlign.configure({ types: ['heading', 'paragraph'], alignments: ['left', 'center', 'right', 'justify'] }),
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+      alignments: ['left', 'center', 'right', 'justify'],
+    }),
     Subscript,
     Superscript,
     ResumeTable.configure({ resizable: false }),

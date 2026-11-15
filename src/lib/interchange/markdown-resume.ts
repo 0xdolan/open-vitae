@@ -74,17 +74,27 @@ export function splitDateRange(text: string): { dateRange: string; rest: string 
  * nothing and returns false unless it holds an email, phone or link, so a
  * headline with separators is not mistaken for contacts.
  */
-function parseContacts(element: Element, profile: Record<string, string>, links: { label: string; url: string }[]): boolean {
+function parseContacts(
+  element: Element,
+  profile: Record<string, string>,
+  links: { label: string; url: string }[],
+): boolean {
   const anchors = Array.from(element.querySelectorAll('a'));
   const text = element.textContent ?? '';
-  const parts = text.split(/\s*[·•|\n]\s*|\s{2,}/).map((p) => p.trim()).filter(Boolean);
+  const parts = text
+    .split(/\s*[·•|\n]\s*|\s{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
   const found: Record<string, string> = {};
   const foundLinks: { label: string; url: string }[] = [];
   const other: string[] = [];
   for (const part of parts) {
     const anchor = anchors.find((a) => (a.textContent ?? '').trim() === part);
     const href = anchor?.getAttribute('href') ?? '';
-    const bareUrl = !href || href.replace(/^https?:\/\//i, '').replace(/\/$/, '') === part.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    const bareUrl =
+      !href ||
+      href.replace(/^https?:\/\//i, '').replace(/\/$/, '') ===
+        part.replace(/^https?:\/\//i, '').replace(/\/$/, '');
     if (EMAIL.test(part) || href.startsWith('mailto:')) {
       found.email ??= href.startsWith('mailto:') ? href.slice(7) : part;
     } else if (PHONE.test(part) && /\d{3}/.test(part)) {
@@ -119,7 +129,10 @@ function itemsFromLooseBlocks(blocks: readonly Element[]): ItemInput[] {
         const text = (li.textContent ?? '').trim();
         const colon = text.indexOf(':');
         if (colon > 0 && colon < 50) {
-          return { title: text.slice(0, colon).trim(), descriptionHtml: `<p>${escapeHtml(text.slice(colon + 1).trim())}</p>` };
+          return {
+            title: text.slice(0, colon).trim(),
+            descriptionHtml: `<p>${escapeHtml(text.slice(colon + 1).trim())}</p>`,
+          };
         }
         const { dateRange, rest } = splitDateRange(text);
         return { title: rest, dateRange };
@@ -148,7 +161,8 @@ export function markdownToResume(markdown: string, fallbackName: string): Resume
   // Everything before the first ## is the header: name, headline, contacts, summary.
   for (; index < blocks.length && blocks[index]?.tagName !== 'H2'; index += 1) {
     const block = blocks[index] as Element;
-    if (block.tagName === 'H1' && !profile.fullName) profile.fullName = (block.textContent ?? '').trim();
+    if (block.tagName === 'H1' && !profile.fullName)
+      profile.fullName = (block.textContent ?? '').trim();
     else intro.push(block);
   }
   const summary: Element[] = [];
@@ -176,7 +190,14 @@ export function markdownToResume(markdown: string, fallbackName: string): Resume
 
     const items: ItemInput[] = [];
     const loose: Element[] = [];
-    let current: { title: string; subtitle: string; dateRange: string; location: string; url: string; body: Element[] } | null = null;
+    let current: {
+      title: string;
+      subtitle: string;
+      dateRange: string;
+      location: string;
+      url: string;
+      body: Element[];
+    } | null = null;
     const flush = () => {
       if (current) {
         items.push({
@@ -195,13 +216,28 @@ export function markdownToResume(markdown: string, fallbackName: string): Resume
         const link = block.querySelector('a')?.getAttribute('href') ?? '';
         const { dateRange, rest } = splitDateRange((block.textContent ?? '').trim());
         const [first = rest, ...others] = rest.split(/\s+(?:—|–|\||at|@)\s+/);
-        current = { title: first.trim(), subtitle: others.join(' · ').trim(), dateRange, location: '', url: /^https?:/i.test(link) ? link : '', body: [] };
+        current = {
+          title: first.trim(),
+          subtitle: others.join(' · ').trim(),
+          dateRange,
+          location: '',
+          url: /^https?:/i.test(link) ? link : '',
+          body: [],
+        };
         continue;
       }
-      if (current && current.body.length === 0 && block.tagName === 'P' && (block.querySelector('em') || DATE_RANGE.test(block.textContent ?? ''))) {
+      if (
+        current &&
+        current.body.length === 0 &&
+        block.tagName === 'P' &&
+        (block.querySelector('em') || DATE_RANGE.test(block.textContent ?? ''))
+      ) {
         // The line under an entry title: "Company · City · 2020 – Present".
         const { dateRange, rest } = splitDateRange((block.textContent ?? '').trim());
-        const parts = rest.split(SEPARATORS).map((p) => p.trim()).filter(Boolean);
+        const parts = rest
+          .split(SEPARATORS)
+          .map((p) => p.trim())
+          .filter(Boolean);
         current.dateRange ||= dateRange;
         if (!current.subtitle) current.subtitle = parts[0] ?? '';
         else if (parts[0]) parts.unshift(current.subtitle);
@@ -212,7 +248,11 @@ export function markdownToResume(markdown: string, fallbackName: string): Resume
       else loose.push(block);
     }
     flush();
-    sections.push({ kind: guessSectionKind(title), title, items: [...itemsFromLooseBlocks(loose), ...items] });
+    sections.push({
+      kind: guessSectionKind(title),
+      title,
+      items: [...itemsFromLooseBlocks(loose), ...items],
+    });
   }
 
   const profileInput: ProfileInput = { ...profile, links };

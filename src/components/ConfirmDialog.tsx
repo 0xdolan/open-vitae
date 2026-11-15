@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { useT } from '@/i18n';
 
 interface ConfirmDialogProps {
   readonly open: boolean;
@@ -26,6 +27,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -57,7 +59,7 @@ export function ConfirmDialog({
         </p>
         <div className="mt-2 flex justify-end gap-2">
           <Button onClick={onCancel} autoFocus>
-            Cancel
+            {t('dialog.cancel')}
           </Button>
           <Button variant={tone} onClick={onConfirm}>
             {confirmLabel}

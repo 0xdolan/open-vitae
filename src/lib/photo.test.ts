@@ -20,8 +20,20 @@ import {
 
 describe('photo crop', () => {
   it('starts with the largest crop of the chosen shape, a little above centre for portraits', () => {
-    expect(initialCrop(1200, 1600, 1)).toEqual({ x: 0, y: 140, width: 1200, height: 1200, rotation: 0 });
-    expect(initialCrop(1600, 1200, 1)).toEqual({ x: 200, y: 0, width: 1200, height: 1200, rotation: 0 });
+    expect(initialCrop(1200, 1600, 1)).toEqual({
+      x: 0,
+      y: 140,
+      width: 1200,
+      height: 1200,
+      rotation: 0,
+    });
+    expect(initialCrop(1600, 1200, 1)).toEqual({
+      x: 200,
+      y: 0,
+      width: 1200,
+      height: 1200,
+      rotation: 0,
+    });
     const portrait = initialCrop(2000, 1000, 4 / 5);
     expect(portrait.height).toBe(1000);
     expect(portrait.width).toBe(800);
@@ -67,8 +79,14 @@ describe('photo crop', () => {
   });
 
   it('scales the finished photo down to the output limit, never up', () => {
-    expect(outputSize({ x: 0, y: 0, width: 2000, height: 2500, rotation: 0 })).toEqual({ width: 800, height: 1000 });
-    expect(outputSize({ x: 0, y: 0, width: 400, height: 400, rotation: 0 })).toEqual({ width: 400, height: 400 });
+    expect(outputSize({ x: 0, y: 0, width: 2000, height: 2500, rotation: 0 })).toEqual({
+      width: 800,
+      height: 1000,
+    });
+    expect(outputSize({ x: 0, y: 0, width: 400, height: 400, rotation: 0 })).toEqual({
+      width: 400,
+      height: 400,
+    });
   });
 });
 

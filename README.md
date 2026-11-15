@@ -1,6 +1,6 @@
 # Open Vitae
 
-*Pronounced OH-pən VEE-tie (/ˈoʊ.pən ˈviː.taɪ/). Vitae is Latin for “of life”, as in curriculum vitae.*
+_Pronounced OH-pən VEE-tie (/ˈoʊ.pən ˈviː.taɪ/). Vitae is Latin for “of life”, as in curriculum vitae._
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
@@ -56,15 +56,15 @@ Both containers bind to localhost only, drop all Linux capabilities and run as a
 
 ## Scripts
 
-| Command             | What it does                                  |
-| ------------------- | --------------------------------------------- |
-| `npm run dev`       | Start the dev server                          |
-| `npm run build`     | Type-check and build to `dist/`               |
-| `npm run preview`   | Serve the production build locally            |
-| `npm run check`     | Type-check, lint, format check and unit tests |
-| `npm run test`      | Unit tests                                    |
-| `npm run lint`      | ESLint                                        |
-| `npm run format`    | Format with Prettier                          |
+| Command           | What it does                                  |
+| ----------------- | --------------------------------------------- |
+| `npm run dev`     | Start the dev server                          |
+| `npm run build`   | Type-check and build to `dist/`               |
+| `npm run preview` | Serve the production build locally            |
+| `npm run check`   | Type-check, lint, format check and unit tests |
+| `npm run test`    | Unit tests                                    |
+| `npm run lint`    | ESLint                                        |
+| `npm run format`  | Format with Prettier                          |
 
 ## Project layout
 

@@ -60,11 +60,11 @@ Hotfixes follow the same steps from a `hotfix/X.Y.Z` branch created from `main`.
 
 ## What automation does
 
-| Trigger                  | Workflow              | Result                                                   |
-| ------------------------ | --------------------- | -------------------------------------------------------- |
-| Pull request, push to `develop` | `ci.yml`       | Type-check, lint, format check, tests, build, audit, Docker build |
-| Push to `main`           | `deploy-pages.yml`    | Site published to GitHub Pages                           |
-| Tag `vX.Y.Z`             | `release.yml`         | Checks the tag, builds, attaches a zip, publishes a GitHub release with that version's changelog section |
+| Trigger                         | Workflow           | Result                                                                                                   |
+| ------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------- |
+| Pull request, push to `develop` | `ci.yml`           | Type-check, lint, format check, tests, build, audit, Docker build                                        |
+| Push to `main`                  | `deploy-pages.yml` | Site published to GitHub Pages                                                                           |
+| Tag `vX.Y.Z`                    | `release.yml`      | Checks the tag, builds, attaches a zip, publishes a GitHub release with that version's changelog section |
 
 ---
 

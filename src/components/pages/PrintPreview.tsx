@@ -5,6 +5,7 @@ import { CloseIcon, PrinterIcon } from '@/components/ui/icons';
 import { getPageSize } from '@/config/page-sizes';
 import type { PageSlice } from '@/lib/pagination';
 import type { ResumeDocument } from '@/schema/resume';
+import { useT } from '@/i18n';
 
 import { PageStack } from './PageStack';
 
@@ -21,6 +22,7 @@ interface PrintPreviewProps {
  * also offered). Built on <dialog>, so focus is trapped and Escape closes it.
  */
 export function PrintPreview({ open, doc, pages, onClose }: PrintPreviewProps) {
+  const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const size = getPageSize(doc.layout.pageSize);
@@ -46,23 +48,35 @@ export function PrintPreview({ open, doc, pages, onClose }: PrintPreviewProps) {
         <div className="flex h-full flex-col">
           <header className="flex flex-wrap items-center gap-3 border-b border-stone-200 bg-white px-4 py-3">
             <h2 id={titleId} className="text-base font-semibold">
-              Print preview
+              {t('print.title')}
             </h2>
             <p className="text-xs text-stone-500">
-              In the print dialog choose a printer or “Save as PDF”. Pages are already {size.label}
-              {doc.layout.orientation === 'landscape' ? ' landscape' : ''}; keep the scale at 100%.
+              {t('print.help', {
+                size: `${size.label}${doc.layout.orientation === 'landscape' ? ` ${t('pages.landscape')}` : ''}`,
+              })}
             </p>
             <div className="ms-auto flex items-center gap-2">
               <Button variant="primary" onClick={() => window.print()} autoFocus>
-                <PrinterIcon /> Print or save as PDF
+                <PrinterIcon /> {t('print.print')}
               </Button>
-              <Button variant="ghost" aria-label="Close print preview" title="Close (Esc)" onClick={onClose}>
+              <Button
+                variant="ghost"
+                aria-label={t('print.close')}
+                title={`${t('print.close')} (Esc)`}
+                onClick={onClose}
+              >
                 <CloseIcon />
               </Button>
             </div>
           </header>
           <div className="min-h-0 flex-1 overflow-auto p-4">
-            <PageStack doc={doc} pages={pages} label="Print preview pages" maxFitZoom={1.25} className="mx-auto max-w-6xl" />
+            <PageStack
+              doc={doc}
+              pages={pages}
+              label={t('print.pagesLabel')}
+              maxFitZoom={1.25}
+              className="mx-auto max-w-6xl"
+            />
           </div>
         </div>
       ) : null}

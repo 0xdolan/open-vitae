@@ -2,9 +2,16 @@ import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from 'r
 
 import { Button } from '@/components/ui/button';
 import { CloseIcon, SearchIcon } from '@/components/ui/icons';
-import { DEFAULT_ICON_SET, ICON_SET_IDS, ICON_SETS, isIconSetId, type IconSetId } from '@/config/icon-sets';
+import {
+  DEFAULT_ICON_SET,
+  ICON_SET_IDS,
+  ICON_SETS,
+  isIconSetId,
+  type IconSetId,
+} from '@/config/icon-sets';
 import { iconLabel, searchIcons } from '@/lib/icons/search';
 import { cn } from '@/lib/utils';
+import { useT } from '@/i18n';
 import type { IconRef } from '@/schema/resume';
 
 import { ResumeIcon, useIconSet } from './ResumeIcon';
@@ -24,12 +31,15 @@ const PAGE = 120;
  * every Lucide and react-icons set. Sets load on demand.
  */
 export function IconPicker({ value, onChange, target, className }: IconPickerProps) {
+  const t = useT();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
   const setSelectId = useId();
   const [open, setOpen] = useState(false);
-  const [setId, setSetId] = useState<IconSetId>(value && isIconSetId(value.set) ? value.set : DEFAULT_ICON_SET);
+  const [setId, setSetId] = useState<IconSetId>(
+    value && isIconSetId(value.set) ? value.set : DEFAULT_ICON_SET,
+  );
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
   const deferredQuery = useDeferredValue(query);
@@ -58,19 +68,28 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
     setOpen(false);
   };
 
-  const currentLabel = value && isIconSetId(value.set) ? iconLabel(value.name, ICON_SETS[value.set].prefix) : null;
+  const currentLabel =
+    value && isIconSetId(value.set) ? iconLabel(value.name, ICON_SETS[value.set].prefix) : null;
 
   return (
     <>
       <Button
         size="sm"
         className={className}
-        aria-label={currentLabel ? `Icon for ${target}: ${currentLabel}. Change icon` : `Add an icon to ${target}`}
-        title={currentLabel ? `Icon: ${currentLabel}` : 'Add an icon'}
+        aria-label={
+          currentLabel
+            ? t('icons.change', { target, icon: currentLabel })
+            : t('icons.add', { target })
+        }
+        title={currentLabel ? t('icons.current', { icon: currentLabel }) : t('icons.addShort')}
         onClick={() => setOpen(true)}
       >
-        {value ? <ResumeIcon icon={value} className="text-base" /> : <span aria-hidden="true">＋</span>}
-        <span>Icon</span>
+        {value ? (
+          <ResumeIcon icon={value} className="text-base" />
+        ) : (
+          <span aria-hidden="true">＋</span>
+        )}
+        <span>{t('icons.button')}</span>
       </Button>
 
       <dialog
@@ -86,28 +105,36 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
           <div className="flex max-h-[min(40rem,calc(100dvh-2rem))] flex-col gap-3 p-4">
             <div className="flex items-center gap-2">
               <h2 id={titleId} className="text-base font-semibold">
-                Icon for {target}
+                {t('icons.title', { target })}
               </h2>
-              <Button variant="ghost" size="sm" className="ms-auto" aria-label="Close" onClick={() => setOpen(false)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ms-auto"
+                aria-label={t('icons.close')}
+                onClick={() => setOpen(false)}
+              >
                 <CloseIcon />
               </Button>
             </div>
 
             <div className="flex flex-wrap gap-2">
               <label className="relative min-w-48 flex-1">
-                <span className="sr-only">Search icons</span>
+                <span className="sr-only">{t('icons.search')}</span>
                 <SearchIcon className="pointer-events-none absolute top-1/2 start-2.5 -translate-y-1/2 text-stone-400" />
                 <input
                   ref={searchRef}
                   type="search"
                   className="h-9 w-full rounded-md border border-stone-300 ps-8 pe-2 text-sm"
-                  placeholder="Search by name, e.g. email, map pin, github"
+                  placeholder={t('icons.searchPlaceholder')}
+                  lang="en"
+                  dir="ltr"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </label>
               <label htmlFor={setSelectId} className="sr-only">
-                Icon set
+                {t('icons.set')}
               </label>
               <select
                 id={setSelectId}
@@ -124,20 +151,23 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
             </div>
 
             <p className="text-xs text-stone-500" aria-live="polite">
+              {t.locale !== 'en' ? `${t('icons.englishNames')} ` : null}
               {results
-                ? `${results.total} ${results.total === 1 ? 'icon' : 'icons'} in ${info.label}`
-                : `Loading ${info.label}…`}
+                ? t('icons.count', { count: results.total, set: info.label })
+                : t('icons.loading', { set: info.label })}
               {' · '}
               <a href={info.url} target="_blank" rel="noopener noreferrer" className="underline">
                 {info.label}
               </a>
               , {info.license}
-              {info.brands ? '. Logos are trademarks of their owners.' : '.'}
+              {info.brands ? `. ${t('icons.trademarks')}` : '.'}
             </p>
 
             <div className="min-h-40 overflow-y-auto">
               {results && results.names.length === 0 ? (
-                <p className="py-8 text-center text-sm text-stone-500">No icons match “{deferredQuery}”. Try another word or set.</p>
+                <p className="py-8 text-center text-sm text-stone-500">
+                  {t('icons.none', { query: deferredQuery })}
+                </p>
               ) : null}
               <ul className="grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-1.5">
                 {results?.names.map((name) => {
@@ -156,7 +186,9 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
                         onClick={() => choose({ set: setId, name })}
                       >
                         <ResumeIcon icon={{ set: setId, name }} className="text-2xl" />
-                        <span className="line-clamp-2 text-[0.65rem] leading-tight text-stone-600">{label}</span>
+                        <span className="line-clamp-2 text-[0.65rem] leading-tight text-stone-600">
+                          {label}
+                        </span>
                       </button>
                     </li>
                   );
@@ -165,7 +197,7 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
               {results && results.total > results.names.length ? (
                 <div className="mt-3 flex justify-center">
                   <Button size="sm" onClick={() => setLimit((current) => current + PAGE)}>
-                    Show more ({results.total - results.names.length} left)
+                    {t('icons.more', { count: results.total - results.names.length })}
                   </Button>
                 </div>
               ) : null}
@@ -173,9 +205,9 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
 
             <div className="flex justify-between gap-2 border-t border-stone-200 pt-3">
               <Button variant="danger-ghost" disabled={!value} onClick={() => choose(undefined)}>
-                Remove icon
+                {t('icons.remove')}
               </Button>
-              <Button onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={() => setOpen(false)}>{t('icons.cancel')}</Button>
             </div>
           </div>
         ) : null}

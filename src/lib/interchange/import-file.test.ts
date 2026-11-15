@@ -45,7 +45,9 @@ describe('import', () => {
       expect(doc.name).toBe('Finance');
       expect(doc.layout.pageSize).toBe(sample.layout.pageSize);
       expect(doc.sections.map((s) => s.title)).toEqual(sample.sections.map((s) => s.title));
-      expect(doc.sections[0]?.items[0]?.descriptionHtml).toBe(sample.sections[0]?.items[0]?.descriptionHtml);
+      expect(doc.sections[0]?.items[0]?.descriptionHtml).toBe(
+        sample.sections[0]?.items[0]?.descriptionHtml,
+      );
     }
   });
 
@@ -58,7 +60,9 @@ describe('import', () => {
   it('explains what went wrong', async () => {
     await expect(importResumeFile(file('', 'x.json'))).rejects.toThrow('empty');
     await expect(importResumeFile(file('{nope', 'x.json'))).rejects.toThrow('not valid JSON');
-    await expect(importResumeFile(file('{"name":"x"}', 'x.json'))).rejects.toThrow('not an Open Vitae resume');
+    await expect(importResumeFile(file('{"name":"x"}', 'x.json'))).rejects.toThrow(
+      'not an Open Vitae resume',
+    );
     await expect(importResumeFile(file('%PDF-1.7', 'x.pdf'))).rejects.toThrow(ImportError);
     await expect(importResumeFile(file('a,"b', 'x.csv'))).rejects.toThrow('quote');
   });

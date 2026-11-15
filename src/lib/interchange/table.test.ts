@@ -40,20 +40,36 @@ describe('table format', () => {
       email: doc.profile.email,
       summaryHtml: doc.profile.summaryHtml,
     });
-    expect(back.profile.links.map((l) => [l.label, l.url])).toEqual(doc.profile.links.map((l) => [l.label, l.url]));
-    expect(back.layout).toMatchObject({ pageSize: doc.layout.pageSize, fontFamily: doc.layout.fontFamily, accentColor: doc.layout.accentColor });
+    expect(back.profile.links.map((l) => [l.label, l.url])).toEqual(
+      doc.profile.links.map((l) => [l.label, l.url]),
+    );
+    expect(back.layout).toMatchObject({
+      pageSize: doc.layout.pageSize,
+      fontFamily: doc.layout.fontFamily,
+      accentColor: doc.layout.accentColor,
+    });
     expect(back.sections.map((s) => [s.kind, s.title, s.visible])).toEqual(
       hidden.sections.map((s) => [s.kind, s.title, s.visible]),
     );
     const strip = (s: (typeof doc.sections)[number]) =>
-      s.items.map(({ title, subtitle, dateRange, location, url, descriptionHtml }) => ({ title, subtitle, dateRange, location, url, descriptionHtml }));
+      s.items.map(({ title, subtitle, dateRange, location, url, descriptionHtml }) => ({
+        title,
+        subtitle,
+        dateRange,
+        location,
+        url,
+        descriptionHtml,
+      }));
     expect(back.sections.map(strip)).toEqual(doc.sections.map(strip));
   });
 
   it('round-trips a right-to-left resume with its language and direction', () => {
     const doc = createResumeFromSample('kurdish', 'کوردی');
     const back = buildResume(tableToResume(resumeToTable(doc, identity), identity, 'x').input);
-    expect(back).toMatchObject({ language: 'ckb', layout: { direction: 'rtl', fontFamily: 'Estedad' } });
+    expect(back).toMatchObject({
+      language: 'ckb',
+      layout: { direction: 'rtl', fontFamily: 'Estedad' },
+    });
     expect(back.sections[0]?.title).toBe('ئەزموونی کار');
   });
 
@@ -70,7 +86,9 @@ describe('table format', () => {
     expect(warnings).toEqual([]);
     const doc = buildResume(input);
     expect(doc.name).toBe('Imported');
-    expect(doc.sections.map((s) => [s.kind, s.title, s.items[0]?.title, s.items[0]?.dateRange])).toEqual([
+    expect(
+      doc.sections.map((s) => [s.kind, s.title, s.items[0]?.title, s.items[0]?.dateRange]),
+    ).toEqual([
       ['experience', 'Work history', 'Barista', '2019 – 2020'],
       ['education', 'Education', 'BA History', '2015 – 2019'],
     ]);

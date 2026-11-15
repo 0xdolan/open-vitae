@@ -29,7 +29,10 @@ describe('version repository', () => {
   it('skips a save whose content did not change', async () => {
     const { repo, doc } = setup();
     await repo.record(doc, { reason: 'created', now: at(1) });
-    const same = await repo.record({ ...doc, updatedAt: at(5).toISOString() }, { reason: 'autosave' });
+    const same = await repo.record(
+      { ...doc, updatedAt: at(5).toISOString() },
+      { reason: 'autosave' },
+    );
     expect(same).toBeNull();
     expect(await repo.list(doc.id)).toHaveLength(1);
   });
@@ -51,7 +54,12 @@ describe('version repository', () => {
 
   it('stores a photo once however many versions use it', async () => {
     const { store, repo, doc } = setup();
-    const photo = { dataUrl: `data:image/png;base64,${'A'.repeat(4000)}`, align: 'start', shape: 'circle', widthMm: 30 } as const;
+    const photo = {
+      dataUrl: `data:image/png;base64,${'A'.repeat(4000)}`,
+      align: 'start',
+      shape: 'circle',
+      widthMm: 30,
+    } as const;
     const withPhoto = { ...doc, photo };
     const v1 = await repo.record(withPhoto, { reason: 'created' });
     await repo.record(rename(withPhoto, 'Two'), { reason: 'autosave' });
@@ -70,7 +78,13 @@ describe('version repository', () => {
       height: 1600,
       crop: { x: 100, y: 200, width: 900, height: 900, rotation: 0 },
     } as const;
-    const photo = { dataUrl: `data:image/jpeg;base64,${'C'.repeat(3000)}`, align: 'end', shape: 'rounded', widthMm: 32, source } as const;
+    const photo = {
+      dataUrl: `data:image/jpeg;base64,${'C'.repeat(3000)}`,
+      align: 'end',
+      shape: 'rounded',
+      widthMm: 32,
+      source,
+    } as const;
     const v1 = await repo.record({ ...doc, photo }, { reason: 'created' });
     await repo.record(rename({ ...doc, photo }, 'Two'), { reason: 'autosave' });
 
@@ -102,7 +116,8 @@ describe('version repository', () => {
 
   it('never prunes when keeping all versions', async () => {
     const { repo, doc } = setup();
-    for (const name of ['a', 'b', 'c']) await repo.record(rename(doc, name), { reason: 'autosave' });
+    for (const name of ['a', 'b', 'c'])
+      await repo.record(rename(doc, name), { reason: 'autosave' });
     expect(await repo.prune(doc.id, 'all')).toBe(0);
     expect(await repo.list(doc.id)).toHaveLength(3);
   });
@@ -116,7 +131,12 @@ describe('version repository', () => {
 
   it('removes all versions of a resume and collects unused photos', async () => {
     const { store, repo, doc } = setup();
-    const photo = { dataUrl: 'data:image/png;base64,QUJD', align: 'center', shape: 'square', widthMm: 25 } as const;
+    const photo = {
+      dataUrl: 'data:image/png;base64,QUJD',
+      align: 'center',
+      shape: 'square',
+      widthMm: 25,
+    } as const;
     await repo.record({ ...doc, photo }, { reason: 'created' });
     await repo.removeAll(doc.id);
     expect(await repo.list(doc.id)).toEqual([]);

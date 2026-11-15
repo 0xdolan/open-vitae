@@ -26,7 +26,11 @@ const UNITS: readonly [Intl.RelativeTimeFormatUnit, number][] = [
 ];
 
 /** "just now", "3 minutes ago", "yesterday"... */
-export function formatRelative(value: string | Date, now: Date = new Date(), locale?: string): string {
+export function formatRelative(
+  value: string | Date,
+  now: Date = new Date(),
+  locale?: string,
+): string {
   const seconds = Math.round((new Date(value).getTime() - now.getTime()) / 1000);
   const format = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
   if (Math.abs(seconds) < 10) return format.format(0, 'second');

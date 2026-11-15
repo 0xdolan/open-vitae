@@ -40,11 +40,11 @@ The frame shows the shape the photo will have on the page (square, rounded or ci
 
 Both the crop window and the photo panel show how sharp the photo will print at its width on the page:
 
-| Label         | Print resolution | Meaning                                      |
-| ------------- | ---------------- | -------------------------------------------- |
-| Sharp         | 250 DPI and up   | Looks crisp on paper                         |
-| Acceptable    | 150 to 249 DPI   | Fine on screen, slightly soft on paper       |
-| May look soft | Below 150 DPI    | Use a larger picture or a smaller width      |
+| Label         | Print resolution | Meaning                                 |
+| ------------- | ---------------- | --------------------------------------- |
+| Sharp         | 250 DPI and up   | Looks crisp on paper                    |
+| Acceptable    | 150 to 249 DPI   | Fine on screen, slightly soft on paper  |
+| May look soft | Below 150 DPI    | Use a larger picture or a smaller width |
 
 For example, a photo 30 mm wide needs at least 355 pixels across to print at 300 DPI. Pictures of at least 600 × 600 pixels are recommended.
 
@@ -73,22 +73,22 @@ The icon window searches by name in the chosen set. Typing everyday words works 
 
 All sets come from the [react-icons](https://react-icons.github.io/react-icons/) package (MIT). Lucide is its `lu` set. The licence of each set is that of the original project and is shown in the icon window with a link.
 
-| Set                    | Licence      | Set                    | Licence      |
-| ---------------------- | ------------ | ---------------------- | ------------ |
-| Lucide                 | ISC          | GitHub Octicons        | MIT          |
-| Font Awesome 6 and 5   | CC BY 4.0    | Grommet Icons          | Apache 2.0   |
-| Simple Icons (brands)  | CC0 1.0      | Heroicons 1 and 2      | MIT          |
-| Tabler Icons           | MIT          | IcoMoon Free           | CC BY 4.0    |
-| Material Design        | Apache 2.0   | Ionicons 4 and 5       | MIT          |
-| Bootstrap Icons        | MIT          | Line Awesome           | MIT          |
-| Phosphor               | MIT          | Radix Icons            | MIT          |
-| Remix Icon             | Apache 2.0   | Simple Line Icons      | MIT          |
-| Feather                | MIT          | Themify Icons          | MIT          |
-| Ant Design Icons       | MIT          | Typicons               | CC BY-SA 3.0 |
-| BoxIcons               | MIT          | VS Code Codicons       | CC BY 4.0    |
-| css.gg                 | MIT          | Weather Icons          | SIL OFL 1.1  |
-| Circum Icons           | MPL 2.0      | Game Icons             | CC BY 3.0    |
-| Devicons               | MIT          | Flat Color Icons       | MIT          |
+| Set                   | Licence    | Set               | Licence      |
+| --------------------- | ---------- | ----------------- | ------------ |
+| Lucide                | ISC        | GitHub Octicons   | MIT          |
+| Font Awesome 6 and 5  | CC BY 4.0  | Grommet Icons     | Apache 2.0   |
+| Simple Icons (brands) | CC0 1.0    | Heroicons 1 and 2 | MIT          |
+| Tabler Icons          | MIT        | IcoMoon Free      | CC BY 4.0    |
+| Material Design       | Apache 2.0 | Ionicons 4 and 5  | MIT          |
+| Bootstrap Icons       | MIT        | Line Awesome      | MIT          |
+| Phosphor              | MIT        | Radix Icons       | MIT          |
+| Remix Icon            | Apache 2.0 | Simple Line Icons | MIT          |
+| Feather               | MIT        | Themify Icons     | MIT          |
+| Ant Design Icons      | MIT        | Typicons          | CC BY-SA 3.0 |
+| BoxIcons              | MIT        | VS Code Codicons  | CC BY 4.0    |
+| css.gg                | MIT        | Weather Icons     | SIL OFL 1.1  |
+| Circum Icons          | MPL 2.0    | Game Icons        | CC BY 3.0    |
+| Devicons              | MIT        | Flat Color Icons  | MIT          |
 
 Brand logos (Simple Icons, Devicons) are trademarks of their owners; use them only to point to your own profiles and projects.
 
@@ -103,18 +103,18 @@ The sets together hold more than 50,000 icons, so they are never all downloaded:
 
 ## Code map
 
-| File                                         | Purpose                                                    |
-| -------------------------------------------- | ---------------------------------------------------------- |
-| `src/lib/photo.ts`                           | Crop maths, aspect presets, size guide                     |
-| `src/lib/photo-canvas.ts`                    | Reading, shrinking, turning and cropping pictures          |
-| `src/components/photo/PhotoField.tsx`        | The photo panel in Profile                                 |
-| `src/components/photo/PhotoCropDialog.tsx`   | The crop window                                            |
-| `src/components/photo/PhotoSizeGuide.tsx`    | Print resolution label                                     |
-| `src/config/icon-sets.ts`                    | The icon sets, licences and contact-line icons             |
-| `src/lib/icons/search.ts`                    | Name splitting, synonyms and ranking                       |
-| `src/lib/icons/registry.ts`                  | Loading each set on demand                                 |
-| `src/components/icons/ResumeIcon.tsx`        | Draws an icon on the page                                  |
-| `src/components/icons/IconPicker.tsx`        | The icon window                                            |
+| File                                       | Purpose                                           |
+| ------------------------------------------ | ------------------------------------------------- |
+| `src/lib/photo.ts`                         | Crop maths, aspect presets, size guide            |
+| `src/lib/photo-canvas.ts`                  | Reading, shrinking, turning and cropping pictures |
+| `src/components/photo/PhotoField.tsx`      | The photo panel in Profile                        |
+| `src/components/photo/PhotoCropDialog.tsx` | The crop window                                   |
+| `src/components/photo/PhotoSizeGuide.tsx`  | Print resolution label                            |
+| `src/config/icon-sets.ts`                  | The icon sets, licences and contact-line icons    |
+| `src/lib/icons/search.ts`                  | Name splitting, synonyms and ranking              |
+| `src/lib/icons/registry.ts`                | Loading each set on demand                        |
+| `src/components/icons/ResumeIcon.tsx`      | Draws an icon on the page                         |
+| `src/components/icons/IconPicker.tsx`      | The icon window                                   |
 
 ---
 

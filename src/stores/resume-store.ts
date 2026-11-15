@@ -85,7 +85,9 @@ export interface ResumeStoreState {
   /** Download the active resume (or one of its versions) as a JSON backup. */
   exportJson(versionId?: string): Promise<ExportResult | null>;
   /** Save pending changes and return the resume (or one of its versions) ready to export. */
-  prepareExport(versionId?: string): Promise<{ doc: ResumeDocument; version: VersionSummary | null } | null>;
+  prepareExport(
+    versionId?: string,
+  ): Promise<{ doc: ResumeDocument; version: VersionSummary | null } | null>;
   /** Record that a version was exported, for the version history. */
   markExported(versionId: string): Promise<void>;
 }

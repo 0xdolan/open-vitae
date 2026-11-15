@@ -9,7 +9,13 @@ import { buildDocx } from './docx';
 async function partsOf(blob: Blob) {
   const zip = await JSZip.loadAsync(await blob.arrayBuffer());
   const read = async (path: string) => (await zip.file(path)?.async('string')) ?? '';
-  return { zip, document: await read('word/document.xml'), rels: await read('word/_rels/document.xml.rels'), numbering: await read('word/numbering.xml'), core: await read('docProps/core.xml') };
+  return {
+    zip,
+    document: await read('word/document.xml'),
+    rels: await read('word/_rels/document.xml.rels'),
+    numbering: await read('word/numbering.xml'),
+    core: await read('docProps/core.xml'),
+  };
 }
 
 describe('docx export', () => {
@@ -37,7 +43,9 @@ describe('docx export', () => {
 
   it('uses the page size and orientation of the resume', async () => {
     const doc = createResumeFromSample('finance', 'Finance');
-    const { document } = await partsOf(await buildDocx({ ...doc, layout: { ...doc.layout, orientation: 'landscape' } }));
+    const { document } = await partsOf(
+      await buildDocx({ ...doc, layout: { ...doc.layout, orientation: 'landscape' } }),
+    );
     // US Letter landscape: 11 × 8.5 inches = 15840 × 12240 twips.
     expect(document).toMatch(/w:w="1584\d"/);
     expect(document).toContain('w:orient="landscape"');

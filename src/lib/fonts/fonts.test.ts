@@ -13,7 +13,8 @@ import { fontsUsedBy } from './usage';
 
 const bytes = (...values: number[]) => new Uint8Array(values);
 const ascii = (text: string) => new Uint8Array([...text].map((c) => c.charCodeAt(0)));
-const fontFile = (name: string, magic: Uint8Array<ArrayBuffer>) => new File([magic, new Uint8Array(64)], name);
+const fontFile = (name: string, magic: Uint8Array<ArrayBuffer>) =>
+  new File([magic, new Uint8Array(64)], name);
 
 const GOOD_CSS = `/* latin */
 @font-face {
@@ -53,16 +54,24 @@ describe('font files', () => {
 describe('Google Fonts', () => {
   it('builds stylesheet addresses from rich to plain', () => {
     const urls = googleFontCssUrls('Noto Sans Arabic');
-    expect(urls[0]).toBe('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-    expect(urls.at(-1)).toBe('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic&display=swap');
+    expect(urls[0]).toBe(
+      'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+    );
+    expect(urls.at(-1)).toBe(
+      'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic&display=swap',
+    );
   });
 
   it('accepts only @font-face rules served from fonts.gstatic.com', () => {
     expect(isSafeGoogleFontCss(GOOD_CSS)).toBe(true);
     expect(isSafeGoogleFontCss(GOOD_CSS.replace('fonts.gstatic.com', 'evil.example'))).toBe(false);
     expect(isSafeGoogleFontCss(`${GOOD_CSS} body { display: none }`)).toBe(false);
-    expect(isSafeGoogleFontCss(`@import url(https://fonts.gstatic.com/x.css); ${GOOD_CSS}`)).toBe(false);
-    expect(isSafeGoogleFontCss(GOOD_CSS.replace('font-display: swap;', 'background: red;'))).toBe(false);
+    expect(isSafeGoogleFontCss(`@import url(https://fonts.gstatic.com/x.css); ${GOOD_CSS}`)).toBe(
+      false,
+    );
+    expect(isSafeGoogleFontCss(GOOD_CSS.replace('font-display: swap;', 'background: red;'))).toBe(
+      false,
+    );
     expect(isSafeGoogleFontCss('')).toBe(false);
   });
 
@@ -87,7 +96,15 @@ describe('Google Fonts', () => {
 describe('bundled fonts', () => {
   it('loads fonts listed in the manifest', async () => {
     const registrar = createMemoryRegistrar();
-    const manifest = { fonts: [{ family: 'Sahel', license: 'OFL-1.1', files: [{ file: 'sahel/Sahel.woff2', weight: '400' }] }] };
+    const manifest = {
+      fonts: [
+        {
+          family: 'Sahel',
+          license: 'OFL-1.1',
+          files: [{ file: 'sahel/Sahel.woff2', weight: '400' }],
+        },
+      ],
+    };
     const fake = (async () => response(200, JSON.stringify(manifest))) as unknown as typeof fetch;
     expect(await loadBundledFonts('/open-vitae/', registrar, fake)).toEqual(['Sahel']);
     expect(registrar.families.has('Sahel')).toBe(true);
@@ -95,9 +112,19 @@ describe('bundled fonts', () => {
 
   it('ignores a missing or suspicious manifest', async () => {
     const registrar = createMemoryRegistrar();
-    expect(await loadBundledFonts('/', registrar, (async () => response(404)) as unknown as typeof fetch)).toEqual([]);
-    const bad = { fonts: [{ family: 'X', license: '', files: [{ file: '../../etc/passwd.woff2', weight: '400' }] }] };
-    expect(await loadBundledFonts('/', registrar, (async () => response(200, JSON.stringify(bad))) as unknown as typeof fetch)).toEqual([]);
+    expect(
+      await loadBundledFonts('/', registrar, (async () =>
+        response(404)) as unknown as typeof fetch),
+    ).toEqual([]);
+    const bad = {
+      fonts: [
+        { family: 'X', license: '', files: [{ file: '../../etc/passwd.woff2', weight: '400' }] },
+      ],
+    };
+    expect(
+      await loadBundledFonts('/', registrar, (async () =>
+        response(200, JSON.stringify(bad))) as unknown as typeof fetch),
+    ).toEqual([]);
   });
 });
 
@@ -106,7 +133,11 @@ describe('fontsUsedBy', () => {
     const doc = createBlankResume('x');
     const withFonts = {
       ...doc,
-      profile: { ...doc.profile, nameStyle: { fontFamily: 'Playfair Display' }, summaryHtml: '<p><span style="font-family: &quot;Fira Code&quot;, monospace">x</span></p>' },
+      profile: {
+        ...doc.profile,
+        nameStyle: { fontFamily: 'Playfair Display' },
+        summaryHtml: '<p><span style="font-family: &quot;Fira Code&quot;, monospace">x</span></p>',
+      },
     };
     expect(fontsUsedBy(withFonts).sort()).toEqual(['Fira Code', 'Manrope', 'Playfair Display']);
   });
@@ -140,7 +171,12 @@ describe('font store', () => {
     expect(font).toMatchObject({ family: 'Brand Sans', format: 'woff2' });
 
     const registrar2 = createMemoryRegistrar();
-    const second = createFontStore({ kv, registrar: registrar2, preferences: createMemoryFontPreferences(), fetchFn: (async () => response(404)) as unknown as typeof fetch });
+    const second = createFontStore({
+      kv,
+      registrar: registrar2,
+      preferences: createMemoryFontPreferences(),
+      fetchFn: (async () => response(404)) as unknown as typeof fetch,
+    });
     await second.getState().init();
     expect(second.getState().userFonts.map((f) => f.family)).toEqual(['Brand Sans']);
     expect(registrar2.families.has('Brand Sans')).toBe(true);
@@ -152,7 +188,9 @@ describe('font store', () => {
   it('refuses files that are not fonts and avoids name clashes', async () => {
     const { store } = setup();
     await store.getState().init();
-    await expect(store.getState().addUserFont(fontFile('evil.woff2', ascii('%PDF')))).rejects.toThrow(/not a font/);
+    await expect(
+      store.getState().addUserFont(fontFile('evil.woff2', ascii('%PDF'))),
+    ).rejects.toThrow(/not a font/);
     const a = await store.getState().addUserFont(fontFile('Arial.ttf', bytes(0, 1, 0, 0)));
     expect(a.family).toBe('Arial (2)');
   });
@@ -175,7 +213,9 @@ describe('font store', () => {
     }) as unknown as typeof fetch);
     await store.getState().init();
     calls = 0;
-    expect(await store.getState().ensureFonts(['Inter'])).toEqual([{ family: 'Inter', kind: 'google', availability: 'needs-consent' }]);
+    expect(await store.getState().ensureFonts(['Inter'])).toEqual([
+      { family: 'Inter', kind: 'google', availability: 'needs-consent' },
+    ]);
     expect(calls).toBe(0);
 
     store.getState().setGoogleConsent(true);
@@ -187,9 +227,18 @@ describe('font store', () => {
   it('reports fonts that are not on this device', async () => {
     const { store } = setup();
     await store.getState().init();
-    expect(store.getState().statusOf('Font From Another Laptop')).toMatchObject({ kind: 'user', availability: 'missing' });
-    expect(store.getState().statusOf('Sahel')).toMatchObject({ kind: 'bundled', availability: 'missing' });
+    expect(store.getState().statusOf('Font From Another Laptop')).toMatchObject({
+      kind: 'user',
+      availability: 'missing',
+    });
+    expect(store.getState().statusOf('Sahel')).toMatchObject({
+      kind: 'bundled',
+      availability: 'missing',
+    });
     expect(store.getState().statusOf('Manrope')).toMatchObject({ availability: 'ready' });
-    expect(store.getState().statusOf('Times New Roman')).toMatchObject({ kind: 'system', availability: 'ready' });
+    expect(store.getState().statusOf('Times New Roman')).toMatchObject({
+      kind: 'system',
+      availability: 'ready',
+    });
   });
 });

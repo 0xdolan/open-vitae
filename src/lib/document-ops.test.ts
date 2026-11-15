@@ -54,7 +54,12 @@ describe('sections', () => {
 
   it('adds a section with a title in the resume language', () => {
     const { doc, sectionId } = addSection(createBlankResume('x', 'rtl'), 'projects');
-    expect(doc.sections.at(-1)).toMatchObject({ id: sectionId, kind: 'projects', title: 'پروژه‌ها', items: [] });
+    expect(doc.sections.at(-1)).toMatchObject({
+      id: sectionId,
+      kind: 'projects',
+      title: 'پروژه‌ها',
+      items: [],
+    });
     expect(resumeSchema.safeParse(doc).success).toBe(true);
   });
 
@@ -100,7 +105,11 @@ describe('items', () => {
     const added = addItem(base, sectionId);
     const itemId = added.itemId ?? '';
     const edited = updateItem(added.doc, sectionId, itemId, { title: 'Engineer', visible: false });
-    expect(edited.sections[0]!.items[0]).toMatchObject({ title: 'Engineer', visible: false, descriptionHtml: '' });
+    expect(edited.sections[0]!.items[0]).toMatchObject({
+      title: 'Engineer',
+      visible: false,
+      descriptionHtml: '',
+    });
 
     const duplicated = duplicateItem(edited, sectionId, itemId);
     expect(duplicated.doc.sections[0]!.items).toHaveLength(2);
@@ -124,7 +133,10 @@ describe('items', () => {
 
 describe('profile and links', () => {
   it('updates profile fields', () => {
-    const doc = updateProfile(createBlankResume('x'), { fullName: 'Ava', email: 'ava@example.com' });
+    const doc = updateProfile(createBlankResume('x'), {
+      fullName: 'Ava',
+      email: 'ava@example.com',
+    });
     expect(doc.profile).toMatchObject({ fullName: 'Ava', email: 'ava@example.com' });
   });
 
@@ -132,11 +144,16 @@ describe('profile and links', () => {
     const one = addLink(createBlankResume('x'));
     expect(resumeSchema.safeParse(one.doc).success).toBe(true);
 
-    const filled = updateLink(one.doc, one.linkId ?? '', { label: 'GitHub', url: 'https://example.com/me' });
+    const filled = updateLink(one.doc, one.linkId ?? '', {
+      label: 'GitHub',
+      url: 'https://example.com/me',
+    });
     const two = addLink(filled);
     const labelled = updateLink(two.doc, two.linkId ?? '', { label: 'Blog' });
     expect(moveLink(labelled, 1, 0).profile.links.map((l) => l.label)).toEqual(['Blog', 'GitHub']);
-    expect(removeLink(labelled, one.linkId ?? '').profile.links.map((l) => l.label)).toEqual(['Blog']);
+    expect(removeLink(labelled, one.linkId ?? '').profile.links.map((l) => l.label)).toEqual([
+      'Blog',
+    ]);
   });
 });
 
