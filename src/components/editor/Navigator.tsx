@@ -14,6 +14,7 @@ export type Panel =
   | { readonly kind: 'page' }
   | { readonly kind: 'profile' }
   | { readonly kind: 'versions' }
+  | { readonly kind: 'grammar' }
   | { readonly kind: 'section'; readonly id: string };
 
 interface NavigatorProps {
@@ -167,7 +168,15 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
         onClick={() => onSelect({ kind: 'versions' })}
       >
         <span className="flex-1">{t('nav.versions')}</span>
-        <span className="text-xs text-stone-400">{versionCount}</span>
+        <span className="text-xs text-stone-400">{t.num(versionCount)}</span>
+      </button>
+      <button
+        type="button"
+        className={entryClass(panel.kind === 'grammar')}
+        aria-current={panel.kind === 'grammar' ? 'page' : undefined}
+        onClick={() => onSelect({ kind: 'grammar' })}
+      >
+        <span className="flex-1">{t('grammar.nav')}</span>
       </button>
     </nav>
   );
