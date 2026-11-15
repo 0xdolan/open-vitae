@@ -9,7 +9,11 @@ import {
   type SyncMessage,
 } from '@/lib/storage';
 
-import { createResumeStore } from './resume-store';
+import { createVersionRepository } from '@/lib/versions/repository';
+
+import { createResumeStore, type ResumeStoreDeps } from './resume-store';
+
+type Download = { fileName: string; content: string; mimeType: string };
 
 /** Two stores connected by an in-memory channel behave like two browser tabs. */
 function createBus() {
@@ -28,10 +32,23 @@ function createBus() {
 }
 
 function setup(options: { delay?: number } = {}) {
-  const repository = createResumeRepository(createMemoryStore());
+  const kv = createMemoryStore();
+  const repository = createResumeRepository(kv);
+  const versions = createVersionRepository(kv);
   const preferences = createMemoryPreferences();
-  const store = createResumeStore({ repository, preferences, autosaveDelayMs: options.delay ?? 10_000 });
-  return { store, repository, preferences };
+  const downloads: Download[] = [];
+  const deps: ResumeStoreDeps = {
+    repository,
+    versions,
+    preferences,
+    download: (fileName, content, mimeType) => {
+      downloads.push({ fileName, content: String(content), mimeType });
+    },
+    autosaveDelayMs: options.delay ?? 10_000,
+    appVersion: '9.9.9',
+  };
+  const store = createResumeStore(deps);
+  return { store, repository, versions, preferences, downloads };
 }
 
 const tick = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -140,12 +157,15 @@ describe('resume store', () => {
   });
 
   it('picks up changes saved in another tab', async () => {
-    const repository = createResumeRepository(createMemoryStore());
+    const kv = createMemoryStore();
+    const repository = createResumeRepository(kv);
     const channel = createBus();
     const make = () =>
       createResumeStore({
         repository,
+        versions: createVersionRepository(kv),
         preferences: createMemoryPreferences(),
+        download: () => undefined,
         sync: channel(),
         autosaveDelayMs: 10_000,
       });
@@ -166,5 +186,125 @@ describe('resume store', () => {
     await tabA.getState().remove(doc?.id ?? '');
     await tick(0);
     expect(tabB.getState().resumes[doc?.id ?? '']).toBeUndefined();
+  });
+
+  describe('versions', () => {
+    it('records a version for every save that changes something', async () => {
+      const { store } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      expect(store.getState().versions.map((v) => v.reason)).toEqual(['created']);
+
+      store.getState().updateActive((d) => ({ ...d, name: 'One' }));
+      await store.getState().flush();
+      store.getState().updateActive((d) => ({ ...d, name: 'Two' }));
+      await store.getState().flush();
+
+      const list = store.getState().versions;
+      expect(list.map((v) => v.number)).toEqual([3, 2, 1]);
+      expect(list.every((v) => !Number.isNaN(Date.parse(v.savedAt)))).toBe(true);
+    });
+
+    it('does not add a version when a save changes nothing', async () => {
+      const { store } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d }));
+      await store.getState().flush();
+      expect(store.getState().versions).toHaveLength(1);
+    });
+
+    it('saves a named version on request', async () => {
+      const { store } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      const named = await store.getState().saveNamedVersion('  Sent to Acme  ');
+      expect(named).toMatchObject({ number: 2, note: 'Sent to Acme', reason: 'manual' });
+    });
+
+    it('restores an older version and keeps the newer one in history', async () => {
+      const { store, repository } = setup();
+      await store.getState().init();
+      const doc = await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d, name: 'Newer' }));
+      await store.getState().flush();
+
+      const first = store.getState().versions.at(-1);
+      const restored = await store.getState().restoreVersion(first?.id ?? '');
+
+      expect(restored).toMatchObject({ number: 3, reason: 'restore', note: 'Restored from version 1' });
+      expect(store.getState().resumes[doc?.id ?? '']?.name).toBe('Untitled resume');
+      expect((await repository.get(doc?.id ?? ''))?.name).toBe('Untitled resume');
+      expect(store.getState().versions.map((v) => v.number)).toEqual([3, 2, 1]);
+    });
+
+    it('keeps all versions by default and prunes when the person chooses a limit', async () => {
+      const { store, preferences } = setup();
+      await store.getState().init();
+      expect(store.getState().retention).toBe('all');
+
+      await store.getState().createBlank();
+      for (let i = 0; i < 25; i++) {
+        store.getState().updateActive((d) => ({ ...d, name: `Name ${i}` }));
+        await store.getState().flush();
+      }
+      expect(store.getState().versions).toHaveLength(26);
+
+      await store.getState().setRetention(20);
+      expect(preferences.getRetention()).toBe(20);
+      expect(store.getState().versions).toHaveLength(20);
+      expect(store.getState().versions[0]?.number).toBe(26);
+    });
+
+    it('removes versions together with their resume', async () => {
+      const { store, versions } = setup();
+      await store.getState().init();
+      const doc = await store.getState().createBlank();
+      await store.getState().remove(doc?.id ?? '');
+      expect(await versions.list(doc?.id ?? '')).toEqual([]);
+    });
+  });
+
+  describe('export', () => {
+    it('downloads the latest saved state with a versioned, time-stamped name', async () => {
+      const { store, downloads } = setup();
+      await store.getState().init();
+      await store.getState().createFromSample('tech');
+      store.getState().updateActive((d) => ({ ...d, name: 'Edited before export' }));
+
+      const result = await store.getState().exportJson();
+
+      expect(result?.version?.number).toBe(2);
+      expect(downloads).toHaveLength(1);
+      expect(downloads[0]?.fileName).toMatch(/^maya-okafor-v2-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.json$/);
+      const body = JSON.parse(downloads[0]?.content ?? '{}') as { app: string; resume: { name: string } };
+      expect(body.app).toBe('Open Vitae 9.9.9');
+      expect(body.resume.name).toBe('Edited before export');
+      expect(store.getState().versions[0]?.exportedAt).not.toBeNull();
+    });
+
+    it('can export an older version', async () => {
+      const { store, downloads } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d, name: 'Later' }));
+      await store.getState().flush();
+      const first = store.getState().versions.at(-1);
+
+      await store.getState().exportJson(first?.id);
+      const body = JSON.parse(downloads[0]?.content ?? '{}') as { resume: { name: string }; version: { number: number } };
+      expect(body.version.number).toBe(1);
+      expect(body.resume.name).toBe('Untitled resume');
+    });
+
+    it('refuses to export invalid data and says why', async () => {
+      const { store, downloads } = setup();
+      await store.getState().init();
+      await store.getState().createBlank();
+      store.getState().updateActive((d) => ({ ...d, name: '' }));
+      expect(await store.getState().exportJson()).toBeNull();
+      expect(downloads).toHaveLength(0);
+      expect(store.getState().message).toMatch(/name/);
+    });
   });
 });
