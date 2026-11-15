@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { ImportAndTemplates } from '@/components/library/ImportAndTemplates';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { navigate, routeHref } from '@/hooks/useHashRoute';
 import { formatDateTime, formatRelative } from '@/lib/datetime';
@@ -30,7 +31,8 @@ export function ResumeLibrary() {
         <h2 id="library-heading" className="text-lg font-bold">
           My resumes <span className="font-normal text-stone-500">({sorted.length})</span>
         </h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <ImportAndTemplates />
           <Button variant="primary" onClick={() => void createAndOpen('ltr')}>
             New resume
           </Button>
