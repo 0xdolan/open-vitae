@@ -9,15 +9,18 @@ type RawDocument = Record<string, unknown>;
 /** A migration takes a document at version N and returns it at version N + 1. */
 type Migration = (doc: RawDocument) => RawDocument;
 
-/**
- * Keyed by the version a migration upgrades FROM.
- * Example for a future v2: { 1: (doc) => ({ ...doc, newField: 'default' }) }
- */
-const MIGRATIONS: Readonly<Partial<Record<number, Migration>>> = {};
-
 function isRecord(value: unknown): value is RawDocument {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
+
+/** Keyed by the version a migration upgrades FROM. */
+const MIGRATIONS: Readonly<Partial<Record<number, Migration>>> = {
+  /** v2 (phase 4): indent size and optional nesting limit for the rich text editor. */
+  1: (doc) => {
+    const layout = isRecord(doc.layout) ? doc.layout : {};
+    return { ...doc, layout: { indentCh: 4, maxDepth: null, ...layout } };
+  },
+};
 
 /**
  * Bring a stored or imported document up to the current schema version.
