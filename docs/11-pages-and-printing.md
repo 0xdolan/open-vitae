@@ -1,6 +1,6 @@
 # Pages and printing
 
-Previous: [Fonts and right-to-left text](10-fonts.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Fonts and right-to-left text](10-fonts.md) · Next: [Photos and icons](12-photos-and-icons.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -92,4 +92,4 @@ If one block is taller than a whole page (a very long paragraph or a large table
 
 ---
 
-Previous: [Fonts and right-to-left text](10-fonts.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Fonts and right-to-left text](10-fonts.md) · Next: [Photos and icons](12-photos-and-icons.md) · [Docs home](README.md) · [Main README](../README.md)
