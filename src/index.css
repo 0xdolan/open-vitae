@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Sahel and Estedad are bundled in phase 5; until then the stack falls back. */
+  --font-sans: 'Manrope Variable', 'Manrope', 'Sahel', 'Estedad', system-ui, sans-serif;
+  --font-rtl: 'Sahel', 'Estedad', 'Manrope Variable', Tahoma, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --color-paper: #fafaf7;
+  --color-ink: #1c1917;
+  --color-brand: #14532d;
+  --color-brand-soft: #dcfce7;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  /* Any element flagged RTL gets the RTL font stack, wherever it sits. */
+  [dir='rtl'] {
+    font-family: var(--font-rtl);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
