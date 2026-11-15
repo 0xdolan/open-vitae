@@ -202,7 +202,7 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
                       onClick={() => void choose(option.family, google)}
                     >
                       <span className="truncate">{option.family}</span>
-                      <span className="shrink-0 font-sans text-xs text-stone-400">
+                      <span className="shrink-0 font-sans text-xs text-stone-600">
                         {state === 'loading' ? t('fonts.loading') : option.note}
                       </span>
                     </button>

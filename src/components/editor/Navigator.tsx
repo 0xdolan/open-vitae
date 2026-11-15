@@ -105,14 +105,14 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
               </button>
               <button
                 type="button"
-                className={cn(entryClass(active), 'flex-1', !section.visible && 'text-stone-400')}
+                className={cn(entryClass(active), 'flex-1', !section.visible && 'text-stone-500')}
                 aria-current={active ? 'page' : undefined}
                 onClick={() => onSelect({ kind: 'section', id: section.id })}
               >
                 <span className="min-w-0 flex-1 truncate" dir="auto">
                   {title}
                 </span>
-                <span className="text-xs text-stone-400">{t.num(section.items.length)}</span>
+                <span className="text-xs text-stone-600">{t.num(section.items.length)}</span>
               </button>
               <button
                 type="button"
@@ -168,7 +168,7 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
         onClick={() => onSelect({ kind: 'versions' })}
       >
         <span className="flex-1">{t('nav.versions')}</span>
-        <span className="text-xs text-stone-400">{t.num(versionCount)}</span>
+        <span className="text-xs text-stone-600">{t.num(versionCount)}</span>
       </button>
       <button
         type="button"

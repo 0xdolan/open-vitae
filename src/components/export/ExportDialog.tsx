@@ -212,7 +212,7 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
                         onChange={() => setFormat(option.id)}
                       />
                       {option.label}
-                      <span className="text-xs font-normal text-stone-500">{option.extension}</span>
+                      <span className="text-xs font-normal text-stone-600">{option.extension}</span>
                     </span>
                     <span className="text-xs text-stone-600">{t(option.description)}</span>
                   </label>

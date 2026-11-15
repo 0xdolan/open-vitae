@@ -157,7 +157,7 @@ export function PageStack({
                 onSectionClick={onSectionClick}
               />
               <div className="flex flex-col items-center gap-1" style={{ zoom: 1 / effective }}>
-                <span className="text-xs text-stone-500">
+                <span className="text-xs text-stone-600">
                   {t('pages.pageOf', { number: index + 1, total })}
                 </span>
                 <PageNote slice={slice} mode={doc.layout.pageBreaks} />

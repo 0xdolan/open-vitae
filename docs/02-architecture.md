@@ -55,6 +55,8 @@ src/
 │   ├── export/      Export window
 │   ├── icons/       Icon picker and the icon drawn on the page
 │   └── resume/      ResumeRenderer, shared by preview and exporters
+├── i18n/            Translator, interface languages, message catalogues
+├── pwa/             Install offer, online state, service worker updates
 ├── config/          Page sizes, fonts, layout limits, section kinds
 ├── lib/             Helpers, sanitiser, migrations, factory
 │   └── storage/     IndexedDB, repository, cross-tab sync
@@ -67,7 +69,7 @@ src/
 └── index.css        Tailwind import, theme tokens, rich-text and bidi rules
 ```
 
-Folders added in later phases: `features/` (editor, export, import), `i18n/`, `hooks/`.
+`hooks/` holds shared React hooks; `lib/grammar/` the optional LanguageTool client.
 
 ## Data model
 
@@ -117,6 +119,10 @@ Photos are cropped with canvas in the browser and stored in the resume, with the
 ## Import and export
 
 Exporters live in `src/lib/export/` and readers and writers for the data formats in `src/lib/interchange/`; both load only when someone exports or imports. Picture formats (PDF, PNG, JPG, SVG) draw a copy of the pages laid out off screen at 100% zoom with html-to-image, inlining the fonts the resume uses; PDF is assembled with pdf-lib, Word with docx, Excel with jszip. Details in [Import and export](13-import-and-export.md).
+
+## Languages and offline use
+
+Every interface string comes from a typed catalogue in `src/i18n/messages/`; `useT()` returns a translator for the chosen language with plural rules and local digits, and tests fail if a translation misses a key or a placeholder. The resume itself is drawn by the same renderer whatever the interface language. The service worker precaches the app, asks before switching to a new version, and the optional grammar check talks only to a same-site LanguageTool server. Details in [Languages, offline use and accessibility](14-languages-and-offline.md).
 
 ## Privacy and security model
 

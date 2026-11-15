@@ -1,6 +1,6 @@
 # Import and export
 
-Previous: [Photos and icons](12-photos-and-icons.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Photos and icons](12-photos-and-icons.md) · Next: [Languages, offline use and accessibility](14-languages-and-offline.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -143,4 +143,4 @@ _City · 2021 – Present_
 
 ---
 
-Previous: [Photos and icons](12-photos-and-icons.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Photos and icons](12-photos-and-icons.md) · Next: [Languages, offline use and accessibility](14-languages-and-offline.md) · [Docs home](README.md) · [Main README](../README.md)

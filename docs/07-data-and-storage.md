@@ -18,14 +18,17 @@ Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs 
 
 ## Where data lives
 
-| What                       | Where                                                                                  | Notes                           |
-| -------------------------- | -------------------------------------------------------------------------------------- | ------------------------------- |
-| Resumes and drafts         | IndexedDB database `open-vitae`, store `resumes`, keys `resume:<id>`                   | Structured objects, not strings |
-| Which resume was last open | `localStorage` key `open-vitae:active-resume`                                          | An id only, never content       |
-| Version history            | Same database: `versions:<resumeId>` index, `version:<resumeId>:<versionId>` snapshots | One snapshot per save           |
-| Photos                     | Same database, `photo:<hash>`, each distinct photo and original picture stored once    | Never uploaded                  |
-| How many versions to keep  | `localStorage` key `open-vitae:version-retention`                                      | `all` by default                |
-| User fonts                 | IndexedDB (phase 5)                                                                    | Never uploaded                  |
+| What                             | Where                                                                                  | Notes                                         |
+| -------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Resumes and drafts               | IndexedDB database `open-vitae`, store `resumes`, keys `resume:<id>`                   | Structured objects, not strings               |
+| Which resume was last open       | `localStorage` key `open-vitae:active-resume`                                          | An id only, never content                     |
+| Version history                  | Same database: `versions:<resumeId>` index, `version:<resumeId>:<versionId>` snapshots | One snapshot per save                         |
+| Photos                           | Same database, `photo:<hash>`, each distinct photo and original picture stored once    | Never uploaded                                |
+| How many versions to keep        | `localStorage` key `open-vitae:version-retention`                                      | `all` by default                              |
+| Interface language               | `localStorage` key `open-vitae:ui-locale`                                              | `en`, `fa`, `ar` or `ckb`                     |
+| Grammar checking                 | `localStorage` key `open-vitae:grammar`                                                | On or off and the server path; off by default |
+| Last calendar in the date helper | `localStorage` key `open-vitae:date-calendar`                                          | A calendar name only                          |
+| User fonts                       | IndexedDB (phase 5)                                                                    | Never uploaded                                |
 
 Nothing is sent to a server. Clearing the site's data in the browser removes all of it. The app tells people this in a banner and offers to ask the browser for **persistent storage**, which stops the browser from evicting the data when disk space runs low.
 
@@ -41,7 +44,7 @@ ResumeDocument
 ├── layout               page size, orientation, margin, page breaks, direction,
 │                        font, base text size, line height, accent colour,
 │                        indent size (indentCh), nesting limit (maxDepth),
-│                        showContactIcons?
+│                        showContactIcons?, digits? (latn, arab, arabext)
 ├── profile              name, headline, email, phone, location, website,
 │                        links[], summary (rich text), name and headline styles
 ├── photo?               finished photo (data URL), alignment, shape, width,
