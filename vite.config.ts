@@ -64,28 +64,46 @@ export default defineConfig({
     tailwindcss(),
     cspMeta(),
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      // Ask before switching to a new version (src/pwa/register.ts saves first).
+      registerType: 'prompt',
+      injectRegister: false,
+      includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
+        id: base,
         name: 'Open Vitae',
         short_name: 'Open Vitae',
         description: 'Privacy-first resume builder that runs entirely in your browser.',
+        lang: 'en',
+        dir: 'auto',
+        categories: ['productivity', 'business'],
         theme_color: '#14532d',
         background_color: '#fafaf7',
         display: 'standalone',
+        display_override: ['window-controls-overlay', 'standalone'],
+        orientation: 'any',
         start_url: base,
         scope: base,
         icons: [
+          { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           {
-            src: 'favicon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'any',
+            src: 'icons/icon-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+        shortcuts: [
+          {
+            name: 'My resumes',
+            url: `${base}#/`,
+            icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }],
           },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,woff2}', 'fonts/manifest.json'],
+        globPatterns: ['**/*.{js,css,html,svg,woff2}', 'icons/*.png', 'fonts/manifest.json'],
         // Icon sets are large and loaded on demand: cache each one the first
         // time it is used instead of downloading all of them up front.
         // Lucide is not named icons-*, so it is precached for offline use.
