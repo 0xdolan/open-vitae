@@ -71,6 +71,8 @@ export function createIndexedDbStore(dbName = 'open-vitae', storeName = 'resumes
       withStore('readwrite', async (store) => {
         await request(store.delete(key));
       }),
+    keys: () =>
+      withStore('readonly', async (store) => (await request(store.getAllKeys())).map(String)),
     entries: () =>
       withStore('readonly', async (store) => {
         // Both requests are issued in the same tick, so they see the same snapshot.

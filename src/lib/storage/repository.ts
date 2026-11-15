@@ -36,9 +36,10 @@ export function createResumeRepository(store: KeyValueStore): ResumeRepository {
     async list() {
       const resumes: ResumeDocument[] = [];
       const invalid: InvalidEntry[] = [];
-      for (const [key, value] of await store.entries()) {
+      // Read resume keys only: version snapshots live in the same store.
+      for (const key of await store.keys()) {
         if (!key.startsWith(KEY_PREFIX)) continue;
-        const result = parseResume(value);
+        const result = parseResume(await store.get(key));
         if (result.ok) {
           resumes.push(result.resume);
         } else {

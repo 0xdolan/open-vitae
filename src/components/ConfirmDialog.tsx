@@ -7,6 +7,8 @@ interface ConfirmDialogProps {
   readonly title: string;
   readonly description: string;
   readonly confirmLabel: string;
+  /** "danger" for destructive actions, "primary" for safe ones such as restoring a version. */
+  readonly tone?: 'danger' | 'primary';
   readonly onConfirm: () => void;
   readonly onCancel: () => void;
 }
@@ -20,6 +22,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel,
+  tone = 'danger',
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -56,7 +59,7 @@ export function ConfirmDialog({
           <Button onClick={onCancel} autoFocus>
             Cancel
           </Button>
-          <Button variant="danger" onClick={onConfirm}>
+          <Button variant={tone} onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>

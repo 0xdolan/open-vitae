@@ -13,7 +13,7 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 | #   | Phase                         | Scope                                                                 | Status      |
 | --- | ----------------------------- | --------------------------------------------------------------------- | ----------- |
 | 1   | Scaffold                      | Tooling, git flow, Docker, CI, Pages, docs skeleton                   | Done        |
-| 2   | Data and samples              | Runtime validation, local storage, drafts, five sample resumes (tech, finance, cybersecurity, cloud, marketing) | Done |
+| 2   | Data and samples              | Runtime validation, local storage, drafts, version history, JSON backup export, five sample resumes (tech, finance, cybersecurity, cloud, marketing) | Done |
 | 3   | Editor shell                  | Layout, navigator side panel, drag-and-drop section order, show/hide  | Next        |
 | 4   | Rich text editor              | Formatting, lists, tables, links, code blocks, find, undo/redo, styles, sanitising | Planned |
 | 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, per-block direction | Planned |

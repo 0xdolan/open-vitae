@@ -95,7 +95,7 @@ export function ResumeLibrary() {
       <ConfirmDialog
         open={pendingDelete !== null}
         title="Delete this resume?"
-        description={`“${pendingDelete?.name ?? ''}” will be removed from this browser. This cannot be undone.`}
+        description={`“${pendingDelete?.name ?? ''}” and all of its saved versions will be removed from this browser. This cannot be undone.`}
         confirmLabel="Delete"
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {

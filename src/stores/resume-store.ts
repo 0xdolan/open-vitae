@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 
 import type { TextDirection } from '@/config/fonts';
+import type { Retention } from '@/config/versions';
+import type { DownloadFn } from '@/lib/download';
+import { createJsonExport } from '@/lib/export/json';
+import { omitKey } from '@/lib/object';
 import {
   cloneResume,
   createBlankResume,
@@ -8,7 +12,7 @@ import {
   touch,
   uniqueName,
 } from '@/lib/resume-factory';
-import { omitKey } from '@/lib/object';
+import { parseResume } from '@/lib/resume-parse';
 import {
   describeStorageError,
   type PreferenceStore,
@@ -16,11 +20,17 @@ import {
   type SyncChannel,
   type SyncMessage,
 } from '@/lib/storage';
+import type { VersionReason, VersionRepository, VersionSummary } from '@/lib/versions/repository';
 import { createResumeFromSample, getSample, type SampleId } from '@/samples';
 import type { ResumeDocument } from '@/schema/resume';
 
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 export type SaveState = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
+
+export interface ExportResult {
+  readonly fileName: string;
+  readonly version: VersionSummary | null;
+}
 
 export interface ResumeStoreState {
   readonly status: LoadStatus;
@@ -31,6 +41,9 @@ export interface ResumeStoreState {
   readonly saveState: SaveState;
   /** Last error, phrased for the person using the app. */
   readonly message: string | null;
+  /** Version history of the active resume, newest first. */
+  readonly versions: readonly VersionSummary[];
+  readonly retention: Retention;
 
   init(): Promise<void>;
   setActive(id: string): void;
@@ -38,19 +51,31 @@ export interface ResumeStoreState {
   createFromSample(sampleId: SampleId): Promise<ResumeDocument | null>;
   duplicate(id: string): Promise<ResumeDocument | null>;
   remove(id: string): Promise<void>;
-  /** Change the active resume; it is saved automatically shortly after. */
+  /** Change the active resume; it is saved (and versioned) automatically shortly after. */
   updateActive(updater: (doc: ResumeDocument) => ResumeDocument): void;
   /** Write any pending changes now (on tab hide, before export...). */
   flush(): Promise<void>;
   clearAll(): Promise<void>;
   dismissMessage(): void;
+
+  refreshVersions(): Promise<void>;
+  /** Save the current state as a named version, even if nothing changed. */
+  saveNamedVersion(note: string): Promise<VersionSummary | null>;
+  /** Bring back an older version. The current state is already a version, so nothing is lost. */
+  restoreVersion(versionId: string): Promise<VersionSummary | null>;
+  setRetention(retention: Retention): Promise<void>;
+  /** Download the active resume (or one of its versions) as a JSON backup. */
+  exportJson(versionId?: string): Promise<ExportResult | null>;
 }
 
 export interface ResumeStoreDeps {
   readonly repository: ResumeRepository;
+  readonly versions: VersionRepository;
   readonly preferences: PreferenceStore;
+  readonly download: DownloadFn;
   readonly sync?: SyncChannel | null;
   readonly autosaveDelayMs?: number;
+  readonly appVersion?: string;
   readonly now?: () => Date;
 }
 
@@ -60,13 +85,19 @@ function mostRecentId(resumes: Readonly<Record<string, ResumeDocument>>): string
 
 /**
  * Creates the resume store. Dependencies are injected so tests can use an
- * in-memory repository and fake timers.
+ * in-memory repository, a fake download and short timers.
+ *
+ * Every successful save is also recorded as a version with its date and time,
+ * unless the content is identical to the previous version.
  */
 export function createResumeStore({
   repository,
+  versions,
   preferences,
+  download,
   sync = null,
   autosaveDelayMs = 600,
+  appVersion = '0.0.0',
   now = () => new Date(),
 }: ResumeStoreDeps) {
   /** Edited documents waiting to be written, by id. */
@@ -80,17 +111,51 @@ export function createResumeStore({
       set({ message: describeStorageError(error) });
     };
 
-    const activate = (id: string | null) => {
-      preferences.setActiveId(id);
-      set({ activeId: id });
+    const loadVersions = async (resumeId: string) => {
+      try {
+        const list = await versions.list(resumeId);
+        if (get().activeId === resumeId) set({ versions: list });
+      } catch (error) {
+        fail(error);
+      }
     };
 
-    /** Save a new document immediately and make it active. */
+    const activate = (id: string | null) => {
+      preferences.setActiveId(id);
+      set({ activeId: id, versions: [] });
+      if (id) void loadVersions(id);
+    };
+
+    /** Record a version after a successful save. Never fails the save itself. */
+    const recordVersion = async (
+      doc: ResumeDocument,
+      reason: VersionReason,
+      note = '',
+      force = false,
+    ): Promise<VersionSummary | null> => {
+      try {
+        const summary = await versions.record(doc, { reason, note, force, now: now() });
+        const { retention } = get();
+        if (summary && retention !== 'all') {
+          await versions.prune(doc.id, retention);
+        }
+        await loadVersions(doc.id);
+        return summary;
+      } catch (error) {
+        set({
+          message: `Saved, but the version history could not be updated. ${describeStorageError(error)}`,
+        });
+        return null;
+      }
+    };
+
+    /** Save a new document immediately, version it and make it active. */
     const addAndActivate = async (doc: ResumeDocument): Promise<ResumeDocument | null> => {
       try {
         const saved = await repository.save(doc);
         set((state) => ({ resumes: { ...state.resumes, [saved.id]: saved }, message: null }));
         activate(saved.id);
+        await recordVersion(saved, 'created');
         sync?.post({ type: 'saved', id: saved.id, updatedAt: saved.updatedAt });
         return saved;
       } catch (error) {
@@ -110,6 +175,7 @@ export function createResumeStore({
     const onSyncMessage = async (message: SyncMessage) => {
       switch (message.type) {
         case 'saved': {
+          if (get().activeId === message.id) void loadVersions(message.id);
           // Never overwrite edits this tab has not saved yet.
           if (pending.has(message.id)) return;
           const local = get().resumes[message.id];
@@ -122,16 +188,14 @@ export function createResumeStore({
         }
         case 'removed': {
           pending.delete(message.id);
-          set((state) => {
-            const rest = omitKey(state.resumes, message.id);
-            const activeId = state.activeId === message.id ? mostRecentId(rest) : state.activeId;
-            return { resumes: rest, activeId };
-          });
+          const rest = omitKey(get().resumes, message.id);
+          set({ resumes: rest });
+          if (get().activeId === message.id) activate(mostRecentId(rest));
           return;
         }
         case 'cleared': {
           pending.clear();
-          set({ resumes: {}, activeId: null, saveState: 'idle' });
+          set({ resumes: {}, activeId: null, versions: [], saveState: 'idle' });
           return;
         }
       }
@@ -144,6 +208,8 @@ export function createResumeStore({
       invalidCount: 0,
       saveState: 'idle',
       message: null,
+      versions: [],
+      retention: preferences.getRetention(),
 
       async init() {
         // Safe to call twice (React StrictMode runs effects twice in development).
@@ -154,15 +220,17 @@ export function createResumeStore({
           const byId = Object.fromEntries(resumes.map((doc) => [doc.id, doc]));
           const remembered = preferences.getActiveId();
           const activeId = remembered && byId[remembered] ? remembered : mostRecentId(byId);
-          set({ status: 'ready', resumes: byId, activeId, invalidCount: invalid.length });
+          set({ status: 'ready', resumes: byId, invalidCount: invalid.length });
+          activate(activeId);
           sync?.subscribe((message) => void onSyncMessage(message));
+          void versions.collectGarbage().catch(() => undefined);
         } catch (error) {
           set({ status: 'error', message: describeStorageError(error) });
         }
       },
 
       setActive(id) {
-        if (get().resumes[id]) activate(id);
+        if (get().resumes[id] && get().activeId !== id) activate(id);
       },
 
       createBlank(direction = 'ltr') {
@@ -187,6 +255,8 @@ export function createResumeStore({
         pending.delete(id);
         try {
           await repository.remove(id);
+          await versions.removeAll(id);
+          void versions.collectGarbage().catch(() => undefined);
         } catch (error) {
           fail(error);
           return;
@@ -215,6 +285,7 @@ export function createResumeStore({
         if (pending.size === 0) return;
 
         const batch = [...pending.values()];
+        const hadError = get().saveState === 'error';
         pending.clear();
         set({ saveState: 'saving' });
 
@@ -222,8 +293,9 @@ export function createResumeStore({
         let lastError: unknown;
         for (const doc of batch) {
           try {
-            await repository.save(doc);
-            sync?.post({ type: 'saved', id: doc.id, updatedAt: doc.updatedAt });
+            const saved = await repository.save(doc);
+            await recordVersion(saved, 'autosave');
+            sync?.post({ type: 'saved', id: saved.id, updatedAt: saved.updatedAt });
           } catch (error) {
             failed.push(doc);
             lastError = error;
@@ -238,7 +310,11 @@ export function createResumeStore({
         if (failed.length > 0) {
           set({ saveState: 'error', message: describeStorageError(lastError) });
         } else {
-          set({ saveState: pending.size > 0 ? 'unsaved' : 'saved', message: null });
+          set((state) => ({
+            saveState: pending.size > 0 ? 'unsaved' : 'saved',
+            // A successful save clears the message left by an earlier failed save.
+            message: hadError ? null : state.message,
+          }));
         }
       },
 
@@ -249,18 +325,117 @@ export function createResumeStore({
         }
         pending.clear();
         try {
+          // Resumes, versions and photos share one store, so this removes everything.
           await repository.clear();
         } catch (error) {
           fail(error);
           return;
         }
         preferences.setActiveId(null);
-        set({ resumes: {}, activeId: null, invalidCount: 0, saveState: 'idle', message: null });
+        set({
+          resumes: {},
+          activeId: null,
+          versions: [],
+          invalidCount: 0,
+          saveState: 'idle',
+          message: null,
+        });
         sync?.post({ type: 'cleared' });
       },
 
       dismissMessage() {
         set({ message: null });
+      },
+
+      async refreshVersions() {
+        const { activeId } = get();
+        if (activeId) await loadVersions(activeId);
+      },
+
+      async saveNamedVersion(note) {
+        await get().flush();
+        const { activeId, resumes } = get();
+        const doc = activeId ? resumes[activeId] : undefined;
+        if (!doc || get().saveState === 'error') return null;
+        return recordVersion(doc, 'manual', note.trim(), true);
+      },
+
+      async restoreVersion(versionId) {
+        await get().flush();
+        const { activeId, versions: list } = get();
+        if (!activeId) return null;
+        const source = list.find((v) => v.id === versionId);
+        try {
+          const old = await versions.load(activeId, versionId);
+          if (!old || !source) {
+            set({ message: 'That version could not be read, so nothing was changed.' });
+            return null;
+          }
+          const restored = await repository.save(touch({ ...old, id: activeId }, now()));
+          set((state) => ({
+            resumes: { ...state.resumes, [restored.id]: restored },
+            saveState: 'saved',
+          }));
+          sync?.post({ type: 'saved', id: restored.id, updatedAt: restored.updatedAt });
+          return recordVersion(restored, 'restore', `Restored from version ${source.number}`, true);
+        } catch (error) {
+          fail(error);
+          return null;
+        }
+      },
+
+      async setRetention(retention) {
+        preferences.setRetention(retention);
+        set({ retention });
+        if (retention === 'all') return;
+        try {
+          for (const id of Object.keys(get().resumes)) {
+            await versions.prune(id, retention);
+          }
+          void versions.collectGarbage().catch(() => undefined);
+          await get().refreshVersions();
+        } catch (error) {
+          fail(error);
+        }
+      },
+
+      async exportJson(versionId) {
+        await get().flush();
+        const { activeId, resumes } = get();
+        const current = activeId ? resumes[activeId] : undefined;
+        if (!activeId || !current) return null;
+
+        try {
+          let doc: ResumeDocument | undefined;
+          let version: VersionSummary | null;
+          if (versionId) {
+            doc = await versions.load(activeId, versionId);
+            version = get().versions.find((v) => v.id === versionId) ?? null;
+          } else {
+            const parsed = parseResume(current);
+            if (!parsed.ok) {
+              set({ message: `Fix this before exporting: ${parsed.error}` });
+              return null;
+            }
+            doc = parsed.resume;
+            version = get().versions[0] ?? null;
+          }
+          if (!doc) {
+            set({ message: 'That version could not be read, so nothing was exported.' });
+            return null;
+          }
+
+          const file = createJsonExport(doc, version, appVersion, now());
+          download(file.fileName, file.content, file.mimeType);
+          if (version) {
+            await versions.markExported(activeId, version.id, now());
+            await loadVersions(activeId);
+          }
+          return { fileName: file.fileName, version };
+        } catch (error) {
+          fail(error);
+          return null;
+        }
       },
     };
   });
