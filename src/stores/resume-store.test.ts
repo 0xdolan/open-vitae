@@ -10,6 +10,7 @@ import {
 } from '@/lib/storage';
 
 import { createVersionRepository } from '@/lib/versions/repository';
+import { createResumeFromSample } from '@/samples';
 
 import { createResumeStore, type ResumeStoreDeps } from './resume-store';
 
@@ -148,6 +149,16 @@ describe('resume store', () => {
     expect(copy?.id).not.toBe(original?.id);
     expect(copy?.name).toBe(`${original?.name ?? ''} (copy)`);
     expect(store.getState().activeId).toBe(copy?.id);
+  });
+
+  it('adds an imported resume with a unique name and an "import" version', async () => {
+    const { store } = setup();
+    await store.getState().init();
+    const existing = await store.getState().createFromSample('finance');
+    const imported = await store.getState().importDocument(createResumeFromSample('finance', existing?.name ?? ''));
+    expect(imported?.name).toBe(`${existing?.name ?? ''} (2)`);
+    expect(store.getState().activeId).toBe(imported?.id);
+    expect(store.getState().versions[0]?.reason).toBe('import');
   });
 
   it('removes a resume and opens the next most recent one', async () => {

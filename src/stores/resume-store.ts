@@ -64,6 +64,8 @@ export interface ResumeStoreState {
   createBlank(direction?: TextDirection): Promise<ResumeDocument | null>;
   createFromSample(sampleId: SampleId): Promise<ResumeDocument | null>;
   duplicate(id: string): Promise<ResumeDocument | null>;
+  /** Add an imported resume (already validated, with fresh ids) and open it. */
+  importDocument(doc: ResumeDocument): Promise<ResumeDocument | null>;
   remove(id: string): Promise<void>;
   /** Change the active resume; it is saved (and versioned) automatically shortly after. */
   updateActive(updater: (doc: ResumeDocument) => ResumeDocument, options?: UpdateOptions): void;
@@ -82,6 +84,10 @@ export interface ResumeStoreState {
   setRetention(retention: Retention): Promise<void>;
   /** Download the active resume (or one of its versions) as a JSON backup. */
   exportJson(versionId?: string): Promise<ExportResult | null>;
+  /** Save pending changes and return the resume (or one of its versions) ready to export. */
+  prepareExport(versionId?: string): Promise<{ doc: ResumeDocument; version: VersionSummary | null } | null>;
+  /** Record that a version was exported, for the version history. */
+  markExported(versionId: string): Promise<void>;
 }
 
 export interface ResumeStoreDeps {
@@ -192,12 +198,15 @@ export function createResumeStore({
     };
 
     /** Save a new document immediately, version it and make it active. */
-    const addAndActivate = async (doc: ResumeDocument): Promise<ResumeDocument | null> => {
+    const addAndActivate = async (
+      doc: ResumeDocument,
+      reason: VersionReason = 'created',
+    ): Promise<ResumeDocument | null> => {
       try {
         const saved = await repository.save(doc);
         set((state) => ({ resumes: { ...state.resumes, [saved.id]: saved }, message: null }));
         activate(saved.id);
-        await recordVersion(saved, 'created');
+        await recordVersion(saved, reason);
         sync?.post({ type: 'saved', id: saved.id, updatedAt: saved.updatedAt });
         return saved;
       } catch (error) {
@@ -295,6 +304,11 @@ export function createResumeStore({
         if (!source) return Promise.resolve(null);
         const name = uniqueName(`${source.name} (copy)`, names());
         return addAndActivate(cloneResume(source, name, now()));
+      },
+
+      importDocument(doc) {
+        const name = uniqueName(doc.name || 'Imported resume', names());
+        return addAndActivate({ ...doc, name, updatedAt: now().toISOString() }, 'import');
       },
 
       async remove(id) {
@@ -484,38 +498,51 @@ export function createResumeStore({
         }
       },
 
-      async exportJson(versionId) {
+      async prepareExport(versionId) {
         await get().flush();
         const { activeId, resumes } = get();
         const current = activeId ? resumes[activeId] : undefined;
         if (!activeId || !current) return null;
-
         try {
-          let doc: ResumeDocument | undefined;
-          let version: VersionSummary | null;
           if (versionId) {
-            doc = await versions.load(activeId, versionId);
-            version = get().versions.find((v) => v.id === versionId) ?? null;
-          } else {
-            const parsed = parseResume(current);
-            if (!parsed.ok) {
-              set({ message: `Fix this before exporting: ${parsed.error}` });
+            const doc = await versions.load(activeId, versionId);
+            if (!doc) {
+              set({ message: 'That version could not be read, so nothing was exported.' });
               return null;
             }
-            doc = parsed.resume;
-            version = get().versions[0] ?? null;
+            return { doc, version: get().versions.find((v) => v.id === versionId) ?? null };
           }
-          if (!doc) {
-            set({ message: 'That version could not be read, so nothing was exported.' });
+          const parsed = parseResume(current);
+          if (!parsed.ok) {
+            set({ message: `Fix this before exporting: ${parsed.error}` });
             return null;
           }
+          return { doc: parsed.resume, version: get().versions[0] ?? null };
+        } catch (error) {
+          fail(error);
+          return null;
+        }
+      },
 
+      async markExported(versionId) {
+        const { activeId } = get();
+        if (!activeId) return;
+        try {
+          await versions.markExported(activeId, versionId, now());
+          await loadVersions(activeId);
+        } catch (error) {
+          fail(error);
+        }
+      },
+
+      async exportJson(versionId) {
+        const prepared = await get().prepareExport(versionId);
+        if (!prepared) return null;
+        const { doc, version } = prepared;
+        try {
           const file = createJsonExport(doc, version, appVersion, now());
           download(file.fileName, file.content, file.mimeType);
-          if (version) {
-            await versions.markExported(activeId, version.id, now());
-            await loadVersions(activeId);
-          }
+          if (version) await get().markExported(version.id);
           return { fileName: file.fileName, version };
         } catch (error) {
           fail(error);
