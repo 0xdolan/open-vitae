@@ -67,6 +67,8 @@ export const resumeItemSchema = z.object({
   location: text(120),
   url: urlTextSchema,
   descriptionHtml: htmlSchema,
+  /** Start this entry on a new page. Optional, so older resumes need no upgrade. */
+  breakBefore: z.boolean().optional(),
   icon: iconRefSchema.optional(),
   titleStyle: textStyleSchema.optional(),
   descriptionStyle: textStyleSchema.optional(),
@@ -77,7 +79,7 @@ export const resumeSectionSchema = z.object({
   kind: z.enum(SECTION_KINDS),
   title: text(120),
   visible: z.boolean(),
-  /** Start this section on a new page (used when page breaks are manual). */
+  /** Start this section on a new page (honoured in both page-break modes). */
   breakBefore: z.boolean(),
   icon: iconRefSchema.optional(),
   titleStyle: textStyleSchema.optional(),
