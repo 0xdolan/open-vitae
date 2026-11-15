@@ -6,6 +6,8 @@ export interface KeyValueStore {
   get(key: string): Promise<unknown>;
   set(key: string, value: unknown): Promise<void>;
   delete(key: string): Promise<void>;
+  /** All keys, without loading values. */
+  keys(): Promise<string[]>;
   entries(): Promise<Array<[string, unknown]>>;
   clear(): Promise<void>;
 }
@@ -21,6 +23,7 @@ export function createMemoryStore(initial: Iterable<[string, unknown]> = []): Ke
     delete: async (key) => {
       data.delete(key);
     },
+    keys: async () => [...data.keys()],
     entries: async () => [...data.entries()].map(([k, v]) => [k, structuredClone(v)]),
     clear: async () => {
       data.clear();
