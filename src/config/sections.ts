@@ -55,3 +55,40 @@ export function defaultSectionTitle(kind: SectionKind, language: string): string
   const titles = DEFAULT_TITLES[base] ?? DEFAULT_TITLES.en;
   return titles?.[kind] ?? kind;
 }
+
+export interface ItemFieldLabels {
+  readonly title: string;
+  readonly subtitle: string;
+  readonly dateRange: string;
+  readonly location: string;
+  readonly url: string;
+  readonly description: string;
+}
+
+const GENERIC: ItemFieldLabels = {
+  title: 'Title',
+  subtitle: 'Subtitle',
+  dateRange: 'Dates',
+  location: 'Location',
+  url: 'Link',
+  description: 'Description',
+};
+
+/** Field labels that match what each kind of section holds. */
+const ITEM_LABELS: Partial<Record<SectionKind, Partial<ItemFieldLabels>>> = {
+  experience: { title: 'Job title', subtitle: 'Company or organisation' },
+  education: { title: 'Degree or qualification', subtitle: 'School or university' },
+  skills: { title: 'Skill group', description: 'Skills' },
+  projects: { title: 'Project name', subtitle: 'Short summary' },
+  certifications: { title: 'Certification', subtitle: 'Issued by', dateRange: 'Date' },
+  languages: { title: 'Language', description: 'Level' },
+  awards: { title: 'Award', subtitle: 'Awarded by', dateRange: 'Date' },
+  publications: { title: 'Title', subtitle: 'Publisher or journal', dateRange: 'Date' },
+  volunteering: { title: 'Role', subtitle: 'Organisation' },
+  references: { title: 'Name', subtitle: 'Role and company', description: 'Contact details' },
+  interests: { title: 'Interest' },
+};
+
+export function itemFieldLabels(kind: SectionKind): ItemFieldLabels {
+  return { ...GENERIC, ...ITEM_LABELS[kind] };
+}
