@@ -34,7 +34,7 @@ export function StorageNotice() {
       <p className="min-w-0 flex-1">
         <strong>Your resumes stay in this browser only.</strong> Nothing is sent to a server.
         Clearing this site’s data or your browser cache deletes them.
-        {info?.usageBytes != null ? ` Using ${formatBytes(info.usageBytes)}.` : ''}
+        {info?.usageBytes ? ` Using ${formatBytes(info.usageBytes)}.` : ''}
       </p>
       {info?.persisted === false ? (
         <Button size="sm" onClick={() => void askToKeep()}>
