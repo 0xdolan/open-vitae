@@ -5,8 +5,10 @@ import {
   createLocalPreferences,
   createResumeRepository,
 } from '@/lib/storage';
+import { createBrowserRegistrar } from '@/lib/fonts/registrar';
 import { createVersionRepository } from '@/lib/versions/repository';
 
+import { createFontStore, createLocalFontPreferences } from './font-store';
 import { createResumeStore } from './resume-store';
 
 export {
@@ -18,6 +20,7 @@ export {
   type UpdateOptions,
 } from './resume-store';
 export { toast, useToastStore, type Toast } from './toast-store';
+export { FontFileError, type FontStatus, type UserFont } from './font-store';
 
 const kv = createIndexedDbStore();
 
@@ -29,6 +32,14 @@ export const useResumeStore = createResumeStore({
   download: downloadFile,
   sync: createBroadcastSync(),
   appVersion: __APP_VERSION__,
+});
+
+/** Fonts: bundled, system, loaded from files (kept in this browser) and Google Fonts (with consent). */
+export const useFontStore = createFontStore({
+  kv,
+  registrar: createBrowserRegistrar(),
+  preferences: createLocalFontPreferences(),
+  baseUrl: import.meta.env.BASE_URL,
 });
 
 /** Selector for the resume currently open in the editor. */
