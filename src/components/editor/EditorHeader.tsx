@@ -31,6 +31,9 @@ export function EditorHeader({ doc, onExport }: EditorHeaderProps) {
         </span>{' '}
         {t('editor.back')}
       </a>
+      <h1 id="page-title" tabIndex={-1} className="sr-only" dir="auto">
+        {doc.name || t('library.untitled')}
+      </h1>
       <label className="sr-only" htmlFor="resume-name">
         {t('editor.resumeName')}
       </label>
