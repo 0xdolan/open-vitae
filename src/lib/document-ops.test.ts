@@ -19,6 +19,7 @@ import {
   removeItem,
   removeLink,
   removeSection,
+  setLanguage,
   updateItem,
   updateLink,
   updateProfile,
@@ -133,5 +134,30 @@ describe('profile and links', () => {
     const labelled = updateLink(two.doc, two.linkId ?? '', { label: 'Blog' });
     expect(moveLink(labelled, 1, 0).profile.links.map((l) => l.label)).toEqual(['Blog', 'GitHub']);
     expect(removeLink(labelled, one.linkId ?? '').profile.links.map((l) => l.label)).toEqual(['Blog']);
+  });
+});
+
+describe('setLanguage', () => {
+  it('renames default titles, keeps custom ones and flips direction and default font', () => {
+    let doc = addSection({ ...createBlankResume('Test', 'ltr'), sections: [] }, 'experience').doc;
+    doc = addSection(doc, 'skills').doc;
+    const skillsId = doc.sections[1]?.id ?? '';
+    doc = updateSection(doc, skillsId, { title: 'Toolbox' });
+
+    const kurdish = setLanguage(doc, 'ckb');
+    expect(kurdish.language).toBe('ckb');
+    expect(kurdish.sections.map((s) => s.title)).toEqual(['ئەزموونی کار', 'Toolbox']);
+    expect(kurdish.layout).toMatchObject({ direction: 'rtl', fontFamily: 'Sahel' });
+    expect(resumeSchema.safeParse(kurdish).success).toBe(true);
+
+    const arabic = setLanguage(kurdish, 'ar');
+    expect(arabic.sections[0]?.title).toBe('الخبرة العملية');
+    expect(arabic.layout.direction).toBe('rtl');
+  });
+
+  it('keeps a font the person chose', () => {
+    const doc = { ...createBlankResume('Test', 'ltr') };
+    const custom = { ...doc, layout: { ...doc.layout, fontFamily: 'Arial' } };
+    expect(setLanguage(custom, 'fa').layout.fontFamily).toBe('Arial');
   });
 });

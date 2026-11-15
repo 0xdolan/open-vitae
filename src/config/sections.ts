@@ -17,7 +17,7 @@ export type SectionKind = (typeof SECTION_KINDS)[number];
 
 /**
  * Default section titles. Phase 9 moves these into the full translation
- * system; English and Persian cover the default LTR and RTL resumes until then.
+ * system; English, Persian, Arabic and Central Kurdish (Sorani) are covered until then.
  */
 const DEFAULT_TITLES: Readonly<Record<string, Readonly<Record<SectionKind, string>>>> = {
   en: {
@@ -47,6 +47,34 @@ const DEFAULT_TITLES: Readonly<Record<string, Readonly<Record<SectionKind, strin
     references: 'معرفان',
     interests: 'علایق',
     custom: 'بخش سفارشی',
+  },
+  ar: {
+    experience: 'الخبرة العملية',
+    education: 'التعليم',
+    skills: 'المهارات',
+    projects: 'المشاريع',
+    certifications: 'الشهادات',
+    languages: 'اللغات',
+    awards: 'الجوائز',
+    publications: 'المنشورات',
+    volunteering: 'العمل التطوعي',
+    references: 'المراجع',
+    interests: 'الاهتمامات',
+    custom: 'قسم مخصص',
+  },
+  ckb: {
+    experience: 'ئەزموونی کار',
+    education: 'خوێندن',
+    skills: 'لێهاتووییەکان',
+    projects: 'پڕۆژەکان',
+    certifications: 'بڕوانامەکان',
+    languages: 'زمانەکان',
+    awards: 'خەڵاتەکان',
+    publications: 'بڵاوکراوەکان',
+    volunteering: 'کاری خۆبەخشی',
+    references: 'ناسێنەرەکان',
+    interests: 'خولیاکان',
+    custom: 'بەشی تایبەت',
   },
 };
 
