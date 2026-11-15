@@ -5,7 +5,7 @@ import { FontPicker } from '@/components/fonts/FontPicker';
 import { DEFAULT_FONT_BY_DIRECTION, type TextDirection } from '@/config/fonts';
 import { findResumeLanguage, RESUME_LANGUAGES } from '@/config/languages';
 import { LIMITS, PAGE_BREAK_MODES, type PageBreakMode } from '@/config/layout';
-import { isPageSizeId, PAGE_SIZES } from '@/config/page-sizes';
+import { describePageSize, isPageSizeId, PAGE_SIZE_GROUPS, PAGE_SIZES } from '@/config/page-sizes';
 import { clamp } from '@/lib/format';
 import type { ResumeLayout } from '@/schema/resume';
 
@@ -55,10 +55,14 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
           value={layout.pageSize}
           onChange={(e) => isPageSizeId(e.target.value) && onChange({ pageSize: e.target.value })}
         >
-          {PAGE_SIZES.map((size) => (
-            <option key={size.id} value={size.id}>
-              {size.label}
-            </option>
+          {PAGE_SIZE_GROUPS.map((group) => (
+            <optgroup key={group} label={group}>
+              {PAGE_SIZES.filter((size) => size.group === group).map((size) => (
+                <option key={size.id} value={size.id}>
+                  {size.label} · {describePageSize(size)}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </Field>

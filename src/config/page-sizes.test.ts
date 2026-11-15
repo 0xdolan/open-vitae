@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_PAGE_SIZE,
+  describePageSize,
   getPageDimensionsMm,
   getPageSize,
   isPageSizeId,
@@ -45,5 +46,11 @@ describe('page sizes', () => {
     expect(() => mmToPx(-1)).toThrow(RangeError);
     expect(() => mmToPx(210, 10)).toThrow(RangeError);
     expect(() => mmToPx(210, 5000)).toThrow(RangeError);
+  });
+
+  it('describes sizes in their usual unit', () => {
+    expect(describePageSize(getPageSize('a4'))).toBe('210 × 297 mm');
+    expect(describePageSize(getPageSize('letter'))).toBe('8.5 × 11 in');
+    expect(describePageSize(getPageSize('statement'))).toBe('5.5 × 8.5 in');
   });
 });
