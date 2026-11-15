@@ -28,4 +28,17 @@ describe('sanitizeHtml', () => {
       '<a href="https://example.com" target="_blank" rel="noopener noreferrer">site</a>',
     );
   });
+
+  it('keeps direction and language attributes for bidi text', () => {
+    expect(sanitizeHtml('<p dir="rtl" lang="fa">سلام</p>')).toBe('<p dir="rtl" lang="fa">سلام</p>');
+  });
+
+  it('keeps table cell spans', () => {
+    const html = '<table><tbody><tr><td colspan="2">Wide</td></tr></tbody></table>';
+    expect(sanitizeHtml(html)).toBe(html);
+  });
+
+  it('drops data: and vbscript: links', () => {
+    expect(sanitizeHtml('<a href="data:text/html,x">a</a><a href="vbscript:x">b</a>')).toBe('<a>a</a><a>b</a>');
+  });
 });

@@ -37,10 +37,12 @@ function installHooks(): void {
 export function sanitizeHtml(html: string): string {
   if (html === '') return '';
   installHooks();
+  // Do not set ALLOWED_URI_REGEXP: DOMPurify then tests every non-URL attribute
+  // against it too, silently dropping dir="rtl", lang and colspan. Links are
+  // checked by the isSafeUrl hook above instead.
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS,
     ALLOWED_ATTR,
-    ALLOWED_URI_REGEXP: /^(?:https?:|mailto:|tel:)/i,
     ALLOW_DATA_ATTR: false,
   });
 }
