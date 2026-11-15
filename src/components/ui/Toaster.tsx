@@ -67,19 +67,21 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       </button>
       {/* The bar empties over the toast's lifetime; when its animation ends, the toast closes.
           Hovering or focusing the toast pauses it (see .ov-toast in index.css). */}
-      <span
-        aria-hidden="true"
-        className={cn(
-          'ov-toast-progress absolute inset-x-0 bottom-0 h-1 origin-[left]',
-          toast.tone === 'success'
-            ? 'bg-emerald-500'
-            : toast.tone === 'error'
-              ? 'bg-red-500'
-              : 'bg-stone-400',
-        )}
-        style={{ animationDuration: `${toast.durationMs}ms` }}
-        onAnimationEnd={() => dismiss(toast.id)}
-      />
+      {Number.isFinite(toast.durationMs) ? (
+        <span
+          aria-hidden="true"
+          className={cn(
+            'ov-toast-progress absolute inset-x-0 bottom-0 h-1 origin-[left]',
+            toast.tone === 'success'
+              ? 'bg-emerald-500'
+              : toast.tone === 'error'
+                ? 'bg-red-500'
+                : 'bg-stone-400',
+          )}
+          style={{ animationDuration: `${toast.durationMs}ms` }}
+          onAnimationEnd={() => dismiss(toast.id)}
+        />
+      ) : null}
     </li>
   );
 }

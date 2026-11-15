@@ -11,7 +11,7 @@ export interface Toast {
   readonly description?: string;
   /** Optional button, such as "Undo". Clicking it also closes the toast. */
   readonly action?: { readonly label: string; readonly onClick: () => void };
-  /** Visible time; paused while hovered or focused. */
+  /** Visible time; paused while hovered or focused. Infinity keeps it until it is closed. */
   readonly durationMs: number;
 }
 

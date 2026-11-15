@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { InstallButton, OfflineBadge } from '@/components/AppStatus';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EditorView } from '@/components/editor/EditorView';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -57,7 +58,10 @@ function LibraryView() {
           </h1>
           <p className="text-stone-600">{t('app.tagline')}</p>
         </div>
-        <LanguageSwitcher />
+        <div className="flex flex-wrap items-center gap-2">
+          <InstallButton />
+          <LanguageSwitcher />
+        </div>
       </header>
       <StorageNotice />
       <Messages />
@@ -107,6 +111,22 @@ export function App() {
   const setActive = useResumeStore((s) => s.setActive);
   const route = useHashRoute();
   const doc = useResumeStore((s) => (route.name === 'editor' ? s.resumes[route.id] : undefined));
+
+  // After moving between pages, put keyboard and screen reader focus on the new
+  // page's heading (or the main area), as a full page load would.
+  const routeKey = route.name === 'editor' ? `editor:${route.id}` : route.name;
+  const firstRoute = useRef(true);
+  useEffect(() => {
+    if (firstRoute.current) {
+      firstRoute.current = false;
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      const target = document.getElementById('page-title') ?? document.getElementById('main');
+      target?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [routeKey]);
 
   // The page language and direction follow the interface language.
   useEffect(() => applyDocumentLocale(t.locale), [t.locale]);
@@ -164,6 +184,7 @@ export function App() {
       <main id="main" tabIndex={-1} className="outline-none">
         {content}
       </main>
+      <OfflineBadge />
       <Toaster />
     </div>
   );

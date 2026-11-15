@@ -5,6 +5,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './App';
+import { startPwa } from './pwa/register';
 
 const container = document.getElementById('root');
 if (!container) {
@@ -16,3 +17,5 @@ createRoot(container).render(
     <App />
   </StrictMode>,
 );
+
+startPwa();
