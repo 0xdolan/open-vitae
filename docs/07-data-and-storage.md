@@ -1,6 +1,6 @@
 # Data and storage
 
-Previous: [Roadmap](06-roadmap.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -64,7 +64,8 @@ Data is validated **on every read and every write**. Invalid data is never writt
 | ------------------------- | ------------------------------------------------- | ------------------------------------- |
 | Colours                   | Hex only: `#rgb`, `#rrggbb`, `#rrggbbaa`          | CSS injection through `style`         |
 | Font names                | Letters, digits, space, `.`, `_`, `-`             | Breaking out of `font-family`         |
-| URLs                      | Absolute `http`, `https`, `mailto`, `tel`         | `javascript:` and `data:` links       |
+| Emails, links, names      | Length limits only; checked in the editor as warnings | Lost work from a half-typed value |
+| Links on the page         | Only absolute `http`, `https`, `mailto`, `tel` become links when drawn | `javascript:` and `data:` links |
 | Photo                     | PNG, JPEG or WebP data URL, about 5 MB at most    | SVG with scripts, oversized storage   |
 | Ids                       | 1–64 URL-safe characters, unique in the document  | Broken lists and drag and drop        |
 | Rich text                 | 100,000 characters, then sanitised by DOMPurify   | Scripts, event handlers, iframes      |
@@ -171,4 +172,4 @@ To add a sample: create `src/samples/<id>.ts` exporting a `SampleDefinition`, ad
 
 ---
 
-Previous: [Roadmap](06-roadmap.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs home](README.md) · [Main README](../README.md)

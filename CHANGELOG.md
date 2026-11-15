@@ -8,6 +8,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- Separate library and editor screens with addresses that survive reloads and work with the back button.
+- Navigator side panel: page setup, profile, sections in page order, add section, version history.
+- Drag and drop for sections, entries and links that works with a mouse, touch and the keyboard, with screen reader announcements.
+- Show or hide any section or entry without deleting it; duplicate and delete, with Undo for deleted sections.
+- Profile, section and entry forms with labels that match each kind of section, and a basic description editor.
+- Undo and redo for the whole document, with typing grouped into sensible steps.
+- Keyboard shortcuts: undo, redo and save now.
+- Clicking a section in the preview opens it for editing.
+
+### Changed
+
+- Email and link checks are now warnings under the field and never stop the resume from saving. Only safe addresses are ever turned into links.
+
+### Fixed
+
+- Ampersand in the finance sample is now properly escaped.
 - Version history: every save is kept as a numbered version with its date and time; name a version, restore or download any version. Keeping all versions is the recommended default.
 - JSON backup export with versioned, time-stamped file names such as `maya-okafor-v12-2026-11-14_19-05-23.json`.
 - Animated success message after exporting, saving a named version or restoring.
