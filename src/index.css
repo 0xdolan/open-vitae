@@ -36,6 +36,22 @@
 
 /* Rich text inside resumes. Tailwind's reset removes list and heading styles. */
 @layer components {
+  /*
+   * Each block takes its base direction from its own first strong character,
+   * so an English bullet inside a Persian resume (or the reverse) keeps its
+   * punctuation on the correct side. Alignment still follows the resume.
+   */
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th) {
+    unicode-bidi: plaintext;
+  }
+  /* plaintext would also flip alignment per block; keep it with the resume and its list markers. */
+  /* :dir() follows the nearest dir attribute; [dir] selectors would also match <html dir="ltr">. */
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th):not([dir]):dir(rtl) {
+    text-align: right;
+  }
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th):not([dir]):dir(ltr) {
+    text-align: left;
+  }
   .ov-rich > * + * {
     margin-block-start: 0.4em;
   }
