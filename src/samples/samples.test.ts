@@ -5,8 +5,8 @@ import { resumeSchema } from '@/schema/resume';
 import { createResumeFromSample, getSample, SAMPLE_IDS, SAMPLES } from './index';
 
 describe('samples', () => {
-  it('ships the five required samples', () => {
-    expect(SAMPLES.map((s) => s.id)).toEqual(['tech', 'finance', 'cybersecurity', 'cloud', 'marketing']);
+  it('ships the five field samples and a right-to-left sample', () => {
+    expect(SAMPLES.map((s) => s.id)).toEqual(['tech', 'finance', 'cybersecurity', 'cloud', 'marketing', 'persian']);
     expect([...SAMPLE_IDS]).toEqual(SAMPLES.map((s) => s.id));
   });
 
@@ -53,5 +53,12 @@ describe('samples', () => {
         expect(/&(?!amp;|lt;|gt;|quot;|#\d+;)/.test(html)).toBe(false);
       }
     }
+  });
+
+  it('has a right-to-left Persian sample that uses Sahel and Persian section titles', () => {
+    const doc = createResumeFromSample('persian');
+    expect(doc.layout).toMatchObject({ direction: 'rtl', fontFamily: 'Sahel' });
+    expect(doc.language).toBe('fa');
+    expect(doc.sections.map((s) => s.title)).toContain('سوابق کاری');
   });
 });

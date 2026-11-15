@@ -1,6 +1,6 @@
 # Rich text editor
 
-Previous: [The editor](08-editor.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [The editor](08-editor.md) · Next: [Fonts and right-to-left text](10-fonts.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -151,4 +151,4 @@ Everything else is removed, including scripts, event handlers, iframes, forms, S
 
 ---
 
-Previous: [The editor](08-editor.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [The editor](08-editor.md) · Next: [Fonts and right-to-left text](10-fonts.md) · [Docs home](README.md) · [Main README](../README.md)

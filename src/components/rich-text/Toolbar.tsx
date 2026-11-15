@@ -46,7 +46,7 @@ import { CODE_LANGUAGES } from '@/lib/highlight';
 import { imageFileToDataUrl, ImageError } from '@/lib/image';
 import { plainToHtml } from '@/lib/plain-text';
 import { cn } from '@/lib/utils';
-import { toast } from '@/stores';
+import { toast, useFontStore } from '@/stores';
 
 import type { ImageAlign } from './extensions';
 import { Popover } from './Popover';
@@ -134,6 +134,17 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
   const [painter, setPainter] = useState<PaintedFormat | null>(null);
   const [tableSize, setTableSize] = useState({ rows: 3, cols: 3 });
   const fileInput = useRef<HTMLInputElement>(null);
+  const userFonts = useFontStore((s) => s.userFonts);
+  const googleFamilies = useFontStore((s) => s.googleFamilies);
+  const googleState = useFontStore((s) => s.googleState);
+  // Bundled and system fonts, your own fonts, and Google fonts already loaded here.
+  const fontChoices = [
+    ...new Set([
+      ...KNOWN_FONTS.map((f) => f.family),
+      ...userFonts.map((f) => f.family),
+      ...googleFamilies.filter((f) => googleState[f]?.state === 'ready'),
+    ]),
+  ];
 
   const state = useEditorState({
     editor,
@@ -288,9 +299,9 @@ export function Toolbar({ editor, accentColor, spellcheck, onToggleSpellcheck, f
           onChange={(e) => (e.target.value ? chain().setFontFamily(e.target.value).run() : chain().unsetFontFamily().run())}
         >
           <option value="">Default font</option>
-          {KNOWN_FONTS.map((f) => (
-            <option key={f.family} value={f.family}>
-              {f.family}
+          {fontChoices.map((family) => (
+            <option key={family} value={family}>
+              {family}
             </option>
           ))}
         </select>

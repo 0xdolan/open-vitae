@@ -20,11 +20,11 @@ export function SampleGallery() {
         </h2>
         <p className="text-sm text-stone-600">You get your own copy to edit. All names, companies and contact details are fictional.</p>
       </div>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {SAMPLES.map((sample) => (
           <li key={sample.id} className="flex flex-col rounded-xl border border-stone-200 bg-white p-4">
             <p className="font-semibold">{sample.label}</p>
-            <p className="text-sm text-stone-600">{sample.role}</p>
+            <p className="text-sm text-stone-600" dir="auto">{sample.role}</p>
             <p className="mt-1 flex-1 text-xs text-stone-500">{sample.description}</p>
             <Button size="sm" className="mt-3 self-start" onClick={() => void useSample(sample.id)} aria-label={`Use the ${sample.label} sample`}>
               Use this sample

@@ -1,7 +1,8 @@
 import { useId } from 'react';
 
 import { Field, controlClass } from '@/components/ui/field';
-import { DEFAULT_FONT_BY_DIRECTION, KNOWN_FONTS, type TextDirection } from '@/config/fonts';
+import { FontPicker } from '@/components/fonts/FontPicker';
+import { DEFAULT_FONT_BY_DIRECTION, type TextDirection } from '@/config/fonts';
 import { LIMITS, PAGE_BREAK_MODES, type PageBreakMode } from '@/config/layout';
 import { isPageSizeId, PAGE_SIZES } from '@/config/page-sizes';
 import { clamp } from '@/lib/format';
@@ -29,8 +30,6 @@ function readNumber(raw: string, limits: { readonly min: number; readonly max: n
 
 export function PageSettings({ layout, onChange }: PageSettingsProps) {
   const id = useId();
-  const fontFamilies = KNOWN_FONTS.map((font) => font.family);
-  if (!fontFamilies.includes(layout.fontFamily)) fontFamilies.unshift(layout.fontFamily);
 
   const setDirection = (direction: TextDirection) => {
     const patch: Partial<ResumeLayout> = { direction };
@@ -87,18 +86,12 @@ export function PageSettings({ layout, onChange }: PageSettingsProps) {
       </Field>
 
       <Field label="Font" htmlFor={`${id}-font`}>
-        <select
+        <FontPicker
           id={`${id}-font`}
-          className={controlClass}
           value={layout.fontFamily}
-          onChange={(e) => onChange({ fontFamily: e.target.value })}
-        >
-          {fontFamilies.map((family) => (
-            <option key={family} value={family}>
-              {family}
-            </option>
-          ))}
-        </select>
+          preferArabic={layout.direction === 'rtl'}
+          onChange={(fontFamily) => onChange({ fontFamily })}
+        />
       </Field>
 
       <Field label="Page breaks" htmlFor={`${id}-breaks`}>
