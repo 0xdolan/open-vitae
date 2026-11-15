@@ -99,10 +99,12 @@ Defined in [`src/config/fonts.ts`](../src/config/fonts.ts).
 
 | Source   | Fonts                                  | Notes                                             |
 | -------- | -------------------------------------- | ------------------------------------------------- |
-| Bundled  | Manrope (LTR default), Sahel (RTL default), Estedad | Work offline. Sahel and Estedad files are added in phase 5 |
-| Google   | The Google Fonts catalogue             | Loaded on demand; Google sees the visitor's IP    |
+| Bundled  | Manrope (LTR default), Sahel (RTL default), Estedad | Work offline. Sahel and Estedad are downloaded by `npm run fonts:fetch` |
+| Google   | A curated catalogue, or any family by name | Only after the user agrees; stylesheet validated before use; Google sees the visitor's IP |
 | System   | Arial, Times New Roman                 | Proprietary, so never shipped; fall back to Arimo and Tinos |
 | User     | Any font file the user loads           | Kept in the browser; must be reloaded after clearing site data |
+
+Font state lives in `src/stores/font-store.ts`; file checks, Google stylesheet validation and the bundled manifest loader are in `src/lib/fonts/`. Full details in [Fonts and right-to-left text](10-fonts.md).
 
 ## Privacy and security model
 

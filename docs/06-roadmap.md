@@ -16,7 +16,7 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 | 2   | Data and samples              | Runtime validation, local storage, drafts, version history, JSON backup export, five sample resumes (tech, finance, cybersecurity, cloud, marketing) | Done |
 | 3   | Editor shell                  | Library and editor views, navigator panel, accessible drag and drop for sections, entries and links, show/hide, profile and entry forms, undo/redo, shortcuts | Done |
 | 4   | Rich text editor              | Formatting, lists with nesting and indent settings, tables, links, images, code blocks with highlighting, emoji, find and replace, format painter, presets, spell check, sanitising | Done |
-| 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, RTL sample resume | Next |
+| 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, RTL sample resume | Done |
 | 6   | Pages                         | True-size preview, all page sizes, margins, smart and manual page breaks, zoom | Planned |
 | 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search | Planned |
 | 8   | Import and export             | JSON, CSV, Excel, Markdown in; plus PDF, Word, IDML, PNG, JPG, SVG out; DPI control; templates | Planned |

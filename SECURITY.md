@@ -13,7 +13,8 @@ Only the latest release receives security fixes.
 Open Vitae is a static web app with no backend.
 
 - **Data stays local.** Resumes, drafts, photos and user fonts are stored only in the browser.
-- **Network.** The app requests its own static files. The only third-party hosts allowed by the Content Security Policy are `fonts.googleapis.com` and `fonts.gstatic.com`, contacted only when a Google font is selected. Google sees the visitor's IP address for those requests.
+- **Network.** The app requests its own static files. The only third-party hosts allowed by the Content Security Policy are `fonts.googleapis.com` and `fonts.gstatic.com`, contacted only after the user turns Google Fonts on and picks a font. Google sees the visitor's IP address for those requests. The stylesheet is downloaded and checked before use: only `@font-face` rules with known descriptors and font files from `https://fonts.gstatic.com/` are accepted.
+- **Fonts.** User font files are checked by signature bytes and size (25 MB) and stay in the browser. The bundled font manifest is validated against strict name and path patterns.
 - **Content Security Policy.** No inline or third-party scripts, no `eval`, no plugins, no form submission.
 - **Untrusted input.** Imported files are schema-validated. Rich text is sanitised whenever it is shown, with allowlists for tags, inline styles and classes.
 - **No remote content in resumes.** Only embedded images are allowed, so opening a resume never contacts another site.

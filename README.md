@@ -4,7 +4,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 4 of 11. A full rich text editor (tables, images, code, find and replace, nested lists); drag-and-drop sections with undo and live preview; autosave with a full version history; JSON backups; five sample resumes. The full editor and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 5 of 11. Bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with a Persian sample; a full rich text editor; drag-and-drop sections with undo and live preview; autosave with a full version history; JSON backups; six sample resumes. Page layout, images and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -98,6 +98,7 @@ open-vitae/
 8. [Data and storage](docs/07-data-and-storage.md)
 9. [The editor](docs/08-editor.md)
 10. [Rich text editor](docs/09-rich-text-editor.md)
+11. [Fonts and right-to-left text](docs/10-fonts.md)
 
 ## Contributing
 
@@ -110,3 +111,5 @@ Open Vitae collects nothing. The only outside request the app can make is to Goo
 ## Licence
 
 [GPL-3.0-or-later](LICENSE). You may use, study, share and change this software; changed versions you distribute must stay under the same licence.
+
+Bundled fonts keep their own licences: Manrope (SIL Open Font License 1.1), Sahel and Estedad (see the licence files that `npm run fonts:fetch` places in `public/fonts`).

@@ -33,6 +33,15 @@ npm run check
 
 The first `npm install` creates `package-lock.json`. **Commit it.** CI and the Docker build use `npm ci`, which needs the lockfile.
 
+Then download the bundled Persian and Arabic fonts (Sahel and Estedad) once and commit them, so every build includes them:
+
+```bash
+npm run fonts:fetch
+git add public/fonts
+```
+
+See [Fonts and right-to-left text](10-fonts.md#bundled-fonts-sahel-and-estedad).
+
 ## First-time repository setup
 
 ```bash
