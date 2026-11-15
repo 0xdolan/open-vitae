@@ -101,3 +101,86 @@
     text-align: start;
   }
 }
+
+/* Notifications: slide in, draw a check mark, count down with a bar. */
+@layer components {
+  .ov-toast {
+    animation: ov-toast-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  }
+  .ov-toast:hover .ov-toast-progress,
+  .ov-toast:focus-within .ov-toast-progress {
+    animation-play-state: paused;
+  }
+  .ov-toast-progress {
+    animation-name: ov-toast-countdown;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+  .ov-check-circle {
+    stroke: #10b981;
+    stroke-width: 3;
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    animation: ov-draw 500ms ease-out 120ms forwards;
+  }
+  .ov-check-mark {
+    stroke: #047857;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 34;
+    stroke-dashoffset: 34;
+    animation: ov-draw 300ms ease-out 560ms forwards;
+  }
+  .ov-check {
+    animation: ov-pop 300ms ease-out 780ms both;
+  }
+}
+
+@keyframes ov-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ov-toast-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes ov-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ov-pop {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+/* Respect "reduce motion": no sliding or drawing. The countdown still runs, just unseen. */
+@media (prefers-reduced-motion: reduce) {
+  .ov-toast,
+  .ov-check {
+    animation: none;
+  }
+  .ov-check-circle,
+  .ov-check-mark {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .ov-toast-progress {
+    opacity: 0;
+  }
+}
