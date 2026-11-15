@@ -50,11 +50,12 @@ src/
 │   ├── ui/          Base controls (Button, Field), shadcn style
 │   ├── library/     Resume list and sample gallery
 │   ├── workspace/   Editing area, page settings, save status
+│   ├── pages/       Measuring, page sheets, page stack, print preview, print layer
 │   └── resume/      ResumeRenderer, shared by preview and exporters
 ├── config/          Page sizes, fonts, layout limits, section kinds
 ├── lib/             Helpers, sanitiser, migrations, factory
 │   └── storage/     IndexedDB, repository, cross-tab sync
-├── samples/         The five sample resumes
+├── samples/         The eight sample resumes
 ├── schema/          resume.ts, the Zod schema and inferred types
 ├── stores/          Zustand store with autosave
 ├── types/           Public re-exports of the model types
@@ -91,7 +92,7 @@ Page sizes are stored in millimetres, portrait, in [`src/config/page-sizes.ts`](
 
 DPI applies to PNG and JPG. PDF and SVG are vector formats, so DPI only affects photos embedded in them.
 
-Page-break mode is `smart` by default (the layout engine avoids splitting an item across pages) or `manual` (sections flagged `breakBefore` start a new page).
+Page-break mode is `smart` by default (pages end at the best place, headings stay with what follows) or `manual` (pages end only where the person put a break). Sections and entries flagged `breakBefore` start a new page in both modes. The preview measures every block once and renders each page with only its own blocks; see [Pages and printing](11-pages-and-printing.md#how-pagination-works).
 
 ## Fonts and direction
 

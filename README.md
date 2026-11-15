@@ -4,7 +4,7 @@
 
 A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
 
-> **Status:** phase 5 of 11. Bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with a Persian sample; a full rich text editor; drag-and-drop sections with undo and live preview; autosave with a full version history; JSON backups; six sample resumes. Page layout, images and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
+> **Status:** phase 6 of 11. Real pages with smart or manual page breaks, 13 paper sizes, zoom and a print preview that prints exactly what you see; bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with Persian, Arabic and Kurdish (Sorani) samples; a full rich text editor; drag-and-drop sections with undo; autosave with a full version history; JSON backups. Images, icons and exports arrive in later phases. See the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 
@@ -99,6 +99,7 @@ open-vitae/
 9. [The editor](docs/08-editor.md)
 10. [Rich text editor](docs/09-rich-text-editor.md)
 11. [Fonts and right-to-left text](docs/10-fonts.md)
+12. [Pages and printing](docs/11-pages-and-printing.md)
 
 ## Contributing
 

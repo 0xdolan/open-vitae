@@ -251,3 +251,45 @@ export const SpellcheckIcon = (p: IconProps) => (
     <path d="m6 16 6-12 6 12M8 12h8M16 20l2 2 4-4" />
   </Icon>
 );
+
+export const PageBreakIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6 3v5h12V3M6 21v-5h12v5" />
+    <path d="M3 12h2M8 12h2M14 12h2M19 12h2" />
+  </Icon>
+);
+
+export const PrinterIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6 9V3h12v6" />
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+    <path d="M6 14h12v7H6z" />
+  </Icon>
+);
+
+export const ZoomInIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.3-4.3M11 8v6M8 11h6" />
+  </Icon>
+);
+
+export const ZoomOutIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.3-4.3M8 11h6" />
+  </Icon>
+);
+
+export const CloseIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M18 6 6 18M6 6l12 12" />
+  </Icon>
+);
+
+export const AlertIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
+    <path d="M12 9v4M12 17h.01" />
+  </Icon>
+);

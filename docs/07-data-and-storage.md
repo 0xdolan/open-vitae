@@ -52,7 +52,7 @@ ResumeDocument
     └── items[]
         ├── title, subtitle, dateRange, location, url, visible
         ├── descriptionHtml      rich text, sanitised when shown
-        └── icon?, titleStyle?, descriptionStyle?
+        └── breakBefore?, icon?, titleStyle?, descriptionStyle?
 ```
 
 Text fields are always strings (empty when unused) so forms never deal with `undefined`. Styles, icons and the photo are optional.
@@ -146,7 +146,7 @@ Tabs announce saves, deletions and clears to each other over `BroadcastChannel`.
 
 ## Samples
 
-Five read-only samples live in [`src/samples/`](../src/samples): technology, finance (US Letter), cybersecurity, cloud and marketing. **Use this sample** creates an editable copy with new ids; the sample itself never changes. All people, companies, schools, emails (`@example.com`) and phone numbers are fictional.
+Eight read-only samples live in [`src/samples/`](../src/samples): technology, finance (US Letter), cybersecurity, cloud and marketing in English, plus Persian, Arabic and Kurdish (Sorani) right-to-left resumes. **Use this sample** creates an editable copy with new ids; the sample itself never changes. All people, companies, schools, emails (`@example.com`) and phone numbers are fictional.
 
 To add a sample: create `src/samples/<id>.ts` exporting a `SampleDefinition`, add the id to `SAMPLE_IDS` in `types.ts`, and add it to `SAMPLES` in `index.ts`. The sample tests validate it automatically.
 

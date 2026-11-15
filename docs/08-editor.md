@@ -33,11 +33,13 @@ Hash addresses work on GitHub Pages and any static server with no rewrite rules.
 
 The navigator sits on the reading-start side and the preview on the reading-end side, so in a right-to-left browser the layout mirrors. The header holds the resume name, the save status ("Saved · version 12 · 19:05:23"), undo, redo and **Export JSON**.
 
-Clicking a section in the preview opens it in the form, and the section being edited is outlined on the page.
+Clicking a section in the preview opens it in the form, and the section being edited is outlined on the page. The preview shows real pages with zoom and a print preview; see [Pages and printing](11-pages-and-printing.md).
+
+Each entry row also has a page-break button to start that entry on a new page; a section's **Start on a new page** box does the same for the whole section.
 
 ## The navigator
 
-- **Page setup:** paper size, orientation, direction, font, page breaks, margin, text size, line height, accent colour.
+- **Page setup:** paper size, orientation, direction, language, font, page breaks, margin, text size, line height, indent, nesting levels, accent colour, and fonts.
 - **Profile:** name, headline, contact details, links and summary.
 - **Sections**, in page order. Each row has a drag handle, the title, the number of entries, and an eye button to show or hide the section on the page without deleting it.
 - **Add section:** experience, education, skills, projects, certifications, languages, awards, publications, volunteering, references, interests or a custom section. New sections get a title in the resume's language.

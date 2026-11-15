@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { ChevronIcon, CopyIcon, EyeIcon, EyeOffIcon, GripIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
+import { ChevronIcon, CopyIcon, EyeIcon, EyeOffIcon, GripIcon, PageBreakIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { SortableList } from '@/components/ui/sortable';
 import { TextField } from '@/components/ui/text-field';
 import { LIMITS } from '@/config/layout';
@@ -77,6 +77,17 @@ function ItemCard({
             ) : null}
           </span>
         </button>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-pressed={Boolean(item.breakBefore)}
+          aria-label={`Start ${heading} on a new page`}
+          title={item.breakBefore ? 'Starts on a new page' : 'Start on a new page'}
+          className={item.breakBefore ? 'text-brand' : 'text-stone-400'}
+          onClick={() => updateActive((d) => updateItem(d, section.id, item.id, { breakBefore: !item.breakBefore }))}
+        >
+          <PageBreakIcon />
+        </Button>
         <Button
           variant="ghost"
           size="sm"
@@ -224,7 +235,6 @@ export function SectionPanel({ doc, section, onSelectSection }: SectionPanelProp
             onChange={(e) => updateActive((d) => updateSection(d, section.id, { breakBefore: e.target.checked }))}
           />
           Start on a new page
-          {doc.layout.pageBreaks === 'smart' ? <span className="text-xs text-stone-500">(when page breaks are manual)</span> : null}
         </label>
       </div>
 

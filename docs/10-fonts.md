@@ -1,6 +1,6 @@
 # Fonts and right-to-left text
 
-Previous: [Rich text editor](09-rich-text-editor.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Rich text editor](09-rich-text-editor.md) · Next: [Pages and printing](11-pages-and-printing.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -70,7 +70,8 @@ When a resume uses a font this browser does not have (a bundled font that is not
 - Set **Direction** in Page setup to right to left. The page, headings, dates and lists mirror.
 - Every rich text paragraph finds its own direction, so English words, numbers and punctuation inside Persian or Arabic text sit correctly, and the reverse.
 - Names, links and short fields are wrapped so a mixed-direction value does not reorder the text around it.
-- The **Persian (RTL)** sample shows a complete resume in Persian with Sahel and Persian digits in dates.
+- The **Persian**, **Arabic** and **Kurdish – Sorani** samples show complete right-to-left resumes. Persian uses Sahel and Persian digits; Arabic uses Sahel, Arabic-Indic digits and the Arabic comma; Kurdish uses Estedad and the Sorani letters ڕ ڵ ێ ۆ ە.
+- **Page setup → Language** sets the resume's language (English, Arabic, Kurdish (Sorani) or Persian). Section titles still at their default are renamed into the new language, titles you typed are kept, and choosing a language written the other way also flips the direction.
 
 ## How the font stack is built
 
@@ -97,8 +98,9 @@ For every font the app builds a CSS stack: the chosen family, then Sahel when th
 | `src/stores/font-store.ts`               | Font state: bundled, yours, Google, consent, status        |
 | `src/components/fonts/`                  | Font picker, fonts panel, consent box, missing-font notice |
 | `scripts/fetch-fonts.mjs`                | Downloads Sahel and Estedad and writes the manifest        |
-| `src/samples/persian.ts`                 | The Persian sample resume                                  |
+| `src/samples/persian.ts`, `arabic.ts`, `kurdish.ts` | The right-to-left sample resumes                |
+| `src/config/languages.ts`                | Resume languages and their direction                       |
 
 ---
 
-Previous: [Rich text editor](09-rich-text-editor.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Rich text editor](09-rich-text-editor.md) · Next: [Pages and printing](11-pages-and-printing.md) · [Docs home](README.md) · [Main README](../README.md)
