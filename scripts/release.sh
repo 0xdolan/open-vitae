@@ -38,6 +38,13 @@ clean_tree() {
   [ -z "$(git status --porcelain)" ] || die "The working tree has uncommitted changes. Commit or stash them first."
 }
 
+# The prepare step may run again after a failed check: the lockfile and the downloaded
+# fonts it created are expected then, and are committed once every check passes.
+clean_tree_except_release_files() {
+  [ -z "$(git status --porcelain -- . ':(exclude)package-lock.json' ':(exclude)public/fonts')" ] \
+    || die "The working tree has uncommitted changes. Commit or stash them first."
+}
+
 release_notes() {
   awk -v v="$version" '
     $0 ~ "^## \\[" v "\\]" { found = 1; next }
@@ -64,9 +71,9 @@ open_pr() {
 }
 
 prepare() {
-  clean_tree
+  clean_tree_except_release_files
   git rev-parse --verify --quiet "$branch" >/dev/null || die "There is no branch $branch. Create it from develop first (docs/04-release-process.md)."
-  git checkout --quiet "$branch"
+  [ "$(git rev-parse --abbrev-ref HEAD)" = "$branch" ] || git checkout --quiet "$branch"
 
   local pkg
   pkg="$(node -p "require('./package.json').version")"
