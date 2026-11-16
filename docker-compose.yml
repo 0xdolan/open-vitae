@@ -1,0 +1,71 @@
+# Open Vitae local stack.
+#
+#   docker compose up --build            production build on http://127.0.0.1:8080
+#   docker compose --profile dev up dev  hot-reload dev server on http://127.0.0.1:5173
+#   docker compose --profile grammar up  the app plus a private LanguageTool server for
+#                                        grammar checking (Grammar in the editor's menu)
+#
+# Both services bind to 127.0.0.1 only, so nothing is exposed to your network.
+
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+    image: open-vitae:local
+    ports:
+      - '127.0.0.1:8080:8080'
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    mem_limit: 128m
+    restart: unless-stopped
+
+  # Optional grammar and spelling server. It is reachable only from the app
+  # container (no published port); the app's nginx forwards /languagetool/ to it.
+  # Needs about 1–1.5 GB of memory. Pin it by digest for reproducible builds.
+  languagetool:
+    profiles: ['grammar']
+    image: erikvl87/languagetool:6.8
+    expose:
+      - '8010'
+    environment:
+      Java_Xms: 256m
+      Java_Xmx: 1g
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 200
+    mem_limit: 1536m
+    restart: unless-stopped
+
+  dev:
+    profiles: ['dev']
+    image: node:22-alpine
+    working_dir: /app
+    # Run as your own user so files created in the project stay yours.
+    user: '${OV_UID:-1000}:${OV_GID:-1000}'
+    environment:
+      npm_config_cache: /tmp/.npm
+      HOME: /tmp
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - '127.0.0.1:5173:5173'
+    volumes:
+      - .:/app
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 512

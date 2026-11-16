@@ -1,0 +1,139 @@
+# Architecture
+
+Previous: [Getting started](01-getting-started.md) · Next: [Git flow](03-git-flow.md) · [Docs home](README.md) · [Main README](../README.md)
+
+## Contents
+
+- [Principles](#principles)
+- [Stack](#stack)
+- [Why no Next.js or NestJS](#why-no-nextjs-or-nestjs)
+- [Folder structure](#folder-structure)
+- [Data model](#data-model)
+- [Pages and units](#pages-and-units)
+- [Fonts and direction](#fonts-and-direction)
+- [Privacy and security model](#privacy-and-security-model)
+
+## Principles
+
+1. **Browser only.** The app is static files. There is no server to send data to.
+2. **One data model.** A `ResumeDocument` drives the editor, storage, import and every export.
+3. **Configuration over code.** Page sizes, fonts and defaults are data in `src/config`.
+4. **Direction is a property, not a mode.** Layout uses CSS logical properties so LTR and RTL share the same components.
+
+## Stack
+
+| Concern         | Choice                                           |
+| --------------- | ------------------------------------------------ |
+| Language        | TypeScript, strict                               |
+| UI              | React 19                                         |
+| Build           | Vite                                             |
+| Styling         | Tailwind CSS 4, shadcn/ui components             |
+| Offline         | `vite-plugin-pwa` (Workbox service worker)       |
+| State           | Zustand                                          |
+| Validation      | Zod                                              |
+| HTML sanitising | DOMPurify with style, class and image allowlists |
+| Rich text       | TipTap 3 (ProseMirror), highlight.js / lowlight  |
+| Storage         | IndexedDB (own small wrapper)                    |
+| Tests           | Vitest                                           |
+| Lint / format   | ESLint (typescript-eslint strict), Prettier      |
+| Hosting         | GitHub Pages, or the nginx Docker image          |
+
+## Why no Next.js or NestJS
+
+GitHub Pages serves static files only, and the privacy promise rules out a backend. A single Vite single-page app covers everything: the landing page, the playground and the editor are routes inside it. NestJS would only be needed for a server, which this project deliberately does not have.
+
+## Folder structure
+
+```text
+src/
+├── components/
+│   ├── ui/          Base controls (Button, Field), shadcn style
+│   ├── library/     Resume list and sample gallery
+│   ├── workspace/   Editing area, page settings, save status
+│   ├── pages/       Measuring, page sheets, page stack, print preview, print layer
+│   ├── photo/       Photo panel, crop window, size guide
+│   ├── export/      Export window
+│   ├── icons/       Icon picker and the icon drawn on the page
+│   └── resume/      ResumeRenderer, shared by preview and exporters
+├── i18n/            Translator, interface languages, message catalogues
+├── pwa/             Install offer, online state, service worker updates
+├── config/          Page sizes, fonts, layout limits, section kinds
+├── lib/             Helpers, sanitiser, migrations, factory
+│   └── storage/     IndexedDB, repository, cross-tab sync
+├── samples/         The eight sample resumes
+├── schema/          resume.ts, the Zod schema and inferred types
+├── stores/          Zustand store with autosave
+├── types/           Public re-exports of the model types
+├── App.tsx          Application shell
+├── main.tsx         Entry point
+└── index.css        Tailwind import, theme tokens, rich-text and bidi rules
+```
+
+`hooks/` holds shared React hooks; `lib/grammar/` the optional LanguageTool client.
+
+## Data model
+
+Defined as a Zod schema in [`src/schema/resume.ts`](../src/schema/resume.ts); the full description, validation rules and migration process are in [Data and storage](07-data-and-storage.md).
+
+```text
+ResumeDocument
+├── schemaVersion        for migrations
+├── layout               page size, orientation, margin, page-break mode, direction, font, size, accent
+├── profile              name, headline, contact details, links, summary
+├── photo?               data URL, alignment, shape, width
+└── sections[]           array order is display order (drag and drop reorders it)
+    ├── title, icon?, titleStyle?, visible, breakBefore
+    └── items[]
+        ├── title, subtitle?, dateRange?, location?
+        ├── descriptionHtml      sanitised rich text
+        └── icon?, titleStyle?, descriptionStyle?
+```
+
+Titles and descriptions carry their own `TextStyle`, which is how each can have a separate colour.
+
+## Pages and units
+
+Page sizes are stored in millimetres, portrait, in [`src/config/page-sizes.ts`](../src/config/page-sizes.ts). A4 is the default. `mmToPx(mm, dpi)` converts for raster export; the default is 300 DPI, accepted range 72 to 1200.
+
+DPI applies to PNG and JPG. PDF and SVG are vector formats, so DPI only affects photos embedded in them.
+
+Page-break mode is `smart` by default (pages end at the best place, headings stay with what follows) or `manual` (pages end only where the person put a break). Sections and entries flagged `breakBefore` start a new page in both modes. The preview measures every block once and renders each page with only its own blocks; see [Pages and printing](11-pages-and-printing.md#how-pagination-works).
+
+## Fonts and direction
+
+Defined in [`src/config/fonts.ts`](../src/config/fonts.ts).
+
+| Source  | Fonts                                               | Notes                                                                                     |
+| ------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Bundled | Manrope (LTR default), Sahel (RTL default), Estedad | Work offline. Sahel and Estedad are downloaded by `npm run fonts:fetch`                   |
+| Google  | A curated catalogue, or any family by name          | Only after the user agrees; stylesheet validated before use; Google sees the visitor's IP |
+| System  | Arial, Times New Roman                              | Proprietary, so never shipped; fall back to Arimo and Tinos                               |
+| User    | Any font file the user loads                        | Kept in the browser; must be reloaded after clearing site data                            |
+
+Font state lives in `src/stores/font-store.ts`; file checks, Google stylesheet validation and the bundled manifest loader are in `src/lib/fonts/`. Full details in [Fonts and right-to-left text](10-fonts.md).
+
+## Photos and icons
+
+Photos are cropped with canvas in the browser and stored in the resume, with the original kept for re-cropping; version history stores each image once. Icons come from react-icons (Lucide is its `lu` set); each set is a separate file loaded on demand, and only Lucide is precached by the service worker. Details in [Photos and icons](12-photos-and-icons.md).
+
+## Import and export
+
+Exporters live in `src/lib/export/` and readers and writers for the data formats in `src/lib/interchange/`; both load only when someone exports or imports. Picture formats (PDF, PNG, JPG, SVG) draw a copy of the pages laid out off screen at 100% zoom with html-to-image, inlining the fonts the resume uses; PDF is assembled with pdf-lib, Word with docx, Excel with jszip. Details in [Import and export](13-import-and-export.md).
+
+## Languages and offline use
+
+Every interface string comes from a typed catalogue in `src/i18n/messages/`; `useT()` returns a translator for the chosen language with plural rules and local digits, and tests fail if a translation misses a key or a placeholder. The resume itself is drawn by the same renderer whatever the interface language. The service worker precaches the app, asks before switching to a new version, and the optional grammar check talks only to a same-site LanguageTool server. Details in [Languages, offline use and accessibility](14-languages-and-offline.md).
+
+## Privacy and security model
+
+- No backend, accounts, analytics or cookies.
+- Storage is browser-local (IndexedDB), validated on every read and write. Clearing site data removes everything, including loaded fonts and photos; the app warns about this where it matters.
+- A Content Security Policy is injected at build time ([`vite.config.ts`](../vite.config.ts)) and sent as a header by the Docker image ([`docker/security-headers.inc`](../docker/security-headers.inc)). The two must stay in sync.
+- `dangerouslySetInnerHTML` is blocked by lint; rich text goes through one sanitising renderer.
+- Imports are validated against the schema before they reach the store.
+
+See [SECURITY.md](../SECURITY.md).
+
+---
+
+Previous: [Getting started](01-getting-started.md) · Next: [Git flow](03-git-flow.md) · [Docs home](README.md) · [Main README](../README.md)

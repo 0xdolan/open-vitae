@@ -1,0 +1,393 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Sahel and Estedad are bundled in phase 5; until then the stack falls back. */
+  --font-sans: 'Manrope Variable', 'Manrope', 'Sahel', 'Estedad', system-ui, sans-serif;
+  --font-rtl: 'Sahel', 'Estedad', 'Manrope Variable', Tahoma, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --color-paper: #fafaf7;
+  --color-ink: #1c1917;
+  --color-brand: #1d4a2e;
+  --color-sun: #febd11;
+  --color-brand-soft: #dcfce7;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  /* App chrome flagged RTL gets the RTL font stack. Resumes set their own font. */
+  [dir='rtl']:not(article) {
+    font-family: var(--font-rtl);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  /* Headings and the main area receive focus from code after navigation; they are not controls. */
+  h1[tabindex='-1']:focus,
+  main[tabindex='-1']:focus {
+    outline: none;
+  }
+}
+
+/* Rich text inside resumes. Tailwind's reset removes list and heading styles. */
+@layer components {
+  /*
+   * Each block takes its base direction from its own first strong character,
+   * so an English bullet inside a Persian resume (or the reverse) keeps its
+   * punctuation on the correct side. Alignment still follows the resume.
+   */
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th) {
+    unicode-bidi: plaintext;
+  }
+  /* plaintext would also flip alignment per block; keep it with the resume and its list markers. */
+  /* :dir() follows the nearest dir attribute; [dir] selectors would also match <html dir="ltr">. */
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th):not([dir]):dir(rtl) {
+    text-align: right;
+  }
+  .ov-rich :is(p, li, h3, h4, h5, h6, blockquote, td, th):not([dir]):dir(ltr) {
+    text-align: left;
+  }
+  .ov-rich > * + * {
+    margin-block-start: 0.4em;
+  }
+  /* --ov-indent is the resume's indent size ("4 spaces" = 4ch by default). */
+  .ov-rich ul,
+  .ov-rich ol {
+    padding-inline-start: max(1.25em, var(--ov-indent, 4ch));
+  }
+  .ov-rich ul {
+    list-style: disc;
+  }
+  .ov-rich ul ul {
+    list-style: circle;
+  }
+  .ov-rich ul ul ul {
+    list-style: square;
+  }
+  .ov-rich ol {
+    list-style: decimal;
+  }
+  .ov-rich ol ol {
+    list-style: lower-alpha;
+  }
+  .ov-rich ol ol ol {
+    list-style: lower-roman;
+  }
+  /* Indented paragraphs store only their level, so a new indent size applies everywhere. */
+  .ov-rich :is(p, h1, h2, h3, h4, h5, h6, blockquote) {
+    margin-inline-start: calc(var(--ov-indent, 4ch) * var(--ov-level, 0));
+  }
+  .ov-rich h1 {
+    font-size: 1.6em;
+    font-weight: 700;
+  }
+  .ov-rich h2 {
+    font-size: 1.35em;
+    font-weight: 700;
+  }
+  .ov-rich h3 {
+    font-size: 1.15em;
+    font-weight: 600;
+  }
+  .ov-rich h4 {
+    font-size: 1em;
+    font-weight: 600;
+  }
+  .ov-rich em,
+  .ov-rich i {
+    font-style: italic;
+  }
+  .ov-rich u {
+    text-decoration: underline;
+  }
+  .ov-rich s {
+    text-decoration: line-through;
+  }
+  .ov-rich hr {
+    border: 0;
+    border-top: 1px solid #d6d3d1;
+    margin-block: 0.75em;
+  }
+  .ov-rich img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  .ov-rich img.ov-img-center {
+    margin-inline: auto;
+  }
+  .ov-rich img.ov-img-end {
+    margin-inline-start: auto;
+  }
+  .ov-rich table.ov-table-borderless :is(td, th) {
+    border-color: transparent;
+  }
+  .ov-rich li + li {
+    margin-block-start: 0.15em;
+  }
+  .ov-rich a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .ov-rich strong,
+  .ov-rich b {
+    font-weight: 700;
+  }
+  .ov-rich code,
+  .ov-rich pre {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    /* Code always reads left to right, even in an RTL resume. */
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .ov-rich :not(pre) > code {
+    background: #f5f5f4;
+    border-radius: 3px;
+    padding: 0.05em 0.3em;
+  }
+  .ov-rich pre {
+    white-space: pre-wrap;
+    background: #f5f5f4;
+    padding: 0.5em 0.75em;
+    border-radius: 4px;
+  }
+  .ov-rich blockquote {
+    border-inline-start: 3px solid #d6d3d1;
+    padding-inline-start: 0.75em;
+    color: #57534e;
+  }
+  .ov-rich table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .ov-rich th,
+  .ov-rich td {
+    border: 1px solid #d6d3d1;
+    padding: 0.25em 0.5em;
+    text-align: start;
+  }
+}
+
+/* Notifications: slide in, draw a check mark, count down with a bar. */
+@layer components {
+  .ov-toast {
+    animation: ov-toast-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  }
+  .ov-toast:hover .ov-toast-progress,
+  .ov-toast:focus-within .ov-toast-progress {
+    animation-play-state: paused;
+  }
+  .ov-toast-progress {
+    animation-name: ov-toast-countdown;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+  .ov-check-circle {
+    stroke: #10b981;
+    stroke-width: 3;
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    animation: ov-draw 500ms ease-out 120ms forwards;
+  }
+  .ov-check-mark {
+    stroke: #047857;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 34;
+    stroke-dashoffset: 34;
+    animation: ov-draw 300ms ease-out 560ms forwards;
+  }
+  .ov-check {
+    animation: ov-pop 300ms ease-out 780ms both;
+  }
+}
+
+@keyframes ov-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ov-toast-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes ov-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ov-pop {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+/* Respect "reduce motion": no sliding or drawing. The countdown still runs, just unseen. */
+@media (prefers-reduced-motion: reduce) {
+  .ov-toast,
+  .ov-check {
+    animation: none;
+  }
+  .ov-check-circle,
+  .ov-check-mark {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .ov-toast-progress {
+    opacity: 0;
+  }
+}
+
+/* Code highlighting colours (a light theme with good contrast on white). */
+@layer components {
+  .ov-rich .hljs-keyword,
+  .ov-rich .hljs-selector-tag,
+  .ov-rich .hljs-built_in,
+  .ov-rich .hljs-type {
+    color: #7c3aed;
+  }
+  .ov-rich .hljs-string,
+  .ov-rich .hljs-attr,
+  .ov-rich .hljs-template-string {
+    color: #047857;
+  }
+  .ov-rich .hljs-number,
+  .ov-rich .hljs-literal,
+  .ov-rich .hljs-symbol {
+    color: #b45309;
+  }
+  .ov-rich .hljs-comment,
+  .ov-rich .hljs-quote {
+    color: #78716c;
+    font-style: italic;
+  }
+  .ov-rich .hljs-title,
+  .ov-rich .hljs-title.function_,
+  .ov-rich .hljs-section {
+    color: #1d4ed8;
+  }
+  .ov-rich .hljs-variable,
+  .ov-rich .hljs-name,
+  .ov-rich .hljs-tag {
+    color: #be123c;
+  }
+  .ov-rich .hljs-meta {
+    color: #57534e;
+  }
+}
+
+/* Rich text editor. */
+@layer components {
+  .ov-tool {
+    display: inline-flex;
+    height: 2rem;
+    min-width: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    padding-inline: 0.375rem;
+    color: var(--color-ink);
+  }
+  .ov-tool:hover:not(:disabled) {
+    background: #e7e5e4;
+  }
+  .ov-tool:disabled {
+    opacity: 0.4;
+  }
+  .ov-tool-active {
+    background: var(--color-brand-soft);
+    color: var(--color-brand);
+  }
+  .ov-editor .ov-editor-content {
+    min-height: 6rem;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    outline: none;
+  }
+  .ov-editor .ov-editor-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: #a8a29e;
+    float: inline-start;
+    height: 0;
+    pointer-events: none;
+  }
+  .ov-editor .selectedCell {
+    background: #dbeafe;
+  }
+  .ov-editor img.ProseMirror-selectednode {
+    outline: 2px solid var(--color-brand);
+  }
+  .ov-editor .ov-find-match {
+    background: #fde68a;
+  }
+  .ov-editor .ov-find-current {
+    background: #f59e0b;
+    color: #1c1917;
+  }
+}
+
+/* ---------------------------------------------------------------- pages and printing */
+
+/* Colours and borders print as shown, without the "background graphics" option. */
+.ov-page {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* Filled only while printing (see PrintLayer). */
+.ov-print-layer {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  body > :not(.ov-print-layer) {
+    display: none !important;
+  }
+
+  .ov-print-layer {
+    display: block;
+  }
+
+  .ov-print-page {
+    break-after: page;
+    break-inside: avoid;
+  }
+
+  .ov-print-page:last-child {
+    break-after: auto;
+  }
+}
