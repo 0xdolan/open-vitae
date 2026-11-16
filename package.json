@@ -14,6 +14,7 @@
     "preview": "vite preview",
     "site:build": "node scripts/build-site.mjs",
     "brand": "node scripts/brand/make-logo.mjs",
+    "schema": "UPDATE_SCHEMA=1 vitest run src/schema/json-schema.test.ts",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",

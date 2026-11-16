@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 2,
+  "id": "resume-shilan-ahmad",
+  "name": "شیلان ئەحمەد",
+  "language": "ckb",
+  "createdAt": "2026-11-15T09:00:00.000Z",
+  "updatedAt": "2026-11-15T09:00:00.000Z",
+  "layout": {
+    "pageSize": "a4",
+    "orientation": "portrait",
+    "marginMm": 16,
+    "pageBreaks": "smart",
+    "direction": "rtl",
+    "fontFamily": "Estedad",
+    "baseFontSizePt": 10,
+    "lineHeight": 1.6,
+    "accentColor": "#1d4a2e",
+    "indentCh": 4,
+    "maxDepth": null,
+    "digits": "arab"
+  },
+  "profile": {
+    "fullName": "شیلان ئەحمەد",
+    "headline": "شیکەرەوەی داتا · Python و SQL",
+    "email": "shilan@example.com",
+    "phone": "+964 750 000 0000",
+    "location": "سلێمانی",
+    "website": "",
+    "links": [],
+    "summaryHtml": "<p>شیکەرەوەی داتا بە چوار ساڵ ئەزموون لە ڕاپۆرتی دارایی و داشبۆرددا.</p>"
+  },
+  "sections": [
+    {
+      "id": "sec-experience",
+      "kind": "experience",
+      "title": "ئەزموونی کار",
+      "visible": true,
+      "breakBefore": false,
+      "items": [
+        {
+          "id": "item-exp-1",
+          "visible": true,
+          "title": "شیکەرەوەی داتا",
+          "subtitle": "کۆمپانیای نموونە",
+          "dateRange": "2022 – ئێستا",
+          "location": "سلێمانی",
+          "url": "",
+          "descriptionHtml": "<ul><li><p>داشبۆردی مانگانەی فرۆشتن بە Power BI دروست کرد.</p></li></ul>"
+        }
+      ]
+    }
+  ]
+}

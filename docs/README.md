@@ -20,6 +20,7 @@
 | 12  | [Photos and icons](12-photos-and-icons.md)                              | Photo crop and size guide, icon sets, search and licences                                       |
 | 13  | [Import and export](13-import-and-export.md)                            | PDF, Word, InDesign, images and data formats; import, templates, safety                         |
 | 14  | [Languages, offline use and accessibility](14-languages-and-offline.md) | Interface languages, digits and calendars, install and offline, grammar checking, accessibility |
+| 15  | [The name, the logo and the brand](15-brand-and-story.md)               | The deq chevron and Roj, colours, logo files, the landing page                                  |
 
 ## Conventions used in these pages
 

@@ -1,10 +1,22 @@
+<div align="center">
+
+<img src="assets/brand/logo.svg" alt="" width="120">
+
 # Open Vitae
+
+**A private resume builder that runs entirely in your browser.**
 
 _Pronounced OH-pən VEE-tie (/ˈoʊ.pən ˈviː.taɪ/). Vitae is Latin for “of life”, as in curriculum vitae._
 
-A free, open-source resume builder that runs entirely in your browser. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
+[Website](https://0xdolan.github.io/open-vitae/) · [Open the app](https://0xdolan.github.io/open-vitae/app/) · [Documentation](docs/README.md) · [The name and the logo](docs/15-brand-and-story.md)
 
-> **Status:** phase 9 of 11. The interface in English, Persian, Arabic and Kurdish (Sorani); a date helper for Gregorian, Persian, Islamic and Kurdish calendars and a choice of digits; installable and fully offline, with updates that ask first; optional grammar checking with your own LanguageTool server; an accessibility pass to WCAG 2.2 AA. Export to PDF, Word, InDesign, PNG, JPG and SVG at the resolution you choose, and import and export JSON, Excel, CSV and Markdown, with downloadable templates; a profile photo with cropping, a print-size guide, shape, width and position; more than 50,000 searchable icons from Lucide and react-icons for sections, entries, links and the contact line; real pages with smart or manual page breaks, 13 paper sizes, zoom and a print preview that prints exactly what you see; bundled Persian and Arabic fonts, your own fonts and optional Google Fonts; full right-to-left support with Persian, Arabic and Kurdish (Sorani) samples; a full rich text editor; drag-and-drop sections with undo; autosave with a full version history. See the [roadmap](docs/06-roadmap.md).
+</div>
+
+A free, open-source resume builder. No account, no server, no tracking. Built for left-to-right, right-to-left and mixed-direction resumes.
+
+<p align="center"><img src="site/images/editor.webp" alt="The Open Vitae editor: the section list, the profile form and the resume on an A4 page" width="860"></p>
+
+> **Status:** phase 10 of 11: the brand, the landing page, the published resume schema and an AI skill are in place; the first release (v1.0.0) is next. See the [roadmap](docs/06-roadmap.md) and the [changelog](CHANGELOG.md) for everything built so far.
 
 ## Contents
 
@@ -28,6 +40,7 @@ A free, open-source resume builder that runs entirely in your browser. No accoun
 - **Open formats.** Export to PDF, Word, InDesign (ICML), PNG, JPG and SVG; import and export JSON, CSV, Excel and Markdown; templates to fill in.
 - **Your language.** Use the app in English, فارسی, العربية or کوردی; write resumes in any language and calendar.
 - **Installable.** Works offline as a progressive web app, and asks before updating.
+- **Works with AI assistants.** A [published JSON Schema](public/schema/resume.schema.json) and an [AI skill](skills/README.md) let assistants write resumes you can import.
 
 ## Quick start
 
@@ -58,15 +71,18 @@ Both containers bind to localhost only, drop all Linux capabilities and run as a
 
 ## Scripts
 
-| Command           | What it does                                  |
-| ----------------- | --------------------------------------------- |
-| `npm run dev`     | Start the dev server                          |
-| `npm run build`   | Type-check and build to `dist/`               |
-| `npm run preview` | Serve the production build locally            |
-| `npm run check`   | Type-check, lint, format check and unit tests |
-| `npm run test`    | Unit tests                                    |
-| `npm run lint`    | ESLint                                        |
-| `npm run format`  | Format with Prettier                          |
+| Command              | What it does                                                  |
+| -------------------- | ------------------------------------------------------------- |
+| `npm run dev`        | Start the dev server                                          |
+| `npm run build`      | Type-check and build to `dist/`                               |
+| `npm run preview`    | Serve the production build locally                            |
+| `npm run check`      | Type-check, lint, format check and unit tests                 |
+| `npm run test`       | Unit tests                                                    |
+| `npm run lint`       | ESLint                                                        |
+| `npm run format`     | Format with Prettier                                          |
+| `npm run site:build` | Assemble the landing page (and the built app) in `dist-site/` |
+| `npm run brand`      | Regenerate the logo SVGs                                      |
+| `npm run schema`     | Regenerate `public/schema/resume.schema.json`                 |
 
 ## Project layout
 
@@ -74,10 +90,13 @@ Both containers bind to localhost only, drop all Linux capabilities and run as a
 open-vitae/
 ├── .claude/commands/     Implement, review and eval commands for Claude Code
 ├── .github/              CI, Pages deploy, release workflow, templates
+├── assets/brand/         Logo, icons, wordmarks and social image (generated)
 ├── docker/               nginx config and security headers
 ├── docs/                 Full documentation
-├── public/               Static assets copied as-is
-├── scripts/              Git flow and branch protection helpers
+├── public/               Static assets copied as-is, including the resume JSON Schema
+├── scripts/              Git flow helpers, brand generator, site assembly
+├── site/                 The landing page (GitHub Pages root)
+├── skills/               AI skill for writing Open Vitae resumes
 └── src/
     ├── components/       Reusable React components (ui/, library/, workspace/, resume/)
     ├── config/           Page sizes, fonts, layout limits, section kinds
@@ -107,6 +126,7 @@ open-vitae/
 13. [Photos and icons](docs/12-photos-and-icons.md)
 14. [Import and export](docs/13-import-and-export.md)
 15. [Languages, offline use and accessibility](docs/14-languages-and-offline.md)
+16. [The name, the logo and the brand](docs/15-brand-and-story.md)
 
 ## Contributing
 

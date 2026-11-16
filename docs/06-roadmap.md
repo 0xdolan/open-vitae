@@ -21,7 +21,7 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 | 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search                                                                                                       | Done    |
 | 8   | Import and export             | JSON, CSV, Excel, Markdown in; plus PDF, Word, InDesign (ICML), PNG, JPG, SVG out; DPI control; templates                                                                           | Done    |
 | 9   | PWA, accessibility, languages | Install and offline polish, WCAG AA audit, translated interface (Persian, Arabic, Sorani), numerals and calendars, optional self-hosted grammar checking (LanguageTool)             | Done    |
-| 10  | Brand and docs                | Landing page, about, playground, icon set, screenshots, social images, AI skill                                                                                                     | Planned |
+| 10  | Brand and docs                | Logo from the deq chevron and Roj, icon set, landing page, screenshots, social images, published resume JSON Schema, AI skill                                                       | Done    |
 | 11  | First release                 | `v1.0.0` tagged and published                                                                                                                                                       | Planned |
 
 ## Decisions already made
@@ -35,6 +35,10 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 - **Updates ask first.** The service worker waits for **Update now**, which saves pending edits before reloading.
 - **Rich text uses TipTap 3** (MIT). Remote images are never allowed in resumes, so opening one cannot notify a third party.
 - **Arial and Times New Roman are not shipped.** The user's installed copies are used.
+- **One family of logos.** The logo joins a deq sign and the Roj sun, like Roj and Zimanyar, and is generated from one script. See [The name, the logo and the brand](15-brand-and-story.md).
+- **Landing page at the Pages root, the app under `app/`.** The landing page is static HTML and CSS without scripts or outside requests. Docker and self-hosted copies still serve the app at the root.
+- **The playground is the app.** Every sample opens straight away as an editable copy, so there is no separate demo to keep in step.
+- **The resume format is published.** `public/schema/resume.schema.json` is generated from the Zod schema and tested against it; the AI skill in `skills/` builds on it.
 
 ## Open questions
 

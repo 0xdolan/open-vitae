@@ -1,6 +1,6 @@
 # Languages, offline use and accessibility
 
-Previous: [Import and export](13-import-and-export.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Import and export](13-import-and-export.md) · Next: [The name, the logo and the brand](15-brand-and-story.md) · [Docs home](README.md) · [Main README](../README.md)
 
 ## Contents
 
@@ -117,4 +117,4 @@ The Persian, Arabic and Sorani translations were written for this release and wo
 
 ---
 
-Previous: [Import and export](13-import-and-export.md) · [Docs home](README.md) · [Main README](../README.md)
+Previous: [Import and export](13-import-and-export.md) · Next: [The name, the logo and the brand](15-brand-and-story.md) · [Docs home](README.md) · [Main README](../README.md)

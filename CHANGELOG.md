@@ -8,6 +8,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- A logo that joins the chin chevron of deq, the traditional Kurdish tattoo, with Roj, the sun of the flag of Kurdistan, in the family of the Roj and Zimanyar logos; generated variants for every size, favicons, PWA and Apple icons, wordmarks and a social image.
+- The logo in the app header, and the deq green and Roj gold as brand colours.
+- A landing page for GitHub Pages, with the app under `app/`, screenshots and the story of the name and the logo.
+- The resume format as a published JSON Schema (`public/schema/resume.schema.json`, also served by the app), generated from the data model and checked by the tests.
+- An AI skill (`skills/open-vitae/`) that teaches assistants to write resumes Open Vitae imports, with tested examples, and `AGENTS.md` for coding agents.
+- Documentation page on the name, the logo and the brand.
 - The interface in Persian, Arabic and Central Kurdish (Sorani) as well as English, chosen from the browser's languages or the Interface language menu, with the page direction following the language, plural forms and local digits.
 - Sorani dates and times with Kurdish month and weekday names and Arabic-Indic digits, also in browsers without Sorani data.
 - Digits setting in Page setup: draw the resume with Western, Arabic-Indic or Persian digits, or as typed; links, email and phone numbers stay unchanged.
@@ -84,6 +90,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+- The storage notice wraps under its text on narrow screens.
+- Headings that receive focus after navigation no longer show a focus ring.
 - Code formatted with Prettier.
 - Validation messages, sample names, font notices and every dialog follow the interface language.
 - Focus moves to the new view's heading after navigating; the editor has a page heading for screen readers.
