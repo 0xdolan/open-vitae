@@ -1,3 +1,4 @@
+import { PageBand } from '@/components/pages/PageBand';
 import { ResumeRenderer } from '@/components/resume/ResumeRenderer';
 import { contentBoxMm, pageBoxMm } from '@/lib/page-geometry';
 import type { PageSlice } from '@/lib/pagination';
@@ -34,7 +35,7 @@ export function PageSheet({
     <div
       role="group"
       aria-label={`Page ${number} of ${total}`}
-      className={cn('ov-page overflow-hidden bg-white', className)}
+      className={cn('ov-page relative overflow-hidden bg-white', className)}
       style={{ width: `${widthMm}mm`, height: `${heightMm}mm`, padding: `${marginMm}mm` }}
     >
       <ResumeRenderer
@@ -43,6 +44,8 @@ export function PageSheet({
         selectedSectionId={selectedSectionId}
         onSectionClick={onSectionClick}
       />
+      <PageBand layout={doc.layout} kind="header" page={number} pages={total} marginMm={marginMm} />
+      <PageBand layout={doc.layout} kind="footer" page={number} pages={total} marginMm={marginMm} />
     </div>
   );
 }

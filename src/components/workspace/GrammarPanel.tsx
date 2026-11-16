@@ -4,7 +4,8 @@ import { PanelHeading } from '@/components/editor/PanelHeading';
 import { Button } from '@/components/ui/button';
 import { controlClass, Field } from '@/components/ui/field';
 import { findResumeLanguage } from '@/config/languages';
-import { useT } from '@/i18n';
+import { useT, type MessageKey } from '@/i18n';
+import type { Translator } from '@/i18n/translate';
 import {
   fieldText,
   grammarFields,
@@ -44,6 +45,30 @@ function readSettings(): GrammarSettings {
     };
   } catch {
     return { enabled: false, endpoint: DEFAULT_GRAMMAR_ENDPOINT };
+  }
+}
+
+/** A plain explanation of a failed check, with what to do about it. */
+function grammarErrorText(err: unknown, t: Translator<MessageKey>): string {
+  if (!(err instanceof GrammarError)) return t('grammar.errorNetwork');
+  switch (err.kind) {
+    case 'endpoint':
+      return t('grammar.errorEndpoint');
+    case 'too-long':
+      return t('grammar.errorTooLong');
+    case 'network':
+      return t('grammar.errorNetwork');
+    case 'response':
+      return t('grammar.errorResponse');
+    case 'status': {
+      const status = err.status ?? 0;
+      if (status === 404) return t('grammar.errorNotFound');
+      if (status === 405) return t('grammar.errorMethod');
+      if (status === 413) return t('grammar.errorTooLong');
+      if (status === 429) return t('grammar.errorBusy');
+      if (status >= 500) return t('grammar.errorServer', { status });
+      return t('grammar.errorStatus', { status });
+    }
   }
 }
 
@@ -137,9 +162,7 @@ export function GrammarPanel({ doc }: { readonly doc: ResumeDocument }) {
       setIgnored(new Set());
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return;
-      setError(
-        t('grammar.failed', { reason: err instanceof GrammarError ? err.message : String(err) }),
-      );
+      setError(grammarErrorText(err, t));
     } finally {
       if (abort.current === controller) setBusy(false);
     }
@@ -185,6 +208,10 @@ export function GrammarPanel({ doc }: { readonly doc: ResumeDocument }) {
         description={t('grammar.description')}
       />
 
+      <p className="rounded-md bg-stone-100 p-3 text-sm text-stone-600">
+        {t('grammar.spellcheck')}
+      </p>
+
       <label className="flex items-center gap-2 text-sm font-medium">
         <input
           type="checkbox"
@@ -196,7 +223,7 @@ export function GrammarPanel({ doc }: { readonly doc: ResumeDocument }) {
       </label>
 
       {!settings.enabled ? (
-        <p className="rounded-md bg-stone-100 p-3 text-sm text-stone-600">{t('grammar.off')}</p>
+        <p className="text-sm text-stone-600">{t('grammar.off')}</p>
       ) : (
         <>
           <Field
@@ -253,7 +280,7 @@ export function GrammarPanel({ doc }: { readonly doc: ResumeDocument }) {
                   return (
                     <li
                       key={finding.key}
-                      className="rounded-lg border border-stone-200 bg-white p-3 text-sm"
+                      className="rounded-lg border border-stone-200 bg-card p-3 text-sm"
                     >
                       <p className="text-xs text-stone-500" dir="auto">
                         {t('grammar.where', { field: fieldLabel(finding.field) })}

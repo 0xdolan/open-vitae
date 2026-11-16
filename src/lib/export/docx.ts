@@ -3,9 +3,12 @@ import {
   BorderStyle,
   Document,
   ExternalHyperlink,
+  Footer,
+  Header,
   ImageRun,
   LevelFormat,
   Packer,
+  PageNumber,
   PageOrientation,
   Paragraph,
   ShadingType,
@@ -19,9 +22,11 @@ import {
   type ParagraphChild,
 } from 'docx';
 
+import { PAGE_BAND_FONT_SCALE, PAGE_BAND_TOKENS } from '@/config/layout';
+import { toDigits } from '@/lib/digits';
 import { contentBoxMm, pageBoxMm } from '@/lib/page-geometry';
 import { isSafeUrl } from '@/lib/url';
-import type { ResumeDocument, TextStyle } from '@/schema/resume';
+import type { PageBand, ResumeDocument, ResumeLayout, TextStyle } from '@/schema/resume';
 
 /**
  * Word (.docx) export with the docx library, built from the resume itself
@@ -397,12 +402,75 @@ const listLevels = (format: 'bullet' | 'decimal') =>
   }));
 
 /** Build the .docx file. */
+
+const BAND_ALIGN = {
+  start: AlignmentType.START,
+  center: AlignmentType.CENTER,
+  end: AlignmentType.END,
+} as const;
+
+const BAND_TOKEN = new RegExp(
+  `(${[PAGE_BAND_TOKENS.page, PAGE_BAND_TOKENS.pages].map((t) => t.replace(/[{}]/g, '\\$&')).join('|')})`,
+);
+
+/**
+ * A page header or footer as a Word paragraph. {page} and {pages} become Word
+ * page fields, so the numbers stay right however Word lays the pages out.
+ */
+function bandParagraph(band: PageBand | undefined, layout: ResumeLayout): Paragraph[] {
+  if (!band?.enabled || band.text.trim() === '') return [];
+  const rtl = layout.direction === 'rtl';
+  const run = {
+    font: layout.fontFamily,
+    size: Math.round(layout.baseFontSizePt * PAGE_BAND_FONT_SCALE * 2),
+    color: '57534E',
+    rightToLeft: rtl,
+  };
+  const children = band.text
+    .split(BAND_TOKEN)
+    .filter((part) => part !== '')
+    .map((part) => {
+      if (part === PAGE_BAND_TOKENS.page)
+        return new TextRun({ ...run, children: [PageNumber.CURRENT] });
+      if (part === PAGE_BAND_TOKENS.pages) {
+        return new TextRun({ ...run, children: [PageNumber.TOTAL_PAGES] });
+      }
+      return new TextRun({ ...run, text: layout.digits ? toDigits(part, layout.digits) : part });
+    });
+  return [new Paragraph({ bidirectional: rtl, alignment: BAND_ALIGN[band.align], children })];
+}
+
+/** Word headers and footers for the section, with a separate first page when one band skips it. */
+function bandSection(layout: ResumeLayout) {
+  const header = bandParagraph(layout.header, layout);
+  const footer = bandParagraph(layout.footer, layout);
+  const skipsFirst =
+    (header.length > 0 && layout.header?.firstPage === false) ||
+    (footer.length > 0 && layout.footer?.firstPage === false);
+  const firstHeader = layout.header?.firstPage === false ? [] : header;
+  const firstFooter = layout.footer?.firstPage === false ? [] : footer;
+  return {
+    titlePage: skipsFirst,
+    headers: {
+      default: new Header({ children: header }),
+      ...(skipsFirst ? { first: new Header({ children: firstHeader }) } : {}),
+    },
+    footers: {
+      default: new Footer({ children: footer }),
+      ...(skipsFirst ? { first: new Footer({ children: firstFooter }) } : {}),
+    },
+  };
+}
+
 export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
   const { layout, profile } = doc;
   const rtl = layout.direction === 'rtl';
   const accent = hex(layout.accentColor) ?? '14532D';
+  const sectionTitleColor = hex(layout.sectionTitleColor ?? layout.accentColor) ?? accent;
+  const sectionRuleColor = hex(layout.sectionRuleColor ?? layout.accentColor) ?? accent;
   const page = pageBoxMm(layout);
   const content = contentBoxMm(layout);
+  const bands = bandSection(layout);
   const contentTwips = Math.round(content.widthMm * TWIP_PER_MM);
 
   const images = new Map<string, WordImage>();
@@ -502,11 +570,17 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
         pageBreakBefore: section.breakBefore,
         keepNext: true,
         spacing: { before: 240, after: 100 },
-        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: accent, space: 2 } },
+        ...(layout.sectionRule === false
+          ? {}
+          : {
+              border: {
+                bottom: { style: BorderStyle.SINGLE, size: 6, color: sectionRuleColor, space: 2 },
+              },
+            }),
         children: [
           text(section.title.toLocaleUpperCase(doc.language), {
             bold: true,
-            color: accent,
+            color: sectionTitleColor,
             size: Math.round(layout.baseFontSizePt * 1.1 * 2),
             characterSpacing: 10,
             ...styleRun(section.titleStyle),
@@ -603,10 +677,15 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
             },
             margin: (() => {
               const m = Math.round(content.marginMm * TWIP_PER_MM);
-              return { top: m, right: m, bottom: m, left: m };
+              // Headers and footers sit in the middle of the top and bottom margins, as on screen.
+              const band = Math.round(m * 0.35);
+              return { top: m, right: m, bottom: m, left: m, header: band, footer: band };
             })(),
           },
+          titlePage: bands.titlePage,
         },
+        headers: bands.headers,
+        footers: bands.footers,
         children,
       },
     ],

@@ -1,9 +1,11 @@
 import { Button, buttonVariants } from '@/components/ui/button';
-import { DownloadIcon, RedoIcon, UndoIcon } from '@/components/ui/icons';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { DownloadIcon, PanelIcon, RedoIcon, UndoIcon } from '@/components/ui/icons';
 import { SaveIndicator } from '@/components/workspace/SaveIndicator';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
+import { useUiStore } from '@/stores/ui-store';
 import { useT } from '@/i18n';
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
@@ -23,6 +25,8 @@ export function EditorHeader({ doc, onExport }: EditorHeaderProps) {
   const canRedo = useResumeStore((s) => s.canRedo);
   const undo = useResumeStore((s) => s.undo);
   const redo = useResumeStore((s) => s.redo);
+  const previewCollapsed = useUiStore((s) => s.previewCollapsed);
+  const setPreviewCollapsed = useUiStore((s) => s.setPreviewCollapsed);
   return (
     <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-stone-200 pb-3">
       <a href="#/" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'shrink-0')}>
@@ -68,6 +72,19 @@ export function EditorHeader({ doc, onExport }: EditorHeaderProps) {
         >
           <RedoIcon />
         </Button>
+        {/* The preview is a side pane only on wide screens; narrow screens use the tabs. */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hidden xl:inline-flex"
+          aria-pressed={!previewCollapsed}
+          aria-label={previewCollapsed ? t('editor.showPreview') : t('editor.hidePreview')}
+          title={previewCollapsed ? t('editor.showPreview') : t('editor.hidePreview')}
+          onClick={() => setPreviewCollapsed(!previewCollapsed)}
+        >
+          <PanelIcon className="rtl:-scale-x-100" />
+        </Button>
+        <ThemeSwitcher />
         <Button variant="primary" size="sm" onClick={onExport}>
           <DownloadIcon /> {t('editor.export')}
         </Button>

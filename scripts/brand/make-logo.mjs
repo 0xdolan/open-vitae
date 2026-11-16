@@ -3,7 +3,7 @@
 // Usage: node scripts/brand/make-logo.mjs   (then scripts/brand/render-icons.mjs for PNGs)
 //
 // The mark joins two Kurdish signs, as the Roj and Zimanyar logos do:
-// - the chin chevron (V) of deq, drawn on the Deq 24-unit grid (github.com/0xdolan/deq),
+// - the chin chevron (V) of deq, drawn on the Deq 24-unit grid (github.com/kanilabs/deq),
 // - Roj, the 21-ray sun of the flag of Kurdistan, in the V's opening, where the sign has its dot.
 // See docs/15-brand-and-story.md.
 import { mkdirSync, writeFileSync } from 'node:fs';

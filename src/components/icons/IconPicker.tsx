@@ -1,7 +1,9 @@
 import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { ColorControl, controlClass } from '@/components/ui/field';
 import { CloseIcon, SearchIcon } from '@/components/ui/icons';
+import { Select } from '@/components/ui/select';
 import {
   DEFAULT_ICON_SET,
   ICON_SET_IDS,
@@ -9,12 +11,14 @@ import {
   isIconSetId,
   type IconSetId,
 } from '@/config/icon-sets';
+import { DEFAULT_ICON_COLOR } from '@/config/layout';
 import { iconLabel, searchIcons } from '@/lib/icons/search';
 import { cn } from '@/lib/utils';
 import { useT } from '@/i18n';
 import type { IconRef } from '@/schema/resume';
 
 import { ResumeIcon, useIconSet } from './ResumeIcon';
+import { useBackdropDismiss } from '@/hooks/useDismiss';
 
 interface IconPickerProps {
   readonly value: IconRef | undefined;
@@ -33,9 +37,13 @@ const PAGE = 120;
 export function IconPicker({ value, onChange, target, className }: IconPickerProps) {
   const t = useT();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const backdrop = useBackdropDismiss(() => {
+    setOpen(false);
+  });
   const searchRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
   const setSelectId = useId();
+  const colorId = useId();
   const [open, setOpen] = useState(false);
   const [setId, setSetId] = useState<IconSetId>(
     value && isIconSetId(value.set) ? value.set : DEFAULT_ICON_SET,
@@ -63,8 +71,9 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
     [set, deferredQuery, info.prefix, limit],
   );
 
+  // A new icon keeps the colour chosen for the old one.
   const choose = (icon: IconRef | undefined) => {
-    onChange(icon);
+    onChange(icon && value?.color ? { ...icon, color: value.color } : icon);
     setOpen(false);
   };
 
@@ -94,12 +103,13 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
 
       <dialog
         ref={dialogRef}
+        {...backdrop}
         aria-labelledby={titleId}
         onCancel={(event) => {
           event.preventDefault();
           setOpen(false);
         }}
-        className="m-auto w-[min(44rem,calc(100vw-1.5rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/40"
+        className="m-auto w-[min(44rem,calc(100vw-1.5rem))] bg-card text-foreground rounded-xl border border-stone-200 p-0 shadow-xl backdrop:bg-black/40"
       >
         {open ? (
           <div className="flex max-h-[min(40rem,calc(100dvh-2rem))] flex-col gap-3 p-4">
@@ -125,7 +135,7 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
                 <input
                   ref={searchRef}
                   type="search"
-                  className="h-9 w-full rounded-md border border-stone-300 ps-8 pe-2 text-sm"
+                  className={cn(controlClass, 'ps-8')}
                   placeholder={t('icons.searchPlaceholder')}
                   lang="en"
                   dir="ltr"
@@ -133,21 +143,14 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </label>
-              <label htmlFor={setSelectId} className="sr-only">
-                {t('icons.set')}
-              </label>
-              <select
+              <Select
                 id={setSelectId}
-                className="h-9 rounded-md border border-stone-300 bg-white px-2 text-sm"
+                aria-label={t('icons.set')}
+                className="w-auto"
                 value={setId}
-                onChange={(e) => isIconSetId(e.target.value) && setSetId(e.target.value)}
-              >
-                {ICON_SET_IDS.map((id) => (
-                  <option key={id} value={id}>
-                    {ICON_SETS[id].label}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(next) => isIconSetId(next) && setSetId(next)}
+                items={ICON_SET_IDS.map((id) => ({ value: id, label: ICON_SETS[id].label }))}
+              />
             </div>
 
             <p className="text-xs text-stone-500" aria-live="polite">
@@ -180,8 +183,10 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
                         aria-pressed={selected}
                         title={label}
                         className={cn(
-                          'flex w-full flex-col items-center gap-1 rounded-md border p-2 text-center hover:bg-stone-100',
-                          selected ? 'border-brand bg-brand/10' : 'border-transparent',
+                          'flex w-full flex-col items-center gap-1 rounded-md border p-2 text-center',
+                          selected
+                            ? 'border-brand bg-selected text-selected-foreground'
+                            : 'hover:bg-hover border-transparent',
                         )}
                         onClick={() => choose({ set: setId, name })}
                       >
@@ -203,10 +208,24 @@ export function IconPicker({ value, onChange, target, className }: IconPickerPro
               ) : null}
             </div>
 
-            <div className="flex justify-between gap-2 border-t border-stone-200 pt-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-stone-200 pt-3">
               <Button variant="danger-ghost" disabled={!value} onClick={() => choose(undefined)}>
                 {t('icons.remove')}
               </Button>
+              {value ? (
+                <div className="flex items-center gap-2 text-sm">
+                  <label htmlFor={colorId}>{t('icons.color')}</label>
+                  <div className="w-28">
+                    <ColorControl
+                      id={colorId}
+                      value={value.color}
+                      fallback={DEFAULT_ICON_COLOR}
+                      resetLabel={t('icons.colorDefault')}
+                      onChange={(color) => onChange({ set: value.set, name: value.name, color })}
+                    />
+                  </div>
+                </div>
+              ) : null}
               <Button onClick={() => setOpen(false)}>{t('icons.cancel')}</Button>
             </div>
           </div>

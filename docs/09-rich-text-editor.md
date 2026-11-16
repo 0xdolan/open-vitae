@@ -39,6 +39,8 @@ Controls are grouped and wrap on narrow screens. Every control has a label and t
 | Clipboard        | Cut, copy, paste as plain text                                                                                                         |
 | Tools            | Find and replace, spell check on or off                                                                                                |
 
+The font menu lists the bundled fonts, the fonts installed on your computer, your own fonts and the Google Fonts list. Google fonts stay greyed out until you allow them in **Page setup › Fonts**; after that, picking one loads it and applies it to the selected text.
+
 Word and character counts appear under each editor, with a warning when the text gets close to the size limit (2 MB, mostly relevant for images).
 
 ## Keyboard shortcuts

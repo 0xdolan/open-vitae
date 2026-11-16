@@ -1,7 +1,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { controlClass, Field } from '@/components/ui/field';
+import { Field } from '@/components/ui/field';
+import { Select } from '@/components/ui/select';
 import { RESUME_LANGUAGES } from '@/config/languages';
 import type { DigitSystem } from '@/config/layout';
 import { useT, type MessageKey } from '@/i18n';
@@ -16,6 +17,7 @@ import {
   type YearMonth,
 } from '@/lib/calendars';
 import { defaultDigits, toDigits } from '@/lib/digits';
+import { useBackdropDismiss } from '@/hooks/useDismiss';
 
 const CALENDAR_LABELS: Readonly<Record<CalendarId, MessageKey>> = {
   gregorian: 'dates.gregorian',
@@ -67,6 +69,9 @@ export function DateRangeDialog({
 }: DateRangeDialogProps) {
   const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
+  const backdrop = useBackdropDismiss(() => {
+    onCancel();
+  });
   const titleId = useId();
   const id = useId();
   const [calendar, setCalendar] = useState<CalendarId>(() => defaultCalendar(resumeLanguage));
@@ -118,36 +123,32 @@ export function DateRangeDialog({
   ) => (
     <div className="grid grid-cols-2 gap-2">
       <Field label={t('dates.month')} htmlFor={`${id}-${which}-month`}>
-        <select
+        <Select
           id={`${id}-${which}-month`}
-          className={controlClass}
           disabled={disabled}
-          value={value.month}
-          lang={language}
-          onChange={(e) => set({ ...value, month: Number(e.target.value) })}
-        >
-          <option value={0}>{t('dates.noMonth')}</option>
-          {months.map((name, index) => (
-            <option key={name} value={index + 1}>
-              {name}
-            </option>
-          ))}
-        </select>
+          value={String(value.month)}
+          onValueChange={(next) => set({ ...value, month: Number(next) })}
+          items={[
+            { value: '0', label: t('dates.noMonth') },
+            ...months.map((name, index) => ({
+              value: String(index + 1),
+              label: name,
+              lang: language,
+            })),
+          ]}
+        />
       </Field>
       <Field label={t('dates.year')} htmlFor={`${id}-${which}-year`}>
-        <select
+        <Select
           id={`${id}-${which}-year`}
-          className={controlClass}
           disabled={disabled}
-          value={value.year}
-          onChange={(e) => set({ ...value, year: Number(e.target.value) })}
-        >
-          {years.map((year) => (
-            <option key={year} value={year}>
-              {toDigits(String(year), shownDigits)}
-            </option>
-          ))}
-        </select>
+          value={String(value.year)}
+          onValueChange={(next) => set({ ...value, year: Number(next) })}
+          items={years.map((year) => ({
+            value: String(year),
+            label: toDigits(String(year), shownDigits),
+          }))}
+        />
       </Field>
     </div>
   );
@@ -155,12 +156,13 @@ export function DateRangeDialog({
   return (
     <dialog
       ref={ref}
+      {...backdrop}
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
       }}
-      className="m-auto w-[min(30rem,calc(100vw-1.5rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/40"
+      className="m-auto w-[min(30rem,calc(100vw-1.5rem))] bg-card text-foreground rounded-xl border border-stone-200 p-0 shadow-xl backdrop:bg-black/40"
     >
       {open ? (
         <form
@@ -175,35 +177,32 @@ export function DateRangeDialog({
           </h2>
           <div className="grid grid-cols-2 gap-3">
             <Field label={t('dates.calendar')} htmlFor={`${id}-calendar`}>
-              <select
+              <Select
                 id={`${id}-calendar`}
-                className={controlClass}
                 value={calendar}
-                onChange={(e) => isCalendarId(e.target.value) && chooseCalendar(e.target.value)}
-              >
-                {CALENDAR_IDS.map((value) => (
-                  <option key={value} value={value}>
-                    {t(CALENDAR_LABELS[value])}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(next) => isCalendarId(next) && chooseCalendar(next)}
+                items={CALENDAR_IDS.map((value) => ({
+                  value,
+                  label: t(CALENDAR_LABELS[value]),
+                }))}
+              />
             </Field>
             <Field label={t('dates.language')} htmlFor={`${id}-language`}>
-              <select
+              <Select
                 id={`${id}-language`}
-                className={controlClass}
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-              >
-                {RESUME_LANGUAGES.map((l) => (
-                  <option key={l.tag} value={l.tag} lang={l.tag}>
-                    {l.nativeName}
-                  </option>
-                ))}
-                {RESUME_LANGUAGES.some((l) => l.tag === language) ? null : (
-                  <option value={language}>{language}</option>
-                )}
-              </select>
+                onValueChange={setLanguage}
+                items={[
+                  ...RESUME_LANGUAGES.map((l) => ({
+                    value: l.tag,
+                    label: l.nativeName,
+                    lang: l.tag,
+                  })),
+                  ...(RESUME_LANGUAGES.some((l) => l.tag === language)
+                    ? []
+                    : [{ value: language, label: language }]),
+                ]}
+              />
             </Field>
           </div>
 

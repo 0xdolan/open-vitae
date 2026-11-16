@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useT } from '@/i18n';
+import { useBackdropDismiss } from '@/hooks/useDismiss';
 
 interface ConfirmDialogProps {
   readonly open: boolean;
@@ -29,6 +30,9 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
+  const backdrop = useBackdropDismiss(() => {
+    onCancel();
+  });
   const titleId = useId();
   const descriptionId = useId();
 
@@ -42,13 +46,14 @@ export function ConfirmDialog({
   return (
     <dialog
       ref={ref}
+      {...backdrop}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
       }}
-      className="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/40"
+      className="m-auto w-[min(28rem,calc(100vw-2rem))] bg-card text-foreground rounded-xl border border-stone-200 p-0 shadow-xl backdrop:bg-black/40"
     >
       <div className="flex flex-col gap-3 p-5">
         <h2 id={titleId} className="text-lg font-semibold">

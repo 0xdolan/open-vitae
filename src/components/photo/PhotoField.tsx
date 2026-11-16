@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type DragEvent } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CropIcon, TrashIcon, UploadIcon } from '@/components/ui/icons';
+import { Select } from '@/components/ui/select';
 import {
   LIMITS,
   PHOTO_RADIUS,
@@ -143,7 +144,7 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
           <p className="text-xs text-stone-500">{t('photo.dropHint')}</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-3 rounded-lg border border-stone-200 bg-white p-3">
+        <div className="flex flex-col gap-3 rounded-lg border border-stone-200 bg-card p-3">
           <div className="flex flex-wrap items-center gap-3">
             <img
               src={photo.dataUrl}
@@ -181,10 +182,10 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
                     role="radio"
                     aria-checked={photo.shape === shape}
                     className={cn(
-                      'flex-1 rounded-md border px-2 py-1.5 text-xs',
+                      'flex-1 rounded-md border px-2 py-1.5 text-xs transition-colors',
                       photo.shape === shape
-                        ? 'border-brand bg-brand/10 text-brand'
-                        : 'border-stone-300 hover:bg-stone-100',
+                        ? 'border-brand bg-selected text-selected-foreground font-medium'
+                        : 'hover:bg-hover border-stone-300',
                     )}
                     onClick={() => updateActive((d) => updatePhoto(d, { shape }))}
                   >
@@ -218,20 +219,17 @@ export function PhotoField({ doc }: { readonly doc: ResumeDocument }) {
               <label htmlFor={`${id}-align`} className="text-xs font-medium text-stone-700">
                 {t('photo.position')}
               </label>
-              <select
+              <Select
                 id={`${id}-align`}
-                className="h-9 rounded-md border border-stone-300 bg-white px-2 text-sm"
                 value={photo.align}
-                onChange={(e) =>
-                  updateActive((d) => updatePhoto(d, { align: e.target.value as HorizontalAlign }))
+                onValueChange={(value) =>
+                  updateActive((d) => updatePhoto(d, { align: value as HorizontalAlign }))
                 }
-              >
-                {Object.entries(alignLabels(rtl)).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {t(label)}
-                  </option>
-                ))}
-              </select>
+                items={Object.entries(alignLabels(rtl)).map(([value, label]) => ({
+                  value,
+                  label: t(label),
+                }))}
+              />
             </div>
           </div>
 

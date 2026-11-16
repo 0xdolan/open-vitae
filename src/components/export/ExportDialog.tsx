@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { PageSheet } from '@/components/pages/PageSheet';
 import { Button } from '@/components/ui/button';
 import { CloseIcon, DownloadIcon } from '@/components/ui/icons';
+import { Select } from '@/components/ui/select';
 import { downloadFile } from '@/lib/download';
 import { DEFAULT_DPI, DPI_OPTIONS, PICTURE_FORMATS, type ExportFormat } from '@/config/export';
 import type { ExportOptions } from '@/lib/export/run-export';
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 import type { ResumeDocument } from '@/schema/resume';
 import { fontRegistrar, toast, useResumeStore } from '@/stores';
 import { useT, type MessageKey } from '@/i18n';
+import { useBackdropDismiss } from '@/hooks/useDismiss';
 
 interface FormatInfo {
   readonly id: ExportFormat;
@@ -65,6 +67,9 @@ interface ExportDialogProps {
 export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
   const t = useT();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const backdrop = useBackdropDismiss(() => {
+    if (!busy) onClose();
+  });
   const stageRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const prepareExport = useResumeStore((s) => s.prepareExport);
@@ -162,12 +167,13 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
   return (
     <dialog
       ref={dialogRef}
+      {...backdrop}
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
         if (!busy) onClose();
       }}
-      className="m-auto w-[min(46rem,calc(100vw-1.5rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/40"
+      className="m-auto w-[min(46rem,calc(100vw-1.5rem))] bg-card text-foreground rounded-xl border border-stone-200 p-0 shadow-xl backdrop:bg-black/40"
     >
       {open ? (
         <div className="flex max-h-[calc(100dvh-2rem)] flex-col gap-4 overflow-y-auto p-5">
@@ -224,31 +230,29 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
           {isPicture ? (
             <div className="flex flex-wrap gap-4 rounded-lg bg-stone-50 p-3 text-sm">
               {format !== 'svg' ? (
-                <label className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
                   <span className="text-xs font-medium text-stone-700">
                     {t('export.resolution')}
                   </span>
-                  <select
-                    className="h-9 rounded-md border border-stone-300 bg-white px-2"
-                    value={dpi}
-                    onChange={(e) => setDpi(Number(e.target.value))}
-                  >
-                    {DPI_OPTIONS.map((value) => (
-                      <option key={value} value={value}>
-                        {t(
-                          value === 72
-                            ? 'export.dpiScreen'
-                            : value === 150
-                              ? 'export.dpiDraft'
-                              : value === 300
-                                ? 'export.dpiPrint'
-                                : 'export.dpiHigh',
-                          { dpi: value },
-                        )}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                  <Select
+                    aria-label={t('export.resolution')}
+                    value={String(dpi)}
+                    onValueChange={(value) => setDpi(Number(value))}
+                    items={DPI_OPTIONS.map((value) => ({
+                      value: String(value),
+                      label: t(
+                        value === 72
+                          ? 'export.dpiScreen'
+                          : value === 150
+                            ? 'export.dpiDraft'
+                            : value === 300
+                              ? 'export.dpiPrint'
+                              : 'export.dpiHigh',
+                        { dpi: value },
+                      ),
+                    }))}
+                  />
+                </div>
               ) : null}
               {format === 'jpg' ? (
                 <label className="flex flex-col gap-1">
@@ -267,23 +271,23 @@ export function ExportDialog({ open, pages, onClose }: ExportDialogProps) {
                 </label>
               ) : null}
               {format !== 'pdf' && pageCount > 1 ? (
-                <label className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
                   <span className="text-xs font-medium text-stone-700">{t('export.pages')}</span>
-                  <select
-                    className="h-9 rounded-md border border-stone-300 bg-white px-2"
+                  <Select
+                    aria-label={t('export.pages')}
                     value={String(pageChoice)}
-                    onChange={(e) =>
-                      setPageChoice(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                    onValueChange={(value) =>
+                      setPageChoice(value === 'all' ? 'all' : Number(value))
                     }
-                  >
-                    <option value="all">{t('export.allPages', { count: pageCount })}</option>
-                    {Array.from({ length: pageCount }, (_, i) => (
-                      <option key={i} value={i + 1}>
-                        {t('export.page', { number: i + 1 })}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    items={[
+                      { value: 'all', label: t('export.allPages', { count: pageCount }) },
+                      ...Array.from({ length: pageCount }, (_, i) => ({
+                        value: String(i + 1),
+                        label: t('export.page', { number: i + 1 }),
+                      })),
+                    ]}
+                  />
+                </div>
               ) : null}
             </div>
           ) : null}

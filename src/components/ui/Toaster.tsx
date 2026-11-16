@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react';
+
+import { isEscapeTaken } from '@/hooks/useDismiss';
 import { cn } from '@/lib/utils';
 import { useToastStore, type Toast } from '@/stores/toast-store';
 import { useT } from '@/i18n';
@@ -29,7 +32,7 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       // Errors interrupt; everything else waits politely.
       role={toast.tone === 'error' ? 'alert' : 'status'}
       className={cn(
-        'ov-toast pointer-events-auto relative flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 overflow-hidden rounded-xl border bg-white p-4 pe-10 shadow-lg',
+        'ov-toast pointer-events-auto relative flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 overflow-hidden rounded-xl border bg-card p-4 pe-10 shadow-lg',
         toast.tone === 'success' && 'border-emerald-200',
         toast.tone === 'error' && 'border-red-200',
         toast.tone === 'info' && 'border-stone-200',
@@ -38,7 +41,7 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       {toast.tone === 'success' ? <SuccessIcon /> : null}
       {toast.tone === 'error' ? <ErrorIcon /> : null}
       <div className="min-w-0">
-        <p className="font-semibold text-ink">{toast.title}</p>
+        <p className="text-foreground font-semibold">{toast.title}</p>
         {toast.description ? (
           <p className="mt-0.5 text-sm break-words text-stone-600" dir="auto">
             {toast.description}
@@ -60,7 +63,7 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
       <button
         type="button"
         onClick={() => dismiss(toast.id)}
-        className="absolute end-2 top-2 rounded-md px-2 py-1 text-stone-500 hover:bg-stone-100 hover:text-ink"
+        className="absolute end-2 top-2 rounded-md px-2 py-1 hover:bg-hover hover:text-foreground text-stone-500"
         aria-label={t('toast.dismiss')}
       >
         ×
@@ -86,12 +89,42 @@ function ToastItem({ toast }: { readonly toast: Toast }) {
   );
 }
 
-/** Notifications in the bottom corner on the reading-end side (right in LTR, left in RTL). */
+/**
+ * Notifications in the bottom corner on the reading-end side (right in LTR,
+ * left in RTL). Escape closes the newest one (unless a menu or dialog is
+ * open, which gets Escape first); a press anywhere else closes them all.
+ */
 export function Toaster() {
   const t = useT();
   const toasts = useToastStore((s) => s.toasts);
+  const dismiss = useToastStore((s) => s.dismiss);
+  const list = useRef<HTMLOListElement>(null);
+  const latest = useRef(toasts);
+  latest.current = toasts;
+  const open = toasts.length > 0;
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || isEscapeTaken()) return;
+      const newest = latest.current[latest.current.length - 1];
+      if (newest) dismiss(newest.id);
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (list.current?.contains(event.target as Node)) return;
+      for (const toast of latest.current) dismiss(toast.id);
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPointer, true);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPointer, true);
+    };
+  }, [open, dismiss]);
+
   return (
     <ol
+      ref={list}
       aria-label={t('toast.region')}
       className="pointer-events-none fixed end-4 bottom-4 z-50 flex flex-col items-end gap-2"
     >
