@@ -69,7 +69,7 @@ export function FindBar({ editor, onClose }: FindBarProps) {
         type="search"
         dir="auto"
         placeholder={t('find.find')}
-        className="h-8 w-40 rounded-md border border-stone-300 bg-white px-2"
+        className="h-8 w-40 rounded-md border border-stone-300 bg-card px-2"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => {
@@ -128,13 +128,13 @@ export function FindBar({ editor, onClose }: FindBarProps) {
         id={`${id}-replace`}
         dir="auto"
         placeholder={t('find.replaceWith')}
-        className="h-8 w-40 rounded-md border border-stone-300 bg-white px-2"
+        className="h-8 w-40 rounded-md border border-stone-300 bg-card px-2"
         value={replacement}
         onChange={(e) => setReplacement(e.target.value)}
       />
       <button
         type="button"
-        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs"
+        className="rounded-md border border-stone-300 bg-card px-2 py-1 text-xs"
         disabled={total === 0}
         onClick={() => editor.commands.replaceCurrent(replacement)}
       >
@@ -142,7 +142,7 @@ export function FindBar({ editor, onClose }: FindBarProps) {
       </button>
       <button
         type="button"
-        className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs"
+        className="rounded-md border border-stone-300 bg-card px-2 py-1 text-xs"
         disabled={total === 0}
         onClick={() => editor.commands.replaceAll(replacement)}
       >

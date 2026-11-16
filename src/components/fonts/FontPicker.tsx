@@ -2,6 +2,9 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { BUNDLED_FONTS, fontStack, SYSTEM_FONTS } from '@/config/fonts';
 import { findGoogleFont, GOOGLE_FONTS, type FontCategory } from '@/config/google-fonts';
+import { ChevronDownIcon } from '@/components/ui/icons';
+import { selectTriggerClass } from '@/components/ui/select';
+import { useDismiss } from '@/hooks/useDismiss';
 import { cleanFamilyName } from '@/lib/fonts/font-file';
 import { cn } from '@/lib/utils';
 import { useT } from '@/i18n';
@@ -55,14 +58,12 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
   const loadGoogleFont = useFontStore((s) => s.loadGoogleFont);
 
   useEffect(() => {
-    if (!open) return;
-    search.current?.focus();
-    const onPointer = (e: PointerEvent) => {
-      if (root.current && !root.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('pointerdown', onPointer);
-    return () => document.removeEventListener('pointerdown', onPointer);
+    if (open) search.current?.focus();
   }, [open]);
+  useDismiss(open, [root], (reason) => {
+    setOpen(false);
+    if (reason === 'escape') document.getElementById(buttonId)?.focus();
+  });
 
   const q = query.trim().toLowerCase();
   const match = (family: string) => q === '' || family.toLowerCase().includes(q);
@@ -136,33 +137,23 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
-        className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-stone-300 bg-white px-2.5 text-start text-sm"
+        className={cn(selectTriggerClass, 'h-9 px-2.5 text-sm')}
         style={{ fontFamily: fontStack(value) }}
         onClick={() => setOpen((v) => !v)}
       >
         <span className="truncate">{value}</span>
-        <span aria-hidden="true" className="text-stone-400">
-          ▾
-        </span>
+        <ChevronDownIcon aria-hidden="true" className="size-3.5 shrink-0 opacity-60" />
       </button>
 
       {open ? (
-        <div
-          className="absolute start-0 top-full z-40 mt-1 w-80 max-w-[90vw] rounded-lg border border-stone-200 bg-white p-2 shadow-xl"
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setOpen(false);
-              document.getElementById(buttonId)?.focus();
-            }
-          }}
-        >
+        <div className="bg-popover absolute start-0 top-full z-40 mt-1 w-80 max-w-[90vw] rounded-lg border border-stone-200 p-2 shadow-lg">
           <input
             ref={search}
             type="search"
             dir="auto"
             aria-label={t('fonts.search')}
             placeholder={t('fonts.searchPlaceholder')}
-            className="mb-2 h-8 w-full rounded-md border border-stone-300 px-2 text-sm"
+            className="bg-card mb-2 h-8 w-full rounded-md border border-stone-300 px-2 text-sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -187,8 +178,8 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
                       aria-selected={option.family === value}
                       disabled={google && !googleConsent}
                       className={cn(
-                        'flex w-full items-baseline justify-between gap-2 rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100 disabled:opacity-50',
-                        option.family === value && 'bg-brand-soft',
+                        'flex w-full items-baseline justify-between gap-2 rounded px-2 py-1.5 text-start text-sm enabled:hover:bg-hover disabled:opacity-50',
+                        option.family === value && 'bg-selected text-selected-foreground',
                       )}
                       style={
                         !google || state === 'ready'
@@ -211,7 +202,7 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
                 {googleConsent ? (
                   <button
                     type="button"
-                    className="w-full rounded px-2 py-1.5 text-start text-sm hover:bg-stone-100"
+                    className="hover:bg-hover w-full rounded px-2 py-1.5 text-start text-sm"
                     onClick={() => void choose(typed, true)}
                   >
                     {t('fonts.loadByName', { name: typed })}

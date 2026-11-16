@@ -39,6 +39,7 @@ import {
   type BlockStyleId,
   type TextPresetId,
 } from '@/config/editor';
+import { Select } from '@/components/ui/select';
 import { BUNDLED_FONTS, SYSTEM_FONTS } from '@/config/fonts';
 import { findGoogleFont, GOOGLE_FONTS } from '@/config/google-fonts';
 import { searchEmoji, EMOJI_GROUPS } from '@/lib/emoji';
@@ -122,8 +123,6 @@ const EMOJI_GROUP_LABELS: Readonly<Record<string, MessageKey>> = {
   people: 'tb.emojiPeople',
   symbols: 'tb.emojiSymbols',
 };
-
-const selectClass = 'h-8 rounded-md border border-stone-200 bg-white px-1.5 text-xs';
 
 function currentBlock(editor: Editor): BlockStyleId {
   if (editor.isActive('codeBlock')) return 'codeBlock';
@@ -387,77 +386,70 @@ export function Toolbar({
       </Group>
 
       <Group label={t('tb.textStyle')}>
-        <select
+        <Select
+          size="sm"
+          keepFocus
+          className="w-auto"
           aria-label={t('tb.paragraphStyle')}
-          className={selectClass}
           value={state.block}
-          onChange={(e) => applyBlock(editor, e.target.value as BlockStyleId)}
-        >
-          {BLOCK_STYLES.map((s) => (
-            <option key={s.id} value={s.id}>
-              {t(BLOCK_LABELS[s.id], { level: s.id.slice(-1) })}
-            </option>
-          ))}
-        </select>
-        <select
+          onValueChange={(value) => applyBlock(editor, value as BlockStyleId)}
+          items={BLOCK_STYLES.map((s) => ({
+            value: s.id,
+            label: t(BLOCK_LABELS[s.id], { level: s.id.slice(-1) }),
+          }))}
+        />
+        <Select
+          size="sm"
+          keepFocus
+          className="w-auto max-w-32"
+          contentClassName="min-w-48"
           aria-label={t('tb.font')}
-          className={cn(selectClass, 'max-w-32')}
           value={state.fontFamily}
-          onChange={(e) => void applyFont(e.target.value)}
-        >
-          <option value="">{t('tb.defaultFont')}</option>
-          {state.fontFamily !== '' &&
-          !fontGroups.some((group) => group.families.includes(state.fontFamily)) ? (
-            <option value={state.fontFamily}>{state.fontFamily}</option>
-          ) : null}
-          {fontGroups.map((group) => (
-            <optgroup key={group.label} label={group.label}>
-              {group.families.map((family) => (
-                <option
-                  key={family}
-                  value={family}
-                  disabled={group.google === true && !googleConsent}
-                >
-                  {family}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-        <select
+          onValueChange={(value) => void applyFont(value)}
+          items={[
+            { value: '', label: t('tb.defaultFont') },
+            ...(state.fontFamily !== '' &&
+            !fontGroups.some((group) => group.families.includes(state.fontFamily))
+              ? [{ value: state.fontFamily, label: state.fontFamily }]
+              : []),
+            ...fontGroups.map((group) => ({
+              group: group.label,
+              options: group.families.map((family) => ({
+                value: family,
+                label: family,
+                disabled: group.google === true && !googleConsent,
+              })),
+            })),
+          ]}
+        />
+        <Select
+          size="sm"
+          keepFocus
+          className="w-auto"
           aria-label={t('tb.fontSize')}
-          className={selectClass}
           value={state.fontSize}
-          onChange={(e) =>
-            e.target.value
-              ? chain().setFontSize(e.target.value).run()
-              : chain().unsetFontSize().run()
+          onValueChange={(value) =>
+            value ? chain().setFontSize(value).run() : chain().unsetFontSize().run()
           }
-        >
-          <option value="">{t('tb.size')}</option>
-          {FONT_SIZES_PT.map((size) => (
-            <option key={size} value={`${size}pt`}>
-              {t('tb.pt', { size })}
-            </option>
-          ))}
-        </select>
-        <select
+          items={[
+            { value: '', label: t('tb.size') },
+            ...FONT_SIZES_PT.map((size) => ({ value: `${size}pt`, label: t('tb.pt', { size }) })),
+          ]}
+        />
+        <Select
+          size="sm"
+          keepFocus
+          className="w-auto"
           aria-label={t('tb.lineHeight')}
-          className={selectClass}
           value={state.lineHeight}
-          onChange={(e) =>
-            e.target.value
-              ? chain().setLineHeight(e.target.value).run()
-              : chain().unsetLineHeight().run()
+          onValueChange={(value) =>
+            value ? chain().setLineHeight(value).run() : chain().unsetLineHeight().run()
           }
-        >
-          <option value="">{t('tb.spacing')}</option>
-          {LINE_HEIGHTS.map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
+          items={[
+            { value: '', label: t('tb.spacing') },
+            ...LINE_HEIGHTS.map((value) => ({ value: String(value), label: String(value) })),
+          ]}
+        />
       </Group>
 
       <Group label={t('tb.character')}>
@@ -574,19 +566,18 @@ export function Toolbar({
             }}
           />
         </Popover>
-        <select
+        <Select
+          size="sm"
+          keepFocus
+          className="w-auto"
           aria-label={t('tb.presets')}
-          className={selectClass}
           value=""
-          onChange={(e) => applyPreset(e.target.value as TextPresetId)}
-        >
-          <option value="">{t('tb.presetsShort')}</option>
-          {TEXT_PRESETS.map((p) => (
-            <option key={p.id} value={p.id}>
-              {t(PRESET_LABELS[p.id])}
-            </option>
-          ))}
-        </select>
+          onValueChange={(value) => value && applyPreset(value as TextPresetId)}
+          items={[
+            { value: '', label: t('tb.presetsShort') },
+            ...TEXT_PRESETS.map((p) => ({ value: p.id, label: t(PRESET_LABELS[p.id]) })),
+          ]}
+        />
         <ToolButton label={t('tb.painter')} active={painter !== null} onClick={togglePainter}>
           <BrushIcon />
         </ToolButton>
@@ -741,7 +732,7 @@ export function Toolbar({
               ) : null}
               <button
                 type="submit"
-                className="bg-brand rounded-md px-3 py-1 font-medium text-white"
+                className="bg-brand text-on-brand rounded-md px-3 py-1 font-medium hover:bg-brand/90"
               >
                 {t('tb.apply')}
               </button>
@@ -845,7 +836,7 @@ export function Toolbar({
               </div>
               <button
                 type="submit"
-                className="bg-brand rounded-md px-3 py-1.5 font-medium text-white"
+                className="bg-brand text-on-brand rounded-md px-3 py-1.5 font-medium hover:bg-brand/90"
               >
                 {t('tb.insertTable')}
               </button>
@@ -863,7 +854,7 @@ export function Toolbar({
           <div className="flex flex-col gap-2">
             <button
               type="button"
-              className="bg-brand rounded-md px-3 py-1.5 font-medium text-white"
+              className="bg-brand text-on-brand rounded-md px-3 py-1.5 font-medium hover:bg-brand/90"
               onClick={() => fileInput.current?.click()}
             >
               {t('tb.chooseImage')}
@@ -988,20 +979,17 @@ export function Toolbar({
           <CodeBlockIcon />
         </ToolButton>
         {state.codeBlock ? (
-          <select
+          <Select
+            size="sm"
+            keepFocus
+            className="w-auto"
             aria-label={t('tb.codeLanguage')}
-            className={selectClass}
             value={state.codeLanguage}
-            onChange={(e) =>
-              chain().updateAttributes('codeBlock', { language: e.target.value }).run()
+            onValueChange={(value) =>
+              chain().updateAttributes('codeBlock', { language: value }).run()
             }
-          >
-            {CODE_LANGUAGES.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.label}
-              </option>
-            ))}
-          </select>
+            items={CODE_LANGUAGES.map((l) => ({ value: l.id, label: l.label }))}
+          />
         ) : null}
       </Group>
 

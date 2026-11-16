@@ -42,11 +42,11 @@ export function PrintPreview({ open, doc, pages, onClose }: PrintPreviewProps) {
         event.preventDefault();
         onClose();
       }}
-      className="m-0 h-dvh max-h-none w-dvw max-w-none bg-stone-100 p-0 backdrop:bg-black/50"
+      className="text-foreground m-0 h-dvh max-h-none w-dvw max-w-none bg-stone-100 p-0 backdrop:bg-black/50"
     >
       {open ? (
         <div className="flex h-full flex-col">
-          <header className="flex flex-wrap items-center gap-3 border-b border-stone-200 bg-white px-4 py-3">
+          <header className="flex flex-wrap items-center gap-3 border-b border-stone-200 bg-card px-4 py-3">
             <h2 id={titleId} className="text-base font-semibold">
               {t('print.title')}
             </h2>

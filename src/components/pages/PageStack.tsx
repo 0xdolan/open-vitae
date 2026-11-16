@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { AlertIcon, ZoomInIcon, ZoomOutIcon } from '@/components/ui/icons';
+import { Select } from '@/components/ui/select';
 import { getPageSize } from '@/config/page-sizes';
 import { formatZoom, MAX_ZOOM, MIN_ZOOM, stepZoom, ZOOM_STEPS, type Zoom } from '@/config/preview';
 import { pageWidthPx } from '@/lib/page-geometry';
@@ -100,26 +101,21 @@ export function PageStack({
         >
           <ZoomOutIcon />
         </Button>
-        <label htmlFor={zoomId} className="sr-only">
-          {t('pages.zoom')}
-        </label>
-        <select
+        <Select
           id={zoomId}
-          className="h-8 rounded-md border border-stone-300 bg-white px-1.5 text-xs"
+          size="sm"
+          aria-label={t('pages.zoom')}
+          className="w-auto"
           value={zoom === 'fit' ? 'fit' : String(zoom)}
-          onChange={(e) => setZoom(e.target.value === 'fit' ? 'fit' : Number(e.target.value))}
-        >
-          <option value="fit">{t('pages.fit', { zoom: formatZoom(fitZoom) })}</option>
-          {ZOOM_STEPS.includes(effective as (typeof ZOOM_STEPS)[number]) ||
-          zoom === 'fit' ? null : (
-            <option value={String(effective)}>{formatZoom(effective)}</option>
-          )}
-          {ZOOM_STEPS.map((step) => (
-            <option key={step} value={String(step)}>
-              {formatZoom(step)}
-            </option>
-          ))}
-        </select>
+          onValueChange={(value) => setZoom(value === 'fit' ? 'fit' : Number(value))}
+          items={[
+            { value: 'fit', label: t('pages.fit', { zoom: formatZoom(fitZoom) }) },
+            ...(ZOOM_STEPS.includes(effective as (typeof ZOOM_STEPS)[number]) || zoom === 'fit'
+              ? []
+              : [{ value: String(effective), label: formatZoom(effective) }]),
+            ...ZOOM_STEPS.map((step) => ({ value: String(step), label: formatZoom(step) })),
+          ]}
+        />
         <Button
           variant="ghost"
           size="sm"

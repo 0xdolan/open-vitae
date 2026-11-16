@@ -335,3 +335,73 @@ export const CalendarIcon = (p: IconProps) => (
     <path d="M16 2v4M8 2v4M3 10h18" />
   </Icon>
 );
+
+export const CheckIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M20 6 9 17l-5-5" />
+  </Icon>
+);
+
+export const ChevronDownIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m6 9 6 6 6-6" />
+  </Icon>
+);
+
+export const SunIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2m-7.07-2.93 1.41-1.41M17.66 6.34l1.41-1.41M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41" />
+  </Icon>
+);
+
+export const MoonIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  </Icon>
+);
+
+export const MonitorIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="20" height="14" x="2" y="3" rx="2" />
+    <path d="M8 21h8m-4-4v4" />
+  </Icon>
+);
+
+export const GlobeIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" />
+  </Icon>
+);
+
+export const GridIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="7" height="7" x="3" y="3" rx="1" />
+    <rect width="7" height="7" x="14" y="3" rx="1" />
+    <rect width="7" height="7" x="3" y="14" rx="1" />
+    <rect width="7" height="7" x="14" y="14" rx="1" />
+  </Icon>
+);
+
+export const RowsIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+  </Icon>
+);
+
+export const ThumbnailsIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="7" height="9" x="3" y="3" rx="1" />
+    <rect width="7" height="9" x="14" y="3" rx="1" />
+    <path d="M3 16h7M3 20h5M14 16h7M14 20h5" />
+  </Icon>
+);
+
+/** A side panel; used for showing and hiding the preview. */
+export const PanelIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="18" height="18" x="3" y="3" rx="2" />
+    <path d="M15 3v18" />
+  </Icon>
+);

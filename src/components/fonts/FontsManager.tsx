@@ -86,7 +86,7 @@ export function FontsManager() {
             {userFonts.map((font) => (
               <li
                 key={font.id}
-                className="flex flex-wrap items-center gap-2 rounded-md border border-stone-200 bg-white p-2"
+                className="flex flex-wrap items-center gap-2 rounded-md border border-stone-200 bg-card p-2"
               >
                 <input
                   aria-label={t('fonts.nameOf', { file: font.fileName })}

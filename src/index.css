@@ -11,6 +11,228 @@
   --color-brand: #1d4a2e;
   --color-sun: #febd11;
   --color-brand-soft: #dcfce7;
+
+  /*
+   * Interface tokens (shadcn/ui names). Every screen uses these for its
+   * states, so light and dark stay consistent. Resume pages do not: they are
+   * paper and always print white (see .ov-page below).
+   */
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --color-card: #ffffff;
+  --color-popover: #ffffff;
+  --color-on-brand: #ffffff;
+  --color-ring: var(--color-brand);
+  /* Hover and pressed backgrounds of quiet controls. */
+  --color-hover: oklch(92.3% 0.003 48.717 / 0.7);
+  /* Selected and active controls (tabs, toggles, the current item). */
+  --color-selected: var(--color-brand-soft);
+  --color-selected-foreground: var(--color-brand);
+}
+
+/*
+ * Dark theme. Tailwind's colour utilities read these variables, so flipping
+ * the scales here themes every screen without touching each component:
+ * stone (the neutral) gets a dark scale, the status colours are mirrored
+ * (50 <-> 950), so "red-50 background, red-700 text" stays readable.
+ */
+:root.dark {
+  --color-paper: #0f0d0c;
+  --color-ink: #f2f0ee;
+  --color-brand: #7bd49a;
+  --color-brand-soft: #163a24;
+  --color-card: #1a1716;
+  --color-popover: #221e1c;
+  --color-on-brand: #0b1f12;
+  --color-hover: oklch(100% 0 0 / 0.08);
+
+  --color-stone-50: #1f1c1a;
+  --color-stone-100: #292524;
+  --color-stone-200: #36312e;
+  --color-stone-300: #48423e;
+  --color-stone-400: #6f6863;
+  --color-stone-500: #a39c96;
+  --color-stone-600: #bdb7b2;
+  --color-stone-700: #d3cfcb;
+  --color-stone-800: #e5e2df;
+  --color-stone-900: #f2f0ee;
+  --color-stone-950: #faf9f8;
+  --color-red-50: oklch(25.8% 0.092 26.042);
+  --color-red-100: oklch(39.6% 0.141 25.723);
+  --color-red-200: oklch(44.4% 0.177 26.899);
+  --color-red-300: oklch(50.5% 0.213 27.518);
+  --color-red-400: oklch(57.7% 0.245 27.325);
+  --color-red-500: oklch(63.7% 0.237 25.331);
+  --color-red-600: oklch(70.4% 0.191 22.216);
+  --color-red-700: oklch(80.8% 0.114 19.571);
+  --color-red-800: oklch(88.5% 0.062 18.334);
+  --color-red-900: oklch(93.6% 0.032 17.717);
+  --color-red-950: oklch(97.1% 0.013 17.38);
+  --color-amber-50: oklch(27.9% 0.077 45.635);
+  --color-amber-100: oklch(41.4% 0.112 45.904);
+  --color-amber-200: oklch(47.3% 0.137 46.201);
+  --color-amber-300: oklch(55.5% 0.163 48.998);
+  --color-amber-400: oklch(66.6% 0.179 58.318);
+  --color-amber-500: oklch(76.9% 0.188 70.08);
+  --color-amber-600: oklch(82.8% 0.189 84.429);
+  --color-amber-700: oklch(87.9% 0.169 91.605);
+  --color-amber-800: oklch(92.4% 0.12 95.746);
+  --color-amber-900: oklch(96.2% 0.059 95.617);
+  --color-amber-950: oklch(98.7% 0.022 95.277);
+  --color-emerald-50: oklch(26.2% 0.051 172.552);
+  --color-emerald-100: oklch(37.8% 0.077 168.94);
+  --color-emerald-200: oklch(43.2% 0.095 166.913);
+  --color-emerald-300: oklch(50.8% 0.118 165.612);
+  --color-emerald-400: oklch(59.6% 0.145 163.225);
+  --color-emerald-500: oklch(69.6% 0.17 162.48);
+  --color-emerald-600: oklch(76.5% 0.177 163.223);
+  --color-emerald-700: oklch(84.5% 0.143 164.978);
+  --color-emerald-800: oklch(90.5% 0.093 164.15);
+  --color-emerald-900: oklch(95% 0.052 163.051);
+  --color-emerald-950: oklch(97.9% 0.021 166.113);
+  --color-green-50: oklch(26.6% 0.065 152.934);
+  --color-green-100: oklch(39.3% 0.095 152.535);
+  --color-green-200: oklch(44.8% 0.119 151.328);
+  --color-green-300: oklch(52.7% 0.154 150.069);
+  --color-green-400: oklch(62.7% 0.194 149.214);
+  --color-green-500: oklch(72.3% 0.219 149.579);
+  --color-green-600: oklch(79.2% 0.209 151.711);
+  --color-green-700: oklch(87.1% 0.15 154.449);
+  --color-green-800: oklch(92.5% 0.084 155.995);
+  --color-green-900: oklch(96.2% 0.044 156.743);
+  --color-green-950: oklch(98.2% 0.018 155.826);
+  --color-blue-50: oklch(28.2% 0.091 267.935);
+  --color-blue-100: oklch(37.9% 0.146 265.522);
+  --color-blue-200: oklch(42.4% 0.199 265.638);
+  --color-blue-300: oklch(48.8% 0.243 264.376);
+  --color-blue-400: oklch(54.6% 0.245 262.881);
+  --color-blue-500: oklch(62.3% 0.214 259.815);
+  --color-blue-600: oklch(70.7% 0.165 254.624);
+  --color-blue-700: oklch(80.9% 0.105 251.813);
+  --color-blue-800: oklch(88.2% 0.059 254.128);
+  --color-blue-900: oklch(93.2% 0.032 255.585);
+  --color-blue-950: oklch(97% 0.014 254.604);
+  --color-sky-50: oklch(29.3% 0.066 243.157);
+  --color-sky-100: oklch(39.1% 0.09 240.876);
+  --color-sky-200: oklch(44.3% 0.11 240.79);
+  --color-sky-300: oklch(50% 0.134 242.749);
+  --color-sky-400: oklch(58.8% 0.158 241.966);
+  --color-sky-500: oklch(68.5% 0.169 237.323);
+  --color-sky-600: oklch(74.6% 0.16 232.661);
+  --color-sky-700: oklch(82.8% 0.111 230.318);
+  --color-sky-800: oklch(90.1% 0.058 230.902);
+  --color-sky-900: oklch(95.1% 0.026 236.824);
+  --color-sky-950: oklch(97.7% 0.013 236.62);
+  --color-violet-50: oklch(28.3% 0.141 291.089);
+  --color-violet-100: oklch(38% 0.189 293.745);
+  --color-violet-200: oklch(43.2% 0.232 292.759);
+  --color-violet-300: oklch(49.1% 0.27 292.581);
+  --color-violet-400: oklch(54.1% 0.281 293.009);
+  --color-violet-500: oklch(60.6% 0.25 292.717);
+  --color-violet-600: oklch(70.2% 0.183 293.541);
+  --color-violet-700: oklch(81.1% 0.111 293.571);
+  --color-violet-800: oklch(89.4% 0.057 293.283);
+  --color-violet-900: oklch(94.3% 0.029 294.588);
+  --color-violet-950: oklch(96.9% 0.016 293.756);
+}
+
+/* Resume pages are paper: light colours whatever the interface theme. */
+:root.dark :is(.ov-page, .ov-thumb) {
+  color-scheme: light;
+  --color-paper: #fafaf7;
+  --color-ink: #1c1917;
+  --color-brand: #1d4a2e;
+  --color-brand-soft: #dcfce7;
+  --color-card: #ffffff;
+  --color-popover: #ffffff;
+  --color-stone-50: oklch(98.5% 0.001 106.423);
+  --color-stone-100: oklch(97% 0.001 106.424);
+  --color-stone-200: oklch(92.3% 0.003 48.717);
+  --color-stone-300: oklch(86.9% 0.005 56.366);
+  --color-stone-400: oklch(70.9% 0.01 56.259);
+  --color-stone-500: oklch(55.3% 0.013 58.071);
+  --color-stone-600: oklch(44.4% 0.011 73.639);
+  --color-stone-700: oklch(37.4% 0.01 67.558);
+  --color-stone-800: oklch(26.8% 0.007 34.298);
+  --color-stone-900: oklch(21.6% 0.006 56.043);
+  --color-stone-950: oklch(14.7% 0.004 49.25);
+  --color-red-50: oklch(97.1% 0.013 17.38);
+  --color-red-100: oklch(93.6% 0.032 17.717);
+  --color-red-200: oklch(88.5% 0.062 18.334);
+  --color-red-300: oklch(80.8% 0.114 19.571);
+  --color-red-400: oklch(70.4% 0.191 22.216);
+  --color-red-500: oklch(63.7% 0.237 25.331);
+  --color-red-600: oklch(57.7% 0.245 27.325);
+  --color-red-700: oklch(50.5% 0.213 27.518);
+  --color-red-800: oklch(44.4% 0.177 26.899);
+  --color-red-900: oklch(39.6% 0.141 25.723);
+  --color-red-950: oklch(25.8% 0.092 26.042);
+  --color-amber-50: oklch(98.7% 0.022 95.277);
+  --color-amber-100: oklch(96.2% 0.059 95.617);
+  --color-amber-200: oklch(92.4% 0.12 95.746);
+  --color-amber-300: oklch(87.9% 0.169 91.605);
+  --color-amber-400: oklch(82.8% 0.189 84.429);
+  --color-amber-500: oklch(76.9% 0.188 70.08);
+  --color-amber-600: oklch(66.6% 0.179 58.318);
+  --color-amber-700: oklch(55.5% 0.163 48.998);
+  --color-amber-800: oklch(47.3% 0.137 46.201);
+  --color-amber-900: oklch(41.4% 0.112 45.904);
+  --color-amber-950: oklch(27.9% 0.077 45.635);
+  --color-emerald-50: oklch(97.9% 0.021 166.113);
+  --color-emerald-100: oklch(95% 0.052 163.051);
+  --color-emerald-200: oklch(90.5% 0.093 164.15);
+  --color-emerald-300: oklch(84.5% 0.143 164.978);
+  --color-emerald-400: oklch(76.5% 0.177 163.223);
+  --color-emerald-500: oklch(69.6% 0.17 162.48);
+  --color-emerald-600: oklch(59.6% 0.145 163.225);
+  --color-emerald-700: oklch(50.8% 0.118 165.612);
+  --color-emerald-800: oklch(43.2% 0.095 166.913);
+  --color-emerald-900: oklch(37.8% 0.077 168.94);
+  --color-emerald-950: oklch(26.2% 0.051 172.552);
+  --color-green-50: oklch(98.2% 0.018 155.826);
+  --color-green-100: oklch(96.2% 0.044 156.743);
+  --color-green-200: oklch(92.5% 0.084 155.995);
+  --color-green-300: oklch(87.1% 0.15 154.449);
+  --color-green-400: oklch(79.2% 0.209 151.711);
+  --color-green-500: oklch(72.3% 0.219 149.579);
+  --color-green-600: oklch(62.7% 0.194 149.214);
+  --color-green-700: oklch(52.7% 0.154 150.069);
+  --color-green-800: oklch(44.8% 0.119 151.328);
+  --color-green-900: oklch(39.3% 0.095 152.535);
+  --color-green-950: oklch(26.6% 0.065 152.934);
+  --color-blue-50: oklch(97% 0.014 254.604);
+  --color-blue-100: oklch(93.2% 0.032 255.585);
+  --color-blue-200: oklch(88.2% 0.059 254.128);
+  --color-blue-300: oklch(80.9% 0.105 251.813);
+  --color-blue-400: oklch(70.7% 0.165 254.624);
+  --color-blue-500: oklch(62.3% 0.214 259.815);
+  --color-blue-600: oklch(54.6% 0.245 262.881);
+  --color-blue-700: oklch(48.8% 0.243 264.376);
+  --color-blue-800: oklch(42.4% 0.199 265.638);
+  --color-blue-900: oklch(37.9% 0.146 265.522);
+  --color-blue-950: oklch(28.2% 0.091 267.935);
+  --color-sky-50: oklch(97.7% 0.013 236.62);
+  --color-sky-100: oklch(95.1% 0.026 236.824);
+  --color-sky-200: oklch(90.1% 0.058 230.902);
+  --color-sky-300: oklch(82.8% 0.111 230.318);
+  --color-sky-400: oklch(74.6% 0.16 232.661);
+  --color-sky-500: oklch(68.5% 0.169 237.323);
+  --color-sky-600: oklch(58.8% 0.158 241.966);
+  --color-sky-700: oklch(50% 0.134 242.749);
+  --color-sky-800: oklch(44.3% 0.11 240.79);
+  --color-sky-900: oklch(39.1% 0.09 240.876);
+  --color-sky-950: oklch(29.3% 0.066 243.157);
+  --color-violet-50: oklch(96.9% 0.016 293.756);
+  --color-violet-100: oklch(94.3% 0.029 294.588);
+  --color-violet-200: oklch(89.4% 0.057 293.283);
+  --color-violet-300: oklch(81.1% 0.111 293.571);
+  --color-violet-400: oklch(70.2% 0.183 293.541);
+  --color-violet-500: oklch(60.6% 0.25 292.717);
+  --color-violet-600: oklch(54.1% 0.281 293.009);
+  --color-violet-700: oklch(49.1% 0.27 292.581);
+  --color-violet-800: oklch(43.2% 0.232 292.759);
+  --color-violet-900: oklch(38% 0.189 293.745);
+  --color-violet-950: oklch(28.3% 0.141 291.089);
 }
 
 @layer base {
@@ -19,7 +241,7 @@
   }
 
   body {
-    @apply bg-paper text-ink font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
     margin: 0;
     min-height: 100dvh;
   }
@@ -30,8 +252,65 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline: 2px solid var(--color-ring);
     outline-offset: 2px;
+  }
+
+  /*
+   * Text fields show focus with their own border and a soft halo instead of
+   * an outline, so a field never gets a border plus a separate ring.
+   */
+  :is(
+    input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file']),
+    textarea,
+    select
+  ):focus-visible {
+    outline: none;
+    border-color: var(--color-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 25%, transparent);
+  }
+
+  /* Everything clickable shows the pointer; disabled controls show "not allowed". */
+  :is(
+    button,
+    a[href],
+    select,
+    summary,
+    label[for],
+    [role='button'],
+    [role='tab'],
+    [role='menuitem'],
+    [role='menuitemradio'],
+    [role='option'],
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    input[type='checkbox'],
+    input[type='radio'],
+    input[type='color'],
+    input[type='file'],
+    input[type='range'],
+    input[type='file']::file-selector-button
+  ) {
+    cursor: pointer;
+  }
+  :is(
+    button,
+    select,
+    input,
+    textarea,
+    [role='option'],
+    [role='menuitem'],
+    [role='tab'],
+    [role='switch'],
+    label
+  ):is(:disabled, [aria-disabled='true']),
+  :is(fieldset:disabled) :is(input, button, select, label) {
+    cursor: not-allowed;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand) 25%, transparent);
   }
 
   /* Headings and the main area receive focus from code after navigation; they are not controls. */
@@ -117,7 +396,7 @@
   }
   .ov-rich hr {
     border: 0;
-    border-top: 1px solid #d6d3d1;
+    border-top: 1px solid var(--color-stone-300);
     margin-block: 0.75em;
   }
   .ov-rich img {
@@ -154,20 +433,20 @@
     unicode-bidi: isolate;
   }
   .ov-rich :not(pre) > code {
-    background: #f5f5f4;
+    background: var(--color-stone-100);
     border-radius: 3px;
     padding: 0.05em 0.3em;
   }
   .ov-rich pre {
     white-space: pre-wrap;
-    background: #f5f5f4;
+    background: var(--color-stone-100);
     padding: 0.5em 0.75em;
     border-radius: 4px;
   }
   .ov-rich blockquote {
-    border-inline-start: 3px solid #d6d3d1;
+    border-inline-start: 3px solid var(--color-stone-300);
     padding-inline-start: 0.75em;
-    color: #57534e;
+    color: var(--color-stone-600);
   }
   .ov-rich table {
     border-collapse: collapse;
@@ -175,7 +454,7 @@
   }
   .ov-rich th,
   .ov-rich td {
-    border: 1px solid #d6d3d1;
+    border: 1px solid var(--color-stone-300);
     padding: 0.25em 0.5em;
     text-align: start;
   }
@@ -264,41 +543,62 @@
   }
 }
 
-/* Code highlighting colours (a light theme with good contrast on white). */
+/* Code highlighting colours: good contrast on white, lighter on the dark interface,
+   and always the light set on resume pages, which are paper. */
+:root,
+:root.dark :is(.ov-page, .ov-thumb) {
+  --ov-hl-keyword: #7c3aed;
+  --ov-hl-string: #047857;
+  --ov-hl-number: #b45309;
+  --ov-hl-comment: #78716c;
+  --ov-hl-title: #1d4ed8;
+  --ov-hl-variable: #be123c;
+  --ov-hl-meta: #57534e;
+}
+:root.dark {
+  --ov-hl-keyword: #c4b5fd;
+  --ov-hl-string: #6ee7b7;
+  --ov-hl-number: #fcd34d;
+  --ov-hl-comment: #a8a29e;
+  --ov-hl-title: #93c5fd;
+  --ov-hl-variable: #fda4af;
+  --ov-hl-meta: #d6d3d1;
+}
+
 @layer components {
   .ov-rich .hljs-keyword,
   .ov-rich .hljs-selector-tag,
   .ov-rich .hljs-built_in,
   .ov-rich .hljs-type {
-    color: #7c3aed;
+    color: var(--ov-hl-keyword);
   }
   .ov-rich .hljs-string,
   .ov-rich .hljs-attr,
   .ov-rich .hljs-template-string {
-    color: #047857;
+    color: var(--ov-hl-string);
   }
   .ov-rich .hljs-number,
   .ov-rich .hljs-literal,
   .ov-rich .hljs-symbol {
-    color: #b45309;
+    color: var(--ov-hl-number);
   }
   .ov-rich .hljs-comment,
   .ov-rich .hljs-quote {
-    color: #78716c;
+    color: var(--ov-hl-comment);
     font-style: italic;
   }
   .ov-rich .hljs-title,
   .ov-rich .hljs-title.function_,
   .ov-rich .hljs-section {
-    color: #1d4ed8;
+    color: var(--ov-hl-title);
   }
   .ov-rich .hljs-variable,
   .ov-rich .hljs-name,
   .ov-rich .hljs-tag {
-    color: #be123c;
+    color: var(--ov-hl-variable);
   }
   .ov-rich .hljs-meta {
-    color: #57534e;
+    color: var(--ov-hl-meta);
   }
 }
 
@@ -315,14 +615,15 @@
     color: var(--color-ink);
   }
   .ov-tool:hover:not(:disabled) {
-    background: #e7e5e4;
+    background: var(--color-hover);
   }
   .ov-tool:disabled {
     opacity: 0.4;
   }
-  .ov-tool-active {
-    background: var(--color-brand-soft);
-    color: var(--color-brand);
+  .ov-tool-active,
+  .ov-tool-active:hover:not(:disabled) {
+    background: var(--color-selected);
+    color: var(--color-selected-foreground);
   }
   .ov-editor .ov-editor-content {
     min-height: 6rem;
@@ -333,7 +634,7 @@
   }
   .ov-editor .ov-editor-content p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
-    color: #a8a29e;
+    color: var(--color-stone-400);
     float: inline-start;
     height: 0;
     pointer-events: none;

@@ -18,6 +18,7 @@ import type { PageSlice } from '@/lib/pagination';
 import { cn } from '@/lib/utils';
 import type { ResumeDocument, ResumeLayout } from '@/schema/resume';
 import { useResumeStore } from '@/stores';
+import { useUiStore } from '@/stores/ui-store';
 import { useT } from '@/i18n';
 
 import { EditorHeader } from './EditorHeader';
@@ -35,6 +36,7 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
   const updateActive = useResumeStore((s) => s.updateActive);
   const [panel, setPanel] = useState<Panel>({ kind: 'profile' });
   const t = useT();
+  const previewCollapsed = useUiStore((s) => s.previewCollapsed);
   const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
   const [pages, setPages] = useState<PageSlice[] | null>(null);
   const [printPreview, setPrintPreview] = useState(false);
@@ -86,7 +88,7 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
             aria-selected={mobileTab === tab}
             className={cn(
               'flex-1 rounded-md py-1.5 text-sm font-medium',
-              mobileTab === tab ? 'bg-white shadow-sm' : 'text-stone-600',
+              mobileTab === tab ? 'bg-card shadow-sm' : 'text-stone-600',
             )}
             onClick={() => setMobileTab(tab)}
           >
@@ -95,7 +97,12 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
         ))}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div
+        className={cn(
+          'grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]',
+          !previewCollapsed && 'xl:grid-cols-[15rem_minmax(0,1fr)_minmax(0,1.1fr)]',
+        )}
+      >
         <aside
           className={cn(
             'lg:sticky lg:top-4 lg:self-start',
@@ -139,6 +146,7 @@ export function EditorView({ doc }: { readonly doc: ResumeDocument }) {
           className={cn(
             'min-w-0 lg:col-span-2 xl:col-span-1 xl:sticky xl:top-4 xl:max-h-[calc(100dvh-2rem)] xl:self-start xl:overflow-auto',
             mobileTab === 'edit' && 'hidden xl:block',
+            previewCollapsed && 'xl:hidden',
           )}
         >
           <div className="rounded-xl bg-stone-200/60 p-3">
