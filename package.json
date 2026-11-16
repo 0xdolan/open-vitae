@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && node --max-old-space-size=6144 node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "site:build": "node scripts/build-site.mjs",
     "brand": "node scripts/brand/make-logo.mjs",
