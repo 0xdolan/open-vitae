@@ -35,8 +35,11 @@ jobs:
       - run: npm run check
       - run: npm run build
 
-      - name: Package build
-        run: cd dist && zip -r "../open-vitae-$GITHUB_REF_NAME.zip" .
+      - name: Package the app, the AI skill and checksums
+        run: |
+          (cd dist && zip -qr "../open-vitae-$GITHUB_REF_NAME.zip" .)
+          (cd skills && zip -qr "../open-vitae-skill-$GITHUB_REF_NAME.zip" open-vitae)
+          sha256sum open-vitae-*.zip > SHA256SUMS.txt
 
       - name: Extract release notes from CHANGELOG.md
         run: |
@@ -44,6 +47,7 @@ jobs:
           awk -v v="$version" '
             $0 ~ "^## \\[" v "\\]" { found = 1; next }
             found && /^## \[/ { exit }
+            found && /^\[[^]]+\]: / { exit }
             found { print }
           ' CHANGELOG.md > release-notes.md
           test -s release-notes.md || {
@@ -52,6 +56,9 @@ jobs:
           }
 
       - name: Create GitHub release
-        run: gh release create "$GITHUB_REF_NAME" "open-vitae-$GITHUB_REF_NAME.zip" --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          "open-vitae-$GITHUB_REF_NAME.zip" "open-vitae-skill-$GITHUB_REF_NAME.zip" SHA256SUMS.txt
+          --title "Open Vitae ${GITHUB_REF_NAME#v}" --notes-file release-notes.md --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}
