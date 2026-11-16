@@ -22,9 +22,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Clearer hover, selected and focus states, a pointer cursor on everything clickable, and no doubled borders.
 - Spelling is checked by the browser by default; the LanguageTool grammar check stays strictly opt-in and now explains failures such as 404 and 405 (no LanguageTool server behind that address).
 - Section and entry icons in existing resumes now draw in the icon colour (black by default) instead of the accent colour.
-
-### Changed
-
 - Open Vitae moved to the Kanî Labs organisation on GitHub. The website, app, schema and source links now point to `kanilabs.github.io/open-vitae` and `github.com/kanilabs`.
 
 ### Fixed
