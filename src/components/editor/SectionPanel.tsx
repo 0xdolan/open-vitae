@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/icons';
 import { SortableList } from '@/components/ui/sortable';
 import { TextField } from '@/components/ui/text-field';
-import { LIMITS } from '@/config/layout';
+import { DEFAULT_DESCRIPTION_LIMIT, LIMITS } from '@/config/layout';
 import { itemFieldLabels } from '@/config/sections';
 import {
   addItem,
@@ -73,7 +73,7 @@ function ItemCard({
   const heading = item.title || t('entry.untitled');
 
   return (
-    <div className={cn('rounded-lg border bg-white', highlight, !item.visible && 'opacity-60')}>
+    <div className={cn('rounded-lg border bg-card', highlight, !item.visible && 'opacity-60')}>
       <div className="flex items-center gap-1 p-1.5">
         {dragHandle}
         <button
@@ -225,6 +225,11 @@ function ItemCard({
               accentColor={doc.layout.accentColor}
               indentCh={doc.layout.indentCh}
               maxDepth={doc.layout.maxDepth}
+              charLimit={
+                doc.layout.descriptionLimit === undefined
+                  ? DEFAULT_DESCRIPTION_LIMIT
+                  : doc.layout.descriptionLimit
+              }
               onChange={(descriptionHtml) => set({ descriptionHtml }, 'description')}
             />
           </div>

@@ -20,6 +20,8 @@ interface RichTextFieldProps {
   readonly accentColor: string;
   readonly indentCh: number;
   readonly maxDepth: number | null;
+  /** Soft character limit: the counter shows it and flags text over it. Null or absent: none. */
+  readonly charLimit?: number | null;
 }
 
 const SPELLCHECK_KEY = 'open-vitae:spellcheck';
@@ -43,6 +45,7 @@ export function RichTextField({
   onChange,
   placeholder,
   language,
+  charLimit = null,
   accentColor,
   indentCh,
   maxDepth,
@@ -126,6 +129,8 @@ export function RichTextField({
 
   const size = html.length;
   const nearLimit = size > LIMITS.htmlLength * 0.8;
+  const characters = counts?.characters ?? 0;
+  const over = charLimit !== null && characters > charLimit ? characters - charLimit : 0;
 
   return (
     <div className="flex flex-col gap-1">
@@ -133,7 +138,7 @@ export function RichTextField({
         {label}
       </p>
       <div
-        className="ov-editor overflow-visible rounded-lg border border-stone-300 bg-white focus-within:border-brand"
+        className="ov-editor overflow-visible rounded-lg border border-stone-300 bg-card focus-within:border-brand"
         style={{ ['--ov-indent' as string]: `${indentCh}ch` }}
       >
         {editor ? (
@@ -154,17 +159,23 @@ export function RichTextField({
       <p
         className={cn(
           'flex flex-wrap justify-between gap-2 text-xs',
-          nearLimit ? 'font-medium text-amber-800' : 'text-stone-500',
+          nearLimit || over > 0 ? 'font-medium' : 'text-stone-500',
+          nearLimit && 'text-amber-800',
+          over > 0 && !nearLimit && 'text-red-700',
         )}
       >
         <span>
           {t('rt.words', { count: counts?.words ?? 0 })} ·{' '}
-          {t('rt.characters', { count: counts?.characters ?? 0 })}
+          {charLimit === null
+            ? t('rt.characters', { count: characters })
+            : t('rt.charactersOf', { count: characters, limit: charLimit })}
         </span>
-        <span>
-          {nearLimit
-            ? t('rt.tooLarge', { size: formatBytes(size), limit: formatBytes(LIMITS.htmlLength) })
-            : t('rt.keys')}
+        <span aria-live="polite">
+          {over > 0 && !nearLimit
+            ? t('rt.overLimit', { count: over })
+            : nearLimit
+              ? t('rt.tooLarge', { size: formatBytes(size), limit: formatBytes(LIMITS.htmlLength) })
+              : t('rt.keys')}
         </span>
       </p>
     </div>

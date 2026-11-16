@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { TEXT_DIRECTIONS } from '@/config/fonts';
 import {
+  type ContactIconKind,
   DIGIT_SYSTEMS,
   HORIZONTAL_ALIGNS,
   LIMITS,
@@ -62,6 +63,8 @@ export const iconRefSchema = z.object({
   /** Icon set: a react-icons pack such as "lu" (Lucide), "fa6" or "si". See src/config/icon-sets.ts. */
   set: z.string().regex(/^[a-z0-9-]{1,32}$/, 'Invalid icon set'),
   name: z.string().regex(/^[A-Za-z0-9-]{1,80}$/, 'Invalid icon name'),
+  /** This icon's colour. Optional; absent means the resume's icon colour. */
+  color: hexColorSchema.optional(),
 });
 
 export const resumeItemSchema = z.object({
@@ -183,6 +186,30 @@ export const layoutSchema = z.object({
   /** Optional header and footer drawn inside the top and bottom margins. Absent means none. */
   header: pageBandSchema.optional(),
   footer: pageBandSchema.optional(),
+  /** Colour of every icon (section, entry, contact and link). Optional; absent means black. */
+  iconColor: hexColorSchema.optional(),
+  /** Colours of single contact icons, overriding iconColor. Optional. */
+  contactIconColors: z
+    .object({
+      email: hexColorSchema.optional(),
+      phone: hexColorSchema.optional(),
+      location: hexColorSchema.optional(),
+      website: hexColorSchema.optional(),
+    } satisfies Record<ContactIconKind, z.ZodOptional<typeof hexColorSchema>>)
+    .optional(),
+  /** Colour of section titles. Optional; absent means the accent colour. */
+  sectionTitleColor: hexColorSchema.optional(),
+  /** Colour of the line under section titles. Optional; absent means the accent colour. */
+  sectionRuleColor: hexColorSchema.optional(),
+  /** Draw the line under section titles. Optional; absent means shown. */
+  sectionRule: z.boolean().optional(),
+  /**
+   * Soft length limits in characters, for the summary and each item
+   * description. Optional: absent means the default (see src/config/layout.ts),
+   * null means unlimited. Text over the limit is kept and flagged, never cut.
+   */
+  summaryLimit: range(LIMITS.textLimit).int().nullable().optional(),
+  descriptionLimit: range(LIMITS.textLimit).int().nullable().optional(),
 });
 
 /** Collect every id in a document so duplicates can be rejected. */

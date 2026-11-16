@@ -92,7 +92,7 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
             <div
               className={cn(
                 'flex items-center gap-0.5 rounded-md',
-                isDragging && 'bg-white shadow-lg ring-1 ring-brand',
+                isDragging && 'bg-card shadow-lg ring-1 ring-brand',
                 isDropTarget && 'ring-1 ring-brand ring-dashed',
               )}
             >
@@ -143,7 +143,7 @@ export function Navigator({ doc, panel, onSelect }: NavigatorProps) {
           <PlusIcon /> {t('nav.add')}
         </summary>
         <ul
-          className="mt-1 grid grid-cols-2 gap-1 rounded-lg border border-stone-200 bg-white p-1.5 shadow-sm"
+          className="mt-1 grid grid-cols-2 gap-1 rounded-lg border border-stone-200 bg-card p-1.5 shadow-sm"
           aria-label={t('nav.types')}
         >
           {SECTION_KINDS.map((kind) => (

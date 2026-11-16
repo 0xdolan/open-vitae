@@ -34,7 +34,21 @@ export const LIMITS = {
   maxDepth: { min: 1, max: 20 },
   /** Text of the page header or footer. */
   pageBandText: 200,
+  /** Soft length limit a person can set on the summary or item descriptions, in characters. */
+  textLimit: { min: 50, max: 100_000 },
 } as const;
+
+/** Soft limit on the summary, in characters, when the resume sets none. */
+export const DEFAULT_SUMMARY_LIMIT = 2280;
+/** Soft limit on each item description, in characters, when the resume sets none. */
+export const DEFAULT_DESCRIPTION_LIMIT = 500;
+
+/** Colour of every icon on the page unless the resume or the icon sets another. */
+export const DEFAULT_ICON_COLOR = '#000000';
+
+/** The fixed contact icons, each of which can have its own colour. */
+export const CONTACT_ICON_KINDS = ['email', 'phone', 'location', 'website'] as const;
+export type ContactIconKind = (typeof CONTACT_ICON_KINDS)[number];
 
 export const DEFAULT_INDENT_CH = 4;
 

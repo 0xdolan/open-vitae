@@ -466,6 +466,8 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
   const { layout, profile } = doc;
   const rtl = layout.direction === 'rtl';
   const accent = hex(layout.accentColor) ?? '14532D';
+  const sectionTitleColor = hex(layout.sectionTitleColor ?? layout.accentColor) ?? accent;
+  const sectionRuleColor = hex(layout.sectionRuleColor ?? layout.accentColor) ?? accent;
   const page = pageBoxMm(layout);
   const content = contentBoxMm(layout);
   const bands = bandSection(layout);
@@ -568,11 +570,17 @@ export async function buildDocx(doc: ResumeDocument): Promise<Blob> {
         pageBreakBefore: section.breakBefore,
         keepNext: true,
         spacing: { before: 240, after: 100 },
-        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: accent, space: 2 } },
+        ...(layout.sectionRule === false
+          ? {}
+          : {
+              border: {
+                bottom: { style: BorderStyle.SINGLE, size: 6, color: sectionRuleColor, space: 2 },
+              },
+            }),
         children: [
           text(section.title.toLocaleUpperCase(doc.language), {
             bold: true,
-            color: accent,
+            color: sectionTitleColor,
             size: Math.round(layout.baseFontSizePt * 1.1 * 2),
             characterSpacing: 10,
             ...styleRun(section.titleStyle),

@@ -3,6 +3,7 @@ import { useEffect, useId, useState } from 'react';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { controlClass, Field } from '@/components/ui/field';
+import { Select } from '@/components/ui/select';
 import { parseRetention, RETENTION_OPTIONS } from '@/config/versions';
 import { formatDateTime, formatRelative } from '@/lib/datetime';
 import { formatBytes } from '@/lib/format';
@@ -151,7 +152,7 @@ export function VersionHistory() {
   };
 
   return (
-    <details className="group rounded-xl border border-stone-200 bg-white" open>
+    <details className="group rounded-xl border border-stone-200 bg-card" open>
       <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3">
         <span className="font-semibold">
           {t('versions.title')}{' '}
@@ -198,20 +199,18 @@ export function VersionHistory() {
           }
           className="max-w-xs"
         >
-          <select
+          <Select
             id={`${id}-retention`}
-            className={controlClass}
             value={String(retention)}
-            onChange={(e) => void setRetention(parseRetention(e.target.value))}
-          >
-            {RETENTION_OPTIONS.map((option) => (
-              <option key={String(option.value)} value={String(option.value)}>
-                {option.value === 'all'
+            onValueChange={(value) => void setRetention(parseRetention(value))}
+            items={RETENTION_OPTIONS.map((option) => ({
+              value: String(option.value),
+              label:
+                option.value === 'all'
                   ? t('versions.retainAll')
-                  : t('versions.retainLatest', { count: option.value })}
-              </option>
-            ))}
-          </select>
+                  : t('versions.retainLatest', { count: option.value }),
+            }))}
+          />
         </Field>
 
         {versions.length === 0 ? (

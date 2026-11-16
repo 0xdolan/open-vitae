@@ -22,6 +22,41 @@ describe('resume schema', () => {
     expect(resumeSchema.safeParse(bad).success).toBe(false);
   });
 
+  it('accepts the optional colour, icon and length settings', () => {
+    const doc = sample();
+    const layout = {
+      ...doc.layout,
+      iconColor: '#123456',
+      contactIconColors: { email: '#ff0000' },
+      sectionTitleColor: '#000000',
+      sectionRuleColor: '#cccccc',
+      sectionRule: false,
+      summaryLimit: null,
+      descriptionLimit: 800,
+    };
+    expect(resumeSchema.safeParse({ ...doc, layout }).success).toBe(true);
+    const section = doc.sections[0];
+    if (!section) throw new Error('sample has no section');
+    const withIcon = {
+      ...doc,
+      sections: [{ ...section, icon: { set: 'lucide', name: 'Briefcase', color: '#00ff00' } }],
+    };
+    expect(resumeSchema.safeParse(withIcon).success).toBe(true);
+  });
+
+  it('rejects unsafe icon colours and out-of-range length limits', () => {
+    const doc = sample();
+    const badColour = { ...doc, layout: { ...doc.layout, iconColor: 'red;}' } };
+    expect(resumeSchema.safeParse(badColour).success).toBe(false);
+    const badContact = {
+      ...doc,
+      layout: { ...doc.layout, contactIconColors: { phone: 'url(x)' } },
+    };
+    expect(resumeSchema.safeParse(badContact).success).toBe(false);
+    const badLimit = { ...doc, layout: { ...doc.layout, summaryLimit: 5 } };
+    expect(resumeSchema.safeParse(badLimit).success).toBe(false);
+  });
+
   it('rejects font names that could inject CSS', () => {
     const doc = sample();
     const bad = { ...doc, layout: { ...doc.layout, fontFamily: 'Arial"; } body { display:none' } };

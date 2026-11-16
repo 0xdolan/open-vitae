@@ -11,8 +11,27 @@ export const DEFAULT_GRAMMAR_ENDPOINT = '/languagetool/v2/check';
 /** Longest text sent in one request; LanguageTool's own default limit is far higher. */
 export const MAX_CHECK_LENGTH = 60_000;
 
+/**
+ * What went wrong, so the interface can explain it in the reader's language:
+ * - endpoint: the address is not a path on this site;
+ * - too-long: the text is over MAX_CHECK_LENGTH;
+ * - network: no answer at all;
+ * - status: an HTTP error (see `status`); 404 and 405 usually mean no
+ *   LanguageTool server runs at that address and the site's own web server answered;
+ * - response: an answer that is not LanguageTool's JSON.
+ */
+export type GrammarErrorKind = 'endpoint' | 'too-long' | 'network' | 'status' | 'response';
+
 export class GrammarError extends Error {
   override readonly name = 'GrammarError';
+
+  constructor(
+    message: string,
+    readonly kind: GrammarErrorKind,
+    readonly status?: number,
+  ) {
+    super(message);
+  }
 }
 
 const matchSchema = z.object({
@@ -125,9 +144,9 @@ export async function checkGrammar({
   fetchImpl = fetch,
 }: CheckOptions): Promise<GrammarMatch[]> {
   const url = sameOriginEndpoint(endpoint, origin);
-  if (!url) throw new GrammarError('The server address must be a path on this site.');
+  if (!url) throw new GrammarError('The server address must be a path on this site.', 'endpoint');
   if (text.length > MAX_CHECK_LENGTH)
-    throw new GrammarError('This resume is too long to check in one go.');
+    throw new GrammarError('This resume is too long to check in one go.', 'too-long');
 
   const body = new URLSearchParams({ text, language });
   let response: Response;
@@ -142,18 +161,24 @@ export async function checkGrammar({
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error;
-    throw new GrammarError('No answer from the server.');
+    throw new GrammarError('No answer from the server.', 'network');
   }
-  if (!response.ok) throw new GrammarError(`The server answered with status ${response.status}.`);
+  if (!response.ok)
+    throw new GrammarError(
+      `The server answered with status ${response.status}.`,
+      'status',
+      response.status,
+    );
 
   let json: unknown;
   try {
     json = await response.json();
   } catch {
-    throw new GrammarError('The server’s answer was not understood.');
+    throw new GrammarError('The server’s answer was not understood.', 'response');
   }
   const parsed = responseSchema.safeParse(json);
-  if (!parsed.success) throw new GrammarError('The server’s answer was not understood.');
+  if (!parsed.success)
+    throw new GrammarError('The server’s answer was not understood.', 'response');
   return [...parsed.data.matches]
     .filter((m) => m.offset + m.length <= text.length)
     .sort((a, b) => a.offset - b.offset);

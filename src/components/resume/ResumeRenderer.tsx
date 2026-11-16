@@ -4,7 +4,7 @@ import { ResumeIcon } from '@/components/icons/ResumeIcon';
 import { SafeHtml } from '@/components/SafeHtml';
 import { CONTACT_ICONS } from '@/config/icon-sets';
 import { fontStack } from '@/config/fonts';
-import { PHOTO_RADIUS } from '@/config/layout';
+import { DEFAULT_ICON_COLOR, PHOTO_RADIUS } from '@/config/layout';
 import { applyDigits } from '@/lib/digits';
 import { isValidEmail } from '@/lib/field-validation';
 import { isSafeUrl, telUrl } from '@/lib/url';
@@ -56,14 +56,15 @@ function ContactLine({
   const { email, phone, location, website, links } = doc.profile;
   const withIcons = doc.layout.showContactIcons === true;
   const parts: ReactNode[] = [];
-  const icon = (ref: IconRef | undefined) =>
-    withIcons && ref ? <ResumeIcon icon={ref} className="me-[0.35em]" /> : null;
+  const colors = doc.layout.contactIconColors;
+  const icon = (ref: IconRef | undefined, color?: string) =>
+    withIcons && ref ? <ResumeIcon icon={ref} color={color} className="me-[0.35em]" /> : null;
 
   // <bdi> keeps emails, numbers and URLs in their own direction inside RTL text.
   if (email) {
     const content = (
       <>
-        {icon(CONTACT_ICONS.email)}
+        {icon(CONTACT_ICONS.email, colors?.email)}
         <bdi>{email}</bdi>
       </>
     );
@@ -80,7 +81,7 @@ function ContactLine({
   if (phone) {
     parts.push(
       <SafeLink key="phone" href={telUrl(phone)}>
-        {icon(CONTACT_ICONS.phone)}
+        {icon(CONTACT_ICONS.phone, colors?.phone)}
         <bdi dir="ltr">{phone}</bdi>
       </SafeLink>,
     );
@@ -88,7 +89,7 @@ function ContactLine({
   if (location) {
     parts.push(
       <span key="location">
-        {icon(CONTACT_ICONS.location)}
+        {icon(CONTACT_ICONS.location, colors?.location)}
         <bdi>{location}</bdi>
       </span>,
     );
@@ -96,7 +97,7 @@ function ContactLine({
   if (website) {
     parts.push(
       <SafeLink key="website" href={website}>
-        {icon(CONTACT_ICONS.website)}
+        {icon(CONTACT_ICONS.website, colors?.website)}
         <bdi>{displayUrl(website)}</bdi>
       </SafeLink>,
     );
@@ -203,13 +204,15 @@ function Item({ item, section, filter }: ItemProps) {
 
 interface SectionProps {
   readonly section: ResumeSection;
-  readonly accent: string;
+  readonly titleColor: string;
+  /** Colour of the line under the title; null draws no line. */
+  readonly ruleColor: string | null;
   readonly selected: boolean;
   readonly onClick?: (id: string) => void;
   readonly filter: PageFilter | null;
 }
 
-function Section({ section, accent, selected, onClick, filter }: SectionProps) {
+function Section({ section, titleColor, ruleColor, selected, onClick, filter }: SectionProps) {
   const titleKey = `title:${section.id}`;
   const items = section.items.filter(
     (item) =>
@@ -237,8 +240,15 @@ function Section({ section, accent, selected, onClick, filter }: SectionProps) {
       {showTitle ? (
         <h2
           data-ov-b={titleKey}
-          className="mb-2 border-b pb-1 text-[1.1em] font-bold tracking-wide uppercase"
-          style={{ color: accent, borderColor: accent, ...toCss(section.titleStyle) }}
+          className={cn(
+            'mb-2 text-[1.1em] font-bold tracking-wide uppercase',
+            ruleColor && 'border-b pb-1',
+          )}
+          style={{
+            color: titleColor,
+            ...(ruleColor ? { borderColor: ruleColor } : {}),
+            ...toCss(section.titleStyle),
+          }}
         >
           <ResumeIcon icon={section.icon} className="me-[0.4em]" />
           {section.title}
@@ -297,6 +307,7 @@ export function ResumeRenderer({
         fontSize: `${layout.baseFontSizePt}pt`,
         lineHeight: layout.lineHeight,
         ['--ov-indent' as string]: `${layout.indentCh}ch`,
+        ['--ov-icon-color' as string]: layout.iconColor ?? DEFAULT_ICON_COLOR,
       }}
     >
       {showHeader ? (
@@ -351,7 +362,10 @@ export function ResumeRenderer({
           <Section
             key={section.id}
             section={section}
-            accent={layout.accentColor}
+            titleColor={layout.sectionTitleColor ?? layout.accentColor}
+            ruleColor={
+              layout.sectionRule === false ? null : (layout.sectionRuleColor ?? layout.accentColor)
+            }
             selected={section.id === selectedSectionId}
             onClick={onSectionClick}
             filter={filter}

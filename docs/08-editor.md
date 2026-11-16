@@ -16,10 +16,12 @@ Previous: [Data and storage](07-data-and-storage.md) · Next: [Rich text editor]
 
 ## Screens
 
-| Address       | Screen                                                   |
-| ------------- | -------------------------------------------------------- |
-| `#/`          | Library: your resumes, the five samples, delete all data |
-| `#/edit/<id>` | Editor for one resume                                    |
+| Address       | Screen                                              |
+| ------------- | --------------------------------------------------- |
+| `#/`          | Library: your resumes, the samples, delete all data |
+| `#/edit/<id>` | Editor for one resume                               |
+
+**My resumes** shows your resumes as a **grid** of cards, a compact **list**, or **thumbnails** with a small live drawing of each resume's first page. Click anywhere on a resume to open it; **Duplicate** and **Delete** sit on top. **Hide samples** folds the sample gallery away once you no longer need it. The view and the samples choice are kept in this browser.
 
 Hash addresses work on GitHub Pages and any static server with no rewrite rules. Reloading, bookmarking and the browser's back button all work. An address for a resume that is not in this browser shows a short explanation and a link back.
 
@@ -32,6 +34,10 @@ Hash addresses work on GitHub Pages and any static server with no rewrite rules.
 | Narrower          | Everything stacked; Edit and Preview tabs              |
 
 The navigator sits on the reading-start side and the preview on the reading-end side, so in a right-to-left browser the layout mirrors. The header holds the resume name, the save status ("Saved · version 12 · 19:05:23"), undo, redo and **Export** (PDF, Word, InDesign, images and data formats; see [Import and export](13-import-and-export.md)).
+
+On wide screens the header's **Hide preview** button folds the preview away so the form gets the whole width; **Show preview** brings it back. The choice is kept in this browser.
+
+The sun, moon and screen buttons in the header (and at the top of **My resumes**) choose a **light**, **dark** or **system** theme for the interface. The choice is kept in this browser. Resume pages, thumbnails and exports always stay black on white, because that is how they print.
 
 Clicking a section in the preview opens it in the form, and the section being edited is outlined on the page. The preview shows real pages with zoom and a print preview; see [Pages and printing](11-pages-and-printing.md).
 
@@ -87,6 +93,8 @@ The whole document has an undo history (up to 100 steps per open resume, kept in
 ## Field checks never block saving
 
 Email addresses and links are checked as you type, and a message appears under the field ("Use a full address starting with https://"). These checks are **warnings only**: a half-typed address never stops the rest of the resume from saving, and a renamed resume may be briefly empty. Safety does not depend on them, because only valid `http`, `https`, `mailto` and `tel` addresses are ever turned into links when the resume is drawn. Anything else appears as plain text.
+
+The summary and each entry description show a character count against a **soft limit**: 2,280 characters for the summary and 500 for a description by default. Text over the limit is flagged in red with a short note, and is **never cut or blocked**. Change both limits, or turn either off with **No limit**, in **Page setup → Length limits**; they are stored with the resume.
 
 Values that could affect the page itself (colours, font names, ids, photos) are still enforced by the schema on every save.
 

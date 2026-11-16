@@ -28,6 +28,10 @@ Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs 
 | Interface language               | `localStorage` key `open-vitae:ui-locale`                                              | `en`, `fa`, `ar` or `ckb`                     |
 | Grammar checking                 | `localStorage` key `open-vitae:grammar`                                                | On or off and the server path; off by default |
 | Last calendar in the date helper | `localStorage` key `open-vitae:date-calendar`                                          | A calendar name only                          |
+| Interface theme                  | `localStorage` key `open-vitae:theme`                                                  | `light`, `dark` or `system` (default)         |
+| Preview folded away              | `localStorage` key `open-vitae:preview-collapsed`                                      | `true` or `false`                             |
+| My resumes view                  | `localStorage` key `open-vitae:library-view`                                           | `grid` (default), `list` or `thumbnails`      |
+| Samples hidden                   | `localStorage` key `open-vitae:hide-samples`                                           | `true` or `false`                             |
 | User fonts                       | IndexedDB (phase 5)                                                                    | Never uploaded                                |
 
 Nothing is sent to a server. Clearing the site's data in the browser removes all of it. The app tells people this in a banner and offers to ask the browser for **persistent storage**, which stops the browser from evicting the data when disk space runs low.

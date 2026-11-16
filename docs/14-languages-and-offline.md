@@ -46,7 +46,7 @@ When a new version is published, a message asks before switching. **Update now**
 
 ## Grammar and spelling
 
-The browser's spell checker works in every text field. For grammar and style, Open Vitae can use a LanguageTool server that you run yourself. It is off by default.
+The browser's own spell checker is the default and needs no setup: it underlines misspellings in every text field, and the **Spell check** button in the rich text toolbar turns it on or off. For grammar and style, Open Vitae can also use a LanguageTool server that you run yourself. That check is **strictly opt-in**: nothing is sent anywhere until you tick **Use the LanguageTool server** and choose **Check this resume**.
 
 With Docker Compose:
 
@@ -57,6 +57,17 @@ docker compose --profile grammar up --build
 This starts the app and a LanguageTool container. The container has no published port; the app's nginx forwards `/languagetool/` to it, so the browser only ever talks to the app's own address. LanguageTool needs about 1 to 1.5 GB of memory.
 
 In the editor, open **Grammar**, tick **Use the LanguageTool server**, and choose **Check this resume**. The headline, summary, section titles, entry titles and descriptions are sent in one request; names, contact details, places and dates are not. Each finding shows where it is, the words around it and suggestions to apply with one click. Suggestions that would cross formatting (part bold, part not) are left for you to fix by hand.
+
+When a check fails, the panel says why in the interface language:
+
+| Answer                           | What it usually means                                                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No answer                        | The server is not running or not reachable.                                                                                                                                     |
+| 404 Not Found                    | Nothing answers at that path: no LanguageTool server is set up behind it.                                                                                                       |
+| 405 Method Not Allowed           | The site's own web server answered instead of LanguageTool, usually because no LanguageTool server runs behind that path, or the address does not accept `POST` to `/v2/check`. |
+| 413 or 429                       | The text is too long for the server, or it is busy; try again later.                                                                                                            |
+| 5xx                              | LanguageTool itself failed; see its logs.                                                                                                                                       |
+| An answer that is not understood | Something other than LanguageTool answered, for example an HTML page.                                                                                                           |
 
 Rules that keep text private:
 
