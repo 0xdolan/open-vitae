@@ -533,6 +533,7 @@ export const en = {
   'tb.heading': 'Heading {level}',
   'tb.font': 'Font',
   'tb.defaultFont': 'Default font',
+  'tb.googleFontsOff': 'Google Fonts (allow them in Page setup › Fonts)',
   'tb.fontSize': 'Font size',
   'tb.size': 'Size',
   'tb.pt': '{size} pt',

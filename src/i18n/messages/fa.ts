@@ -508,6 +508,7 @@ export const fa: Translations<MessageKey> = {
   'tb.heading': 'سرتیتر {level}',
   'tb.font': 'فونت',
   'tb.defaultFont': 'فونت پیش‌فرض',
+  'tb.googleFontsOff': 'فونت‌های گوگل (در تنظیم صفحه › فونت‌ها اجازه دهید)',
   'tb.fontSize': 'اندازهٔ فونت',
   'tb.size': 'اندازه',
   'tb.pt': '{size} پوینت',

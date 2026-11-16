@@ -39,7 +39,8 @@ import {
   type BlockStyleId,
   type TextPresetId,
 } from '@/config/editor';
-import { KNOWN_FONTS } from '@/config/fonts';
+import { BUNDLED_FONTS, SYSTEM_FONTS } from '@/config/fonts';
+import { findGoogleFont, GOOGLE_FONTS } from '@/config/google-fonts';
 import { searchEmoji, EMOJI_GROUPS } from '@/lib/emoji';
 import { urlError } from '@/lib/field-validation';
 import { CODE_LANGUAGES } from '@/lib/highlight';
@@ -180,14 +181,43 @@ export function Toolbar({
   const userFonts = useFontStore((s) => s.userFonts);
   const googleFamilies = useFontStore((s) => s.googleFamilies);
   const googleState = useFontStore((s) => s.googleState);
-  // Bundled and system fonts, your own fonts, and Google fonts already loaded here.
-  const fontChoices = [
-    ...new Set([
-      ...KNOWN_FONTS.map((f) => f.family),
-      ...userFonts.map((f) => f.family),
-      ...googleFamilies.filter((f) => googleState[f]?.state === 'ready'),
-    ]),
-  ];
+  const googleConsent = useFontStore((s) => s.googleConsent);
+  const loadGoogleFont = useFontStore((s) => s.loadGoogleFont);
+  // The same groups as the page font picker. Google fonts load when picked.
+  const fontGroups: readonly { label: string; families: readonly string[]; google?: boolean }[] = [
+    { label: t('fonts.groupBundled'), families: BUNDLED_FONTS.map((f) => f.family) },
+    { label: t('fonts.groupSystem'), families: SYSTEM_FONTS.map((f) => f.family) },
+    { label: t('fonts.groupUser'), families: userFonts.map((f) => f.family) },
+    {
+      label: googleConsent ? t('fonts.google') : t('tb.googleFontsOff'),
+      families: [
+        ...new Set([
+          ...googleFamilies.filter((f) => !findGoogleFont(f)),
+          ...GOOGLE_FONTS.map((f) => f.family),
+        ]),
+      ],
+      google: true,
+    },
+  ].filter((group) => group.families.length > 0);
+  const isGoogleFamily = (family: string) =>
+    fontGroups.some((group) => group.google === true && group.families.includes(family));
+
+  const applyFont = async (family: string) => {
+    if (family === '') {
+      chain().unsetFontFamily().run();
+      return;
+    }
+    if (isGoogleFamily(family) && googleState[family]?.state !== 'ready') {
+      if (!googleConsent) return;
+      try {
+        await loadGoogleFont(family);
+      } catch (error) {
+        toast.error(t('fonts.notLoaded'), error instanceof Error ? error.message : undefined);
+        return;
+      }
+    }
+    chain().setFontFamily(family).run();
+  };
 
   const state = useEditorState({
     editor,
@@ -373,17 +403,25 @@ export function Toolbar({
           aria-label={t('tb.font')}
           className={cn(selectClass, 'max-w-32')}
           value={state.fontFamily}
-          onChange={(e) =>
-            e.target.value
-              ? chain().setFontFamily(e.target.value).run()
-              : chain().unsetFontFamily().run()
-          }
+          onChange={(e) => void applyFont(e.target.value)}
         >
           <option value="">{t('tb.defaultFont')}</option>
-          {fontChoices.map((family) => (
-            <option key={family} value={family}>
-              {family}
-            </option>
+          {state.fontFamily !== '' &&
+          !fontGroups.some((group) => group.families.includes(state.fontFamily)) ? (
+            <option value={state.fontFamily}>{state.fontFamily}</option>
+          ) : null}
+          {fontGroups.map((group) => (
+            <optgroup key={group.label} label={group.label}>
+              {group.families.map((family) => (
+                <option
+                  key={family}
+                  value={family}
+                  disabled={group.google === true && !googleConsent}
+                >
+                  {family}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
         <select

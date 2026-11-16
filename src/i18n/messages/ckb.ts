@@ -508,6 +508,7 @@ export const ckb: Translations<MessageKey> = {
   'tb.heading': 'سەردێڕی {level}',
   'tb.font': 'فۆنت',
   'tb.defaultFont': 'فۆنتی بنەڕەت',
+  'tb.googleFontsOff': 'فۆنتەکانی گووگڵ (لە ڕێکخستنی پەڕە › فۆنتەکان ڕێگە بدە)',
   'tb.fontSize': 'قەبارەی فۆنت',
   'tb.size': 'قەبارە',
   'tb.pt': '{size} پۆینت',

@@ -564,6 +564,7 @@ export const ar: Translations<MessageKey> = {
   'tb.heading': 'عنوان {level}',
   'tb.font': 'الخط',
   'tb.defaultFont': 'الخط الافتراضي',
+  'tb.googleFontsOff': 'خطوط Google (اسمح بها في إعداد الصفحة › الخطوط)',
   'tb.fontSize': 'حجم الخط',
   'tb.size': 'الحجم',
   'tb.pt': '{size} نقطة',
