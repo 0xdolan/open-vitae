@@ -70,18 +70,16 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
   const groups = useMemo(() => {
     const google = [...GOOGLE_FONTS]
       .sort((a, b) => (preferArabic ? Number(Boolean(b.arabic)) - Number(Boolean(a.arabic)) : 0))
-      .map(
-        (g): Option => ({
-          family: g.family,
-          note: t(
-            g.arabic
-              ? 'fonts.noteArabic'
-              : g.hebrew
-                ? 'fonts.noteHebrew'
-                : CATEGORY_LABELS[g.category],
-          ),
-        }),
-      );
+      .map((g): Option => ({
+        family: g.family,
+        note: t(
+          g.arabic
+            ? 'fonts.noteArabic'
+            : g.hebrew
+              ? 'fonts.noteHebrew'
+              : CATEGORY_LABELS[g.category],
+        ),
+      }));
     const recent = googleFamilies
       .filter((f) => !findGoogleFont(f))
       .map((family): Option => ({ family, note: 'Google' }));
@@ -89,12 +87,10 @@ export function FontPicker({ id, value, onChange, preferArabic = false }: FontPi
       {
         id: 'bundled' as GroupId,
         label: t('fonts.groupBundled'),
-        options: BUNDLED_FONTS.map(
-          (f): Option => ({
-            family: f.family,
-            note: f.arabicScript ? t('fonts.notePersianArabic') : undefined,
-          }),
-        ),
+        options: BUNDLED_FONTS.map((f): Option => ({
+          family: f.family,
+          note: f.arabicScript ? t('fonts.notePersianArabic') : undefined,
+        })),
       },
       {
         id: 'system' as GroupId,

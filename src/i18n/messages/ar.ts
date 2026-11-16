@@ -29,8 +29,7 @@ export const ar: Translations<MessageKey> = {
 
   'storage.label': 'مكان حفظ بياناتك',
   'storage.title': 'تبقى سيرك الذاتية في هذا المتصفح فقط.',
-  'storage.body':
-    'لا يُرسل أي شيء إلى خادم. مسح بيانات هذا الموقع أو ذاكرة المتصفح المؤقتة يحذفها.',
+  'storage.body': 'لا يُرسل أي شيء إلى خادم. مسح بيانات هذا الموقع أو ذاكرة المتصفح المؤقتة يحذفها.',
   'storage.usage': 'المساحة المستخدمة: {size}.',
   'storage.keep': 'اطلب من المتصفح الاحتفاظ ببياناتي',
   'storage.kept': 'سيحتفظ المتصفح بهذه البيانات عند امتلاء المساحة.',
@@ -49,8 +48,7 @@ export const ar: Translations<MessageKey> = {
   'library.delete': 'حذف',
   'library.deleteNamed': 'حذف {name}',
   'library.deleteTitle': 'حذف هذه السيرة الذاتية؟',
-  'library.deleteBody':
-    'ستُحذف «{name}» وكل نسخها المحفوظة من هذا المتصفح. لا يمكن التراجع عن ذلك.',
+  'library.deleteBody': 'ستُحذف «{name}» وكل نسخها المحفوظة من هذا المتصفح. لا يمكن التراجع عن ذلك.',
 
   'samples.title': 'ابدأ من نموذج',
   'samples.intro': 'تحصل على نسختك الخاصة لتعديلها. كل الأسماء والشركات وبيانات التواصل خيالية.',
