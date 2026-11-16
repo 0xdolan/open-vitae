@@ -34,7 +34,7 @@ export function toCsv(rows: Table, delimiter = ','): string {
   const body = rows
     .map((row) => row.map((cell) => quote(protectCell(cell), delimiter)).join(delimiter))
     .join('\r\n');
-  return `﻿${body}\r\n`;
+  return `\uFEFF${body}\r\n`;
 }
 
 /** The delimiter used in the first line: comma, semicolon (common in Europe) or tab. */
@@ -65,9 +65,9 @@ export class CsvError extends Error {
  */
 export function parseCsv(
   text: string,
-  delimiter: string = detectDelimiter(text.replace(/^﻿/, '')),
+  delimiter: string = detectDelimiter(text.replace(/^\uFEFF/, '')),
 ): Table {
-  const input = text.replace(/^﻿/, '');
+  const input = text.replace(/^\uFEFF/, '');
   const rows: Table = [];
   let row: string[] = [];
   let cell = '';

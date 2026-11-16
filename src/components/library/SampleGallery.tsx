@@ -9,7 +9,7 @@ export function SampleGallery() {
   const t = useT();
   const createFromSample = useResumeStore((s) => s.createFromSample);
 
-  const useSample = async (id: SampleId) => {
+  const applySample = async (id: SampleId) => {
     const doc = await createFromSample(id);
     if (doc) navigate({ name: 'editor', id: doc.id });
   };
@@ -38,7 +38,7 @@ export function SampleGallery() {
             <Button
               size="sm"
               className="mt-3 self-start"
-              onClick={() => void useSample(sample.id)}
+              onClick={() => void applySample(sample.id)}
               aria-label={t('samples.useNamed', { name: t(`samples.${sample.id}.label`) })}
             >
               {t('samples.use')}

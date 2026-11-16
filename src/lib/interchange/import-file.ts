@@ -53,7 +53,10 @@ export function detectImportFormat(fileName: string, head: Uint8Array): ImportFo
   if (extension === 'xlsx') return 'xlsx';
   if (extension === 'md' || extension === 'markdown' || extension === 'txt') return 'markdown';
   if (head[0] === 0x50 && head[1] === 0x4b) return 'xlsx';
-  const text = new TextDecoder().decode(head).replace(/^﻿/, '').trimStart();
+  const text = new TextDecoder()
+    .decode(head)
+    .replace(/^\uFEFF/, '')
+    .trimStart();
   if (text.startsWith('{')) return 'json';
   if (text.startsWith('#')) return 'markdown';
   return null;

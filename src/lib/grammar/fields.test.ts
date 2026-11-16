@@ -13,6 +13,12 @@ import {
   setFieldValue,
 } from './fields';
 
+/** The value, or a test failure if it is missing. */
+function must<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) throw new Error('Expected a value');
+  return value;
+}
+
 describe('grammar fields', () => {
   it('reads plain text from HTML with blocks on their own lines, skipping code', () => {
     const { text } = plainTextOf(
@@ -47,15 +53,15 @@ describe('grammar fields', () => {
     expect(fields.some((f) => f.value === doc.profile.email)).toBe(false);
 
     const { text, spans } = joinFields(fields);
-    const headline = fields[0]!;
+    const headline = must(fields[0]);
     expect(text.startsWith(headline.value)).toBe(true);
-    const second = spans[1]!;
+    const second = must(spans[1]);
     expect(locate(spans, second.start + 1, 2)).toEqual({ field: 1, offset: 1 });
-    expect(locate(spans, spans[0]!.end - 1, 4)).toBeNull();
+    expect(locate(spans, must(spans[0]).end - 1, 4)).toBeNull();
 
     const fixed = setFieldValue(doc, headline, 'Staff engineer');
     expect(fixed.profile.headline).toBe('Staff engineer');
-    const item = fields.find((f) => f.target.type === 'item' && f.target.key === 'title')!;
+    const item = must(fields.find((f) => f.target.type === 'item' && f.target.key === 'title'));
     const changed = setFieldValue(doc, item, 'New title');
     expect(changed.sections.flatMap((s) => s.items).some((i) => i.title === 'New title')).toBe(
       true,
