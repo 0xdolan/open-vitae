@@ -7,10 +7,12 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ResumeLibrary } from '@/components/library/ResumeLibrary';
 import { SampleGallery } from '@/components/library/SampleGallery';
 import { StorageNotice } from '@/components/StorageNotice';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/Toaster';
 import { useHashRoute } from '@/hooks/useHashRoute';
 import { applyDocumentLocale, useT } from '@/i18n';
+import { useThemeEffect } from '@/lib/theme';
 import { useFontStore, useResumeStore } from '@/stores';
 import logoUrl from '../assets/brand/logo.svg';
 
@@ -33,7 +35,7 @@ function Messages() {
         </div>
       ) : null}
       {invalidCount > 0 ? (
-        <p role="status" className="rounded-lg border border-stone-300 bg-white px-4 py-3 text-sm">
+        <p role="status" className="rounded-lg border border-stone-300 bg-card px-4 py-3 text-sm">
           {t('app.unreadable', { count: invalidCount })}
         </p>
       ) : null}
@@ -64,6 +66,7 @@ function LibraryView() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <InstallButton />
+          <ThemeSwitcher />
           <LanguageSwitcher />
         </div>
       </header>
@@ -109,6 +112,7 @@ function NotFound() {
 
 export function App() {
   const t = useT();
+  useThemeEffect();
   const init = useResumeStore((s) => s.init);
   const flush = useResumeStore((s) => s.flush);
   const status = useResumeStore((s) => s.status);
@@ -177,7 +181,7 @@ export function App() {
     <div className="mx-auto flex min-h-dvh max-w-[110rem] flex-col gap-4 p-3 sm:p-6">
       <a
         href="#main"
-        className="bg-brand sr-only fixed top-2 start-2 z-50 rounded-md px-3 py-2 text-white focus:not-sr-only"
+        className="bg-brand sr-only fixed top-2 start-2 z-50 rounded-md px-3 py-2 text-on-brand focus:not-sr-only"
         onClick={(event) => {
           event.preventDefault();
           document.getElementById('main')?.focus();

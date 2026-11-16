@@ -9,6 +9,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ### Added
 
 - An optional page header and footer in **Page setup**, with `{page}` and `{pages}` placeholders for page numbers, start, centre or end alignment and a choice to skip the first page. They show in the preview, printing and page exports, and as real headers and footers in Word.
+- A light, dark or system theme for the interface, kept in this browser. Resume pages stay black on white.
+- **Hide preview** folds the live preview away on wide screens; the choice is remembered.
+- **My resumes** has grid, list and thumbnail views with a small drawing of each resume, the whole card opens the resume, and the samples can be hidden.
+- **Page setup** sets the section title colour and the line under titles separately from the accent colour, can hide that line, and sets an icon colour (black by default) and colours for each contact icon. Each icon can also have its own colour.
+- Soft length limits for the summary (2,280 characters) and entry descriptions (500), with a counter. Text over the limit is flagged, never cut; each limit can be changed or turned off.
+
+### Changed
+
+- Every drop-down uses one shared menu that follows the theme and the page direction, and the interface language picker shows each language in its own script.
+- Menus, pop-ups and dialogs close when you click outside them or press Escape.
+- Clearer hover, selected and focus states, a pointer cursor on everything clickable, and no doubled borders.
+- Spelling is checked by the browser by default; the LanguageTool grammar check stays strictly opt-in and now explains failures such as 404 and 405 (no LanguageTool server behind that address).
+- Section and entry icons in existing resumes now draw in the icon colour (black by default) instead of the accent colour.
 
 ### Changed
 

@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { GripIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { SortableList } from '@/components/ui/sortable';
 import { TextField } from '@/components/ui/text-field';
-import { LIMITS } from '@/config/layout';
+import { DEFAULT_SUMMARY_LIMIT, LIMITS } from '@/config/layout';
 import { addLink, moveLink, removeLink, updateLink, updateProfile } from '@/lib/document-ops';
 import { emailError, urlError } from '@/lib/field-validation';
 import type { Profile, ResumeDocument } from '@/schema/resume';
@@ -86,7 +86,7 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
           className="flex flex-col gap-2"
           renderItem={(link, { handleProps, isDragging, isDropTarget }) => (
             <div
-              className={`flex items-start gap-2 rounded-lg border bg-white p-2 ${isDragging ? 'border-brand shadow-lg' : isDropTarget ? 'border-brand border-dashed' : 'border-stone-200'}`}
+              className={`flex items-start gap-2 rounded-lg border bg-card p-2 ${isDragging ? 'border-brand shadow-lg' : isDropTarget ? 'border-brand border-dashed' : 'border-stone-200'}`}
             >
               <button
                 type="button"
@@ -156,6 +156,9 @@ export function ProfilePanel({ doc }: { readonly doc: ResumeDocument }) {
         accentColor={doc.layout.accentColor}
         indentCh={doc.layout.indentCh}
         maxDepth={doc.layout.maxDepth}
+        charLimit={
+          doc.layout.summaryLimit === undefined ? DEFAULT_SUMMARY_LIMIT : doc.layout.summaryLimit
+        }
         onChange={(summaryHtml) =>
           updateActive((d) => updateProfile(d, { summaryHtml }), { group: 'profile.summary' })
         }

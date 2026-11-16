@@ -185,6 +185,67 @@
             "firstPage"
           ],
           "additionalProperties": false
+        },
+        "iconColor": {
+          "type": "string",
+          "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+        },
+        "contactIconColors": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+            },
+            "phone": {
+              "type": "string",
+              "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+            },
+            "location": {
+              "type": "string",
+              "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+            },
+            "website": {
+              "type": "string",
+              "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "sectionTitleColor": {
+          "type": "string",
+          "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+        },
+        "sectionRuleColor": {
+          "type": "string",
+          "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
+        },
+        "sectionRule": {
+          "type": "boolean"
+        },
+        "summaryLimit": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 100000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "descriptionLimit": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 100000
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -257,6 +318,10 @@
                   "name": {
                     "type": "string",
                     "pattern": "^[A-Za-z0-9-]{1,80}$"
+                  },
+                  "color": {
+                    "type": "string",
+                    "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
                   }
                 },
                 "required": [
@@ -494,6 +559,10 @@
               "name": {
                 "type": "string",
                 "pattern": "^[A-Za-z0-9-]{1,80}$"
+              },
+              "color": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
               }
             },
             "required": [
@@ -594,6 +663,10 @@
                     "name": {
                       "type": "string",
                       "pattern": "^[A-Za-z0-9-]{1,80}$"
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$"
                     }
                   },
                   "required": [

@@ -1,6 +1,8 @@
 import { useId, useRef } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { Field, controlClass } from '@/components/ui/field';
+import { Select } from '@/components/ui/select';
 import { HORIZONTAL_ALIGNS, LIMITS, PAGE_BAND_TOKENS, type HorizontalAlign } from '@/config/layout';
 import { useT, type MessageKey } from '@/i18n';
 import { newPageBand, type PageBandKind } from '@/lib/page-bands';
@@ -50,7 +52,7 @@ export function PageBandFields({ kind, band, onChange }: PageBandFieldsProps) {
   };
 
   return (
-    <div className="col-span-full flex flex-col gap-2 rounded-md border border-stone-200 p-3">
+    <div className="col-span-full flex flex-col gap-2">
       <label className="flex items-center gap-2 text-sm font-semibold">
         <input
           type="checkbox"
@@ -79,36 +81,25 @@ export function PageBandFields({ kind, band, onChange }: PageBandFieldsProps) {
             />
           </Field>
           <div className="col-span-full flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="rounded-md border border-stone-300 px-2 py-1 text-xs hover:bg-stone-100"
-              onClick={() => insert(PAGE_BAND_TOKENS.page)}
-            >
+            <Button size="sm" onClick={() => insert(PAGE_BAND_TOKENS.page)}>
               {t('page.insertPage')}
-            </button>
-            <button
-              type="button"
-              className="rounded-md border border-stone-300 px-2 py-1 text-xs hover:bg-stone-100"
-              onClick={() => insert(PAGE_BAND_TOKENS.pages)}
-            >
+            </Button>
+            <Button size="sm" onClick={() => insert(PAGE_BAND_TOKENS.pages)}>
               {t('page.insertPages')}
-            </button>
+            </Button>
           </div>
           <Field label={t('page.bandAlign')} htmlFor={`${id}-align`}>
-            <select
+            <Select
               id={`${id}-align`}
-              className={controlClass}
               value={current.align}
-              onChange={(e) =>
-                isHorizontalAlign(e.target.value) && onChange({ ...current, align: e.target.value })
+              onValueChange={(value) =>
+                isHorizontalAlign(value) && onChange({ ...current, align: value })
               }
-            >
-              {HORIZONTAL_ALIGNS.map((align) => (
-                <option key={align} value={align}>
-                  {t(ALIGN_LABELS[align])}
-                </option>
-              ))}
-            </select>
+              items={HORIZONTAL_ALIGNS.map((align) => ({
+                value: align,
+                label: t(ALIGN_LABELS[align]),
+              }))}
+            />
           </Field>
           <label className="flex items-center gap-2 self-end pb-2 text-sm">
             <input

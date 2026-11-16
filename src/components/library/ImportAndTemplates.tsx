@@ -2,6 +2,8 @@ import { useId, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { DownloadIcon, UploadIcon } from '@/components/ui/icons';
+import { Select } from '@/components/ui/select';
+import { useDismiss } from '@/hooks/useDismiss';
 import { navigate } from '@/hooks/useHashRoute';
 import { downloadFile } from '@/lib/download';
 import { IMPORT_ACCEPT, type DataFormat } from '@/config/export';
@@ -26,6 +28,8 @@ export function ImportAndTemplates() {
   const [templateOpen, setTemplateOpen] = useState(false);
   const [source, setSource] = useState<'template' | SampleId>('template');
   const [format, setFormat] = useState<DataFormat>('xlsx');
+  const rootRef = useRef<HTMLDivElement>(null);
+  useDismiss(templateOpen, [rootRef], () => setTemplateOpen(false));
 
   const onFile = async (file: File | undefined) => {
     if (!file) return;
@@ -76,7 +80,7 @@ export function ImportAndTemplates() {
   };
 
   return (
-    <div className="relative flex flex-wrap gap-2">
+    <div ref={rootRef} className="relative flex flex-wrap gap-2">
       <input
         ref={inputRef}
         type="file"
@@ -102,40 +106,36 @@ export function ImportAndTemplates() {
           id={`${id}-templates`}
           role="group"
           aria-label={t('templates.label')}
-          className="absolute top-full end-0 z-20 mt-2 flex w-[min(34rem,calc(100vw-2rem))] flex-wrap items-end gap-2 rounded-lg border border-stone-200 bg-white p-3 text-sm shadow-lg"
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') setTemplateOpen(false);
-          }}
+          className="bg-popover absolute top-full end-0 z-20 mt-2 flex w-[min(34rem,calc(100vw-2rem))] flex-wrap items-end gap-2 rounded-lg border border-stone-200 p-3 text-sm shadow-lg"
         >
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-stone-700">{t('templates.from')}</span>
-            <select
-              className="h-9 rounded-md border border-stone-300 bg-white px-2"
+          <div className="flex min-w-48 flex-1 flex-col gap-1">
+            <label htmlFor={`${id}-source`} className="text-xs font-medium text-stone-700">
+              {t('templates.from')}
+            </label>
+            <Select
+              id={`${id}-source`}
               value={source}
-              onChange={(e) => setSource(e.target.value as 'template' | SampleId)}
-            >
-              <option value="template">{t('templates.blank')}</option>
-              {SAMPLES.map((sample) => (
-                <option key={sample.id} value={sample.id}>
-                  {t('templates.sample', { name: t(`samples.${sample.id}.label`) })}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-stone-700">{t('templates.format')}</span>
-            <select
-              className="h-9 rounded-md border border-stone-300 bg-white px-2"
+              onValueChange={(value) => setSource(value as 'template' | SampleId)}
+              items={[
+                { value: 'template', label: t('templates.blank') },
+                ...SAMPLES.map((sample) => ({
+                  value: sample.id,
+                  label: t('templates.sample', { name: t(`samples.${sample.id}.label`) }),
+                })),
+              ]}
+            />
+          </div>
+          <div className="flex min-w-32 flex-col gap-1">
+            <label htmlFor={`${id}-format`} className="text-xs font-medium text-stone-700">
+              {t('templates.format')}
+            </label>
+            <Select
+              id={`${id}-format`}
               value={format}
-              onChange={(e) => setFormat(e.target.value as DataFormat)}
-            >
-              {TEMPLATE_FORMATS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              onValueChange={(value) => setFormat(value as DataFormat)}
+              items={TEMPLATE_FORMATS.map((option) => ({ value: option.id, label: option.label }))}
+            />
+          </div>
           <Button variant="primary" onClick={() => void downloadTemplate()}>
             {t('templates.download')}
           </Button>

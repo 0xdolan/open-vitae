@@ -8,6 +8,7 @@ Previous: [Fonts and right-to-left text](10-fonts.md) · Next: [Photos and icons
 - [The page preview](#the-page-preview)
 - [Smart page breaks](#smart-page-breaks)
 - [Manual page breaks](#manual-page-breaks)
+- [Colours](#colours)
 - [Page header and footer](#page-header-and-footer)
 - [Print preview and printing](#print-preview-and-printing)
 - [When something does not fit](#when-something-does-not-fit)
@@ -53,6 +54,10 @@ To start a section on a new page, open the section and tick **Start on a new pag
 Set **Page setup → Page breaks** to **Manual** to turn the automatic rules off: pages then end only where you put a break. If a page is too full, the rest carries on to a new page at the last block that fits, and a note under that page suggests adding a break.
 
 A break on the first entry of a section is moved before the section heading, so the heading is never left behind.
+
+## Colours
+
+**Page setup → Colours** sets the **accent colour** (the headline and, unless you choose otherwise, section titles and the line under them), the **section title colour** and the **title line colour** separately. **Line under section titles** turns the line off. **Use accent** returns a colour to the accent.
 
 ## Page header and footer
 

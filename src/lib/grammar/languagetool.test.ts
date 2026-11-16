@@ -75,6 +75,22 @@ describe('LanguageTool client', () => {
     await expect(
       checkGrammar({ endpoint: '/lt', text: 'x', language: 'en-US', origin, fetchImpl: failing }),
     ).rejects.toThrow(GrammarError);
+    const notAllowed = (async () => new Response('', { status: 405 })) as unknown as typeof fetch;
+    await expect(
+      checkGrammar({
+        endpoint: '/lt',
+        text: 'x',
+        language: 'en-US',
+        origin,
+        fetchImpl: notAllowed,
+      }),
+    ).rejects.toMatchObject({ kind: 'status', status: 405 });
+    const offline = (async () => {
+      throw new TypeError('Failed to fetch');
+    }) as unknown as typeof fetch;
+    await expect(
+      checkGrammar({ endpoint: '/lt', text: 'x', language: 'en-US', origin, fetchImpl: offline }),
+    ).rejects.toMatchObject({ kind: 'network' });
     const garbage = (async () =>
       new Response('{"matches": "no"}', { status: 200 })) as unknown as typeof fetch;
     await expect(

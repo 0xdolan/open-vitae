@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { CSSProperties, ComponentType } from 'react';
 
 import { ICON_SETS, type IconSetId } from '@/config/icon-sets';
 
@@ -8,6 +8,7 @@ export interface IconComponentProps {
   readonly size?: string | number;
   readonly 'aria-hidden'?: boolean | 'true';
   readonly focusable?: string;
+  readonly style?: CSSProperties;
 }
 
 export type IconComponent = ComponentType<IconComponentProps>;

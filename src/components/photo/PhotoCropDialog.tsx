@@ -23,6 +23,7 @@ import type { PhotoCrop } from '@/schema/resume';
 import { useT, type MessageKey } from '@/i18n';
 
 import { PhotoSizeGuide } from './PhotoSizeGuide';
+import { useBackdropDismiss } from '@/hooks/useDismiss';
 
 interface PhotoCropDialogProps {
   readonly open: boolean;
@@ -70,6 +71,9 @@ export function PhotoCropDialog({
 }: PhotoCropDialogProps) {
   const t = useT();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const backdrop = useBackdropDismiss(() => {
+    onCancel();
+  });
   const viewRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const zoomId = useId();
@@ -249,12 +253,13 @@ export function PhotoCropDialog({
   return (
     <dialog
       ref={dialogRef}
+      {...backdrop}
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
       }}
-      className="m-auto w-[min(36rem,calc(100vw-1.5rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/50"
+      className="m-auto w-[min(36rem,calc(100vw-1.5rem))] bg-card text-foreground rounded-xl border border-stone-200 p-0 shadow-xl backdrop:bg-black/50"
     >
       {open ? (
         <div className="flex flex-col gap-4 p-5">

@@ -1,5 +1,6 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 
+import { useDismiss } from '@/hooks/useDismiss';
 import { cn } from '@/lib/utils';
 
 interface PopoverProps {
@@ -30,25 +31,10 @@ export function Popover({
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const onPointer = (event: PointerEvent) => {
-      if (root.current && !root.current.contains(event.target as Node)) onOpenChange(false);
-    };
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.stopPropagation();
-        onOpenChange(false);
-        button.current?.focus();
-      }
-    };
-    document.addEventListener('pointerdown', onPointer);
-    document.addEventListener('keydown', onKey, true);
-    return () => {
-      document.removeEventListener('pointerdown', onPointer);
-      document.removeEventListener('keydown', onKey, true);
-    };
-  }, [open, onOpenChange]);
+  useDismiss(open, [root], (reason) => {
+    onOpenChange(false);
+    if (reason === 'escape') button.current?.focus();
+  });
 
   return (
     <div ref={root} className="relative">
@@ -70,7 +56,7 @@ export function Popover({
           role="dialog"
           aria-label={label}
           className={cn(
-            'absolute start-0 top-full z-30 mt-1 w-72 rounded-lg border border-stone-200 bg-white p-3 text-sm shadow-xl',
+            'bg-popover absolute start-0 top-full z-30 mt-1 w-72 rounded-lg border border-stone-200 p-3 text-sm shadow-lg',
             className,
           )}
         >

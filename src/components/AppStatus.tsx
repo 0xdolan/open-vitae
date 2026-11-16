@@ -28,7 +28,7 @@ export function OfflineBadge() {
     >
       {online ? null : (
         <p
-          className="pointer-events-auto flex max-w-xs items-start gap-2 rounded-lg border border-stone-300 bg-white px-3 py-2 text-xs text-stone-700 shadow"
+          className="pointer-events-auto flex max-w-xs items-start gap-2 rounded-lg border border-stone-300 bg-card px-3 py-2 text-xs text-stone-700 shadow"
           title={t('pwa.offlineHint')}
         >
           <span aria-hidden="true" className="mt-1 size-2 shrink-0 rounded-full bg-amber-500" />
