@@ -4,7 +4,7 @@ import { RESUME_SCHEMA_VERSION, resumeSchema } from './resume';
 
 /** Where the published JSON Schema lives (also served by the app at schema/resume.schema.json). */
 export const RESUME_JSON_SCHEMA_ID =
-  'https://0xdolan.github.io/open-vitae/app/schema/resume.schema.json';
+  'https://kanilabs.github.io/open-vitae/app/schema/resume.schema.json';
 
 /**
  * The resume format as JSON Schema (draft 2020-12), generated from the Zod

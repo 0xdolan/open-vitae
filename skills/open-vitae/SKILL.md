@@ -6,7 +6,7 @@ license: GPL-3.0-or-later
 
 # Open Vitae resumes
 
-Open Vitae is a free resume builder that runs entirely in the browser (https://0xdolan.github.io/open-vitae/). It imports JSON, Markdown, CSV and Excel files. This skill produces those files. The person opens Open Vitae, chooses **Import** on **My resumes**, and picks the file; the resume opens ready to edit, lay out and export (PDF, Word, InDesign, images).
+Open Vitae is a free resume builder that runs entirely in the browser (https://kanilabs.github.io/open-vitae/). It imports JSON, Markdown, CSV and Excel files. This skill produces those files. The person opens Open Vitae, chooses **Import** on **My resumes**, and picks the file; the resume opens ready to edit, lay out and export (PDF, Word, InDesign, images).
 
 ## Choose the format
 

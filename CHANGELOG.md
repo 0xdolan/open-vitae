@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+
+- Open Vitae moved to the Kanî Labs organisation on GitHub. The website, app, schema and source links now point to `kanilabs.github.io/open-vitae` and `github.com/kanilabs`.
+
 ## [1.0.0] - 2026-11-15
 
 The first release of Open Vitae: a private resume builder that runs entirely in your browser, for left-to-right, right-to-left and mixed-direction resumes.
@@ -47,5 +51,5 @@ The first release of Open Vitae: a private resume builder that runs entirely in 
 - A landing page and the app on GitHub Pages, and GitHub releases with the built app, the AI skill and checksums.
 - Documentation for users, self-hosters and contributors, and a logo that joins the chin chevron of deq with Roj, the sun of the flag of Kurdistan.
 
-[Unreleased]: https://github.com/0xdolan/open-vitae/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/0xdolan/open-vitae/releases/tag/v1.0.0
+[Unreleased]: https://github.com/kanilabs/open-vitae/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/kanilabs/open-vitae/releases/tag/v1.0.0

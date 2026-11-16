@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://0xdolan.github.io/open-vitae/app/schema/resume.schema.json",
+  "$id": "https://kanilabs.github.io/open-vitae/app/schema/resume.schema.json",
   "title": "Open Vitae resume (schemaVersion 2)",
   "description": "A resume as stored, exported and imported by Open Vitae. Import also accepts this object wrapped in an export envelope ({ \"format\": \"open-vitae\", \"resume\": … }). Every id must be unique within the resume; rich text fields hold HTML that is sanitised on display.",
   "type": "object",
