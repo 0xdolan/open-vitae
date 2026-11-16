@@ -20,7 +20,7 @@ Previous: [Languages, offline use and accessibility](14-languages-and-offline.md
 
 ## The logo
 
-The logo joins two Kurdish signs, as the logos of its sibling projects [Roj](https://github.com/0xdolan/roj) and [Zimanyar](https://github.com/0xdolan/Zimanyar) do: a sign of **deq** and **Roj**, the sun of the flag of Kurdistan.
+The logo joins two Kurdish signs, as the logos of its sibling projects [Roj](https://github.com/kanilabs/roj) and [Zimanyar](https://github.com/kanilabs/Zimanyar) do: a sign of **deq** and **Roj**, the sun of the flag of Kurdistan.
 
 ### Deq
 
@@ -30,7 +30,7 @@ One description of deq fits a resume closely: a woman's deq “can be seen as a 
 
 ### The chin chevron: the V of Vitae
 
-Chin markings are among the most familiar places for deq, and the chevron (a V) is one of its basic strokes. The logo draws that chevron with the modules of [Deq](https://github.com/0xdolan/deq), the open design system of deq shapes: two 45-degree strokes from one point, with round ends. [3] The chevron is also the **V** of **Vitae**.
+Chin markings are among the most familiar places for deq, and the chevron (a V) is one of its basic strokes. The logo draws that chevron with the modules of [Deq](https://github.com/kanilabs/deq), the open design system of deq shapes: two 45-degree strokes from one point, with round ends. [3] The chevron is also the **V** of **Vitae**.
 
 When the deq artist Fatê Temel gave herself her first deq, on her chin, it was a sun. [2] The logo puts the two together.
 
@@ -98,7 +98,7 @@ The screenshots in `site/images/` are taken from the running app.
 
 1. “Deq (tattoo)”, Wikipedia. https://en.wikipedia.org/wiki/Deq_(tattoo)
 2. Jaclynn Ashly, “The deq tattooist: Preserving the ink of a disappearing culture”, Al Jazeera, 8 January 2023. https://www.aljazeera.com/features/longform/2023/1/8/deq-the-tattooist-preserving-the-ink-of-a-disappearing-culture
-3. Deq: traditional Kurdish tattoo shapes as an open, parametric design system (grid and module rules in `docs/design/shape-spec.md`). https://github.com/0xdolan/deq
+3. Deq: traditional Kurdish tattoo shapes as an open, parametric design system (grid and module rules in `docs/design/shape-spec.md`). https://github.com/kanilabs/deq
 4. “Kurdish Sun”, Wikipedia. https://en.wikipedia.org/wiki/Kurdish_Sun
 5. “Flag of Kurdistan”, Wikipedia. https://en.wikipedia.org/wiki/Flag_of_Kurdistan
 

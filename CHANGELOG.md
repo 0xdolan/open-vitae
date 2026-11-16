@@ -22,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Clearer hover, selected and focus states, a pointer cursor on everything clickable, and no doubled borders.
 - Spelling is checked by the browser by default; the LanguageTool grammar check stays strictly opt-in and now explains failures such as 404 and 405 (no LanguageTool server behind that address).
 - Section and entry icons in existing resumes now draw in the icon colour (black by default) instead of the accent colour.
+- Open Vitae moved to the Kanî Labs organisation on GitHub. The website, app, schema and source links now point to `kanilabs.github.io/open-vitae` and `github.com/kanilabs`.
 
 ### Fixed
 
@@ -69,5 +70,5 @@ The first release of Open Vitae: a private resume builder that runs entirely in 
 - A landing page and the app on GitHub Pages, and GitHub releases with the built app, the AI skill and checksums.
 - Documentation for users, self-hosters and contributors, and a logo that joins the chin chevron of deq with Roj, the sun of the flag of Kurdistan.
 
-[Unreleased]: https://github.com/0xdolan/open-vitae/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/0xdolan/open-vitae/releases/tag/v1.0.0
+[Unreleased]: https://github.com/kanilabs/open-vitae/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/kanilabs/open-vitae/releases/tag/v1.0.0

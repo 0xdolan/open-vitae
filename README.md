@@ -8,7 +8,7 @@
 
 _Pronounced OH-pən VEE-tie (/ˈoʊ.pən ˈviː.taɪ/). Vitae is Latin for “of life”, as in curriculum vitae._
 
-[Website](https://0xdolan.github.io/open-vitae/) · [Open the app](https://0xdolan.github.io/open-vitae/app/) · [Documentation](docs/README.md) · [The name and the logo](docs/15-brand-and-story.md)
+[Website](https://kanilabs.github.io/open-vitae/) · [Open the app](https://kanilabs.github.io/open-vitae/app/) · [Documentation](docs/README.md) · [The name and the logo](docs/15-brand-and-story.md)
 
 </div>
 
