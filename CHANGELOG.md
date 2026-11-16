@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- `scripts/release.sh` finishes a release: install, fonts, every check and both builds, then the pull request into `main`, the tag and the pull request back into `develop`. GitHub releases also carry the AI skill as a zip and SHA-256 checksums.
 - A logo that joins the chin chevron of deq, the traditional Kurdish tattoo, with Roj, the sun of the flag of Kurdistan, in the family of the Roj and Zimanyar logos; generated variants for every size, favicons, PWA and Apple icons, wordmarks and a social image.
 - The logo in the app header, and the deq green and Roj gold as brand colours.
 - A landing page for GitHub Pages, with the app under `app/`, screenshots and the story of the name and the logo.
