@@ -7,6 +7,12 @@ import {
   sameOriginEndpoint,
 } from './languagetool';
 
+/** The value, or a test failure if it is missing. */
+function must<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) throw new Error('Expected a value');
+  return value;
+}
+
 const origin = 'https://cv.example.org';
 
 describe('LanguageTool client', () => {
@@ -29,9 +35,9 @@ describe('LanguageTool client', () => {
   });
 
   it('posts the text as a form and validates the answer', async () => {
-    let sent: { url: string; init: RequestInit } | null = null;
+    const calls: { url: string; init: RequestInit }[] = [];
     const fetchImpl = (async (url: string, init: RequestInit) => {
-      sent = { url, init };
+      calls.push({ url, init });
       return new Response(
         JSON.stringify({
           matches: [
@@ -58,9 +64,10 @@ describe('LanguageTool client', () => {
     });
     expect(matches.map((m) => m.message)).toEqual(['Repeated word', 'Possible typo']);
     expect(matches[0]?.replacements).toEqual([]);
-    expect(sent!.url).toBe('https://cv.example.org/languagetool/v2/check');
-    expect(sent!.init.credentials).toBe('omit');
-    expect(String(sent!.init.body)).toBe('text=the+the+cat+thier&language=en-US');
+    const sent = must(calls[0]);
+    expect(sent.url).toBe('https://cv.example.org/languagetool/v2/check');
+    expect(sent.init.credentials).toBe('omit');
+    expect(String(sent.init.body)).toBe('text=the+the+cat+thier&language=en-US');
   });
 
   it('reports server problems plainly', async () => {

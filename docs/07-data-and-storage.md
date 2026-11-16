@@ -130,7 +130,7 @@ The file contains:
 {
   "format": "open-vitae",
   "formatVersion": 1,
-  "app": "Open Vitae 0.1.0",
+  "app": "Open Vitae 1.0.0",
   "exportedAt": "2026-11-14T19:06:02.000Z",
   "exportedAtText": "Saturday, 14 November 2026 at 19:06:02",
   "version": {

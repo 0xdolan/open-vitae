@@ -36,11 +36,11 @@ export function SafeHtml({ html, className, style, blockPrefix, include }: SafeH
   }, [clean, pieces, include]);
 
   if (output === '') return null;
-  // eslint-disable-next-line no-restricted-syntax -- sanitised above; only our own markers are added
   return (
     <div
       className={cn('ov-rich', className)}
       style={style}
+      // eslint-disable-next-line no-restricted-syntax -- sanitised above; only our own markers are added
       dangerouslySetInnerHTML={{ __html: output }}
     />
   );

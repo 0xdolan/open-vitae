@@ -1,0 +1,33 @@
+{
+  "fonts": [
+    {
+      "family": "Sahel",
+      "license": "OFL-1.1",
+      "source": "https://github.com/rastikerdar/sahel-font (v3.4.0)",
+      "files": [
+        {
+          "file": "sahel/Sahel.woff2",
+          "weight": "400",
+          "sha256": "df74c625136d60e981abbd32cc75624007e5b36cc41cc5327dff190d22b21772"
+        },
+        {
+          "file": "sahel/Sahel-Bold.woff2",
+          "weight": "700",
+          "sha256": "162c05c4a6c2e975b07390f923425bb5e170e00c8bd3deccd784f6cb4326d289"
+        }
+      ]
+    },
+    {
+      "family": "Estedad",
+      "license": "OFL-1.1",
+      "source": "https://github.com/aminabedi68/Estedad (8.5)",
+      "files": [
+        {
+          "file": "estedad/Estedad-wght.woff2",
+          "weight": "100 900",
+          "sha256": "b40ce2504e442a79e8adddf1d7b27bc4bd171bb94c9e7c93e0732d095bc051b0"
+        }
+      ]
+    }
+  ]
+}

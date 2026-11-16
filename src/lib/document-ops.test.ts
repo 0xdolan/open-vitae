@@ -29,6 +29,12 @@ import {
   updateSection,
 } from './document-ops';
 
+/** The value, or a test failure if it is missing. */
+function must<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) throw new Error('Expected a value');
+  return value;
+}
+
 const kinds = (doc: { sections: readonly { kind: string }[] }) => doc.sections.map((s) => s.kind);
 
 describe('arrayMove', () => {
@@ -79,16 +85,16 @@ describe('sections', () => {
 
     const removed = removeSection(hidden, id);
     expect(kinds(removed)).toEqual(['experience', 'skills']);
-    const restored = insertSection(removed, hidden.sections[1]!, 1);
+    const restored = insertSection(removed, must(hidden.sections[1]), 1);
     expect(restored.sections.map((s) => s.title)).toEqual(['Experience', 'Studies', 'Skills']);
-    expect(insertSection(restored, hidden.sections[1]!, 0)).toBe(restored);
+    expect(insertSection(restored, must(hidden.sections[1]), 0)).toBe(restored);
   });
 
   it('duplicates a section right after the original with new ids', () => {
     const doc = createResumeFromSample('tech');
-    const source = doc.sections[0]!;
+    const source = must(doc.sections[0]);
     const { doc: next, sectionId } = duplicateSection(doc, source.id);
-    const copy = next.sections[1]!;
+    const copy = must(next.sections[1]);
     expect(copy.id).toBe(sectionId);
     expect(copy.title).toBe(source.title);
     expect(copy.items.map((i) => i.title)).toEqual(source.items.map((i) => i.title));
@@ -100,28 +106,28 @@ describe('sections', () => {
 describe('items', () => {
   it('adds, edits, duplicates, moves and removes entries', () => {
     const base = createBlankResume('x');
-    const sectionId = base.sections[0]!.id;
+    const sectionId = must(base.sections[0]).id;
 
     const added = addItem(base, sectionId);
     const itemId = added.itemId ?? '';
     const edited = updateItem(added.doc, sectionId, itemId, { title: 'Engineer', visible: false });
-    expect(edited.sections[0]!.items[0]).toMatchObject({
+    expect(must(edited.sections[0]).items[0]).toMatchObject({
       title: 'Engineer',
       visible: false,
       descriptionHtml: '',
     });
 
     const duplicated = duplicateItem(edited, sectionId, itemId);
-    expect(duplicated.doc.sections[0]!.items).toHaveLength(2);
+    expect(must(duplicated.doc.sections[0]).items).toHaveLength(2);
     expect(duplicated.itemId).not.toBe(itemId);
 
     const second = addItem(duplicated.doc, sectionId);
     const renamed = updateItem(second.doc, sectionId, second.itemId ?? '', { title: 'Last' });
     const moved = moveItem(renamed, sectionId, 2, 0);
-    expect(moved.sections[0]!.items[0]?.title).toBe('Last');
+    expect(must(moved.sections[0]).items[0]?.title).toBe('Last');
 
     const removed = removeItem(moved, sectionId, itemId);
-    expect(removed.sections[0]!.items).toHaveLength(2);
+    expect(must(removed.sections[0]).items).toHaveLength(2);
     expect(resumeSchema.safeParse(removed).success).toBe(true);
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "open-vitae",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Open Vitae: a privacy-first, browser-only resume builder with full RTL/LTR support.",
   "license": "GPL-3.0-or-later",
@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && node --max-old-space-size=6144 node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "site:build": "node scripts/build-site.mjs",
     "brand": "node scripts/brand/make-logo.mjs",
@@ -70,9 +70,9 @@
     "prettier": "^3.6.0",
     "tailwindcss": "^4.1.0",
     "typescript": "~5.9.0",
-    "typescript-eslint": "^8.35.0",
+    "typescript-eslint": "^8.72.2",
     "vite": "^7.0.0",
     "vite-plugin-pwa": "^1.0.0",
-    "vitest": "^3.2.0"
+    "vitest": "^5.1.0"
   }
 }
