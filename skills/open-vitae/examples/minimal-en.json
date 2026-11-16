@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 2,
+  "id": "resume-sam-rivera",
+  "name": "Sam Rivera – backend",
+  "language": "en",
+  "createdAt": "2026-11-15T09:00:00.000Z",
+  "updatedAt": "2026-11-15T09:00:00.000Z",
+  "layout": {
+    "pageSize": "a4",
+    "orientation": "portrait",
+    "marginMm": 16,
+    "pageBreaks": "smart",
+    "direction": "ltr",
+    "fontFamily": "Manrope",
+    "baseFontSizePt": 10,
+    "lineHeight": 1.4,
+    "accentColor": "#1d4a2e",
+    "indentCh": 4,
+    "maxDepth": null
+  },
+  "profile": {
+    "fullName": "Sam Rivera",
+    "headline": "Backend engineer · Go, PostgreSQL",
+    "email": "sam.rivera@example.com",
+    "phone": "+1 555 0100",
+    "location": "Austin, TX",
+    "website": "https://sam.example.com",
+    "links": [{ "id": "link-github", "label": "GitHub", "url": "https://github.com/example" }],
+    "summaryHtml": "<p>Backend engineer with six years of experience building reliable payment services.</p>"
+  },
+  "sections": [
+    {
+      "id": "sec-experience",
+      "kind": "experience",
+      "title": "Experience",
+      "visible": true,
+      "breakBefore": false,
+      "items": [
+        {
+          "id": "item-exp-1",
+          "visible": true,
+          "title": "Senior Backend Engineer",
+          "subtitle": "Example Payments",
+          "dateRange": "2022 – Present",
+          "location": "Remote",
+          "url": "",
+          "descriptionHtml": "<ul><li><p>Cut checkout latency by 40% by moving fraud checks off the request path.</p></li><li><p>Led the move from a monolith to six Go services.</p></li></ul>"
+        }
+      ]
+    },
+    {
+      "id": "sec-education",
+      "kind": "education",
+      "title": "Education",
+      "visible": true,
+      "breakBefore": false,
+      "items": [
+        {
+          "id": "item-edu-1",
+          "visible": true,
+          "title": "BSc Computer Science",
+          "subtitle": "University of Texas",
+          "dateRange": "2014 – 2018",
+          "location": "Austin, TX",
+          "url": "",
+          "descriptionHtml": ""
+        }
+      ]
+    },
+    {
+      "id": "sec-skills",
+      "kind": "skills",
+      "title": "Skills",
+      "visible": true,
+      "breakBefore": false,
+      "items": [
+        {
+          "id": "item-skill-1",
+          "visible": true,
+          "title": "Languages",
+          "subtitle": "",
+          "dateRange": "",
+          "location": "",
+          "url": "",
+          "descriptionHtml": "<p>Go, Python, SQL</p>"
+        }
+      ]
+    }
+  ]
+}
