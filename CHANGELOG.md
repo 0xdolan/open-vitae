@@ -6,108 +6,46 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-15
+
+The first release of Open Vitae: a private resume builder that runs entirely in your browser, for left-to-right, right-to-left and mixed-direction resumes.
+
 ### Added
 
-- `scripts/release.sh` finishes a release: install, fonts, every check and both builds, then the pull request into `main`, the tag and the pull request back into `develop`. GitHub releases also carry the AI skill as a zip and SHA-256 checksums.
-- A logo that joins the chin chevron of deq, the traditional Kurdish tattoo, with Roj, the sun of the flag of Kurdistan, in the family of the Roj and Zimanyar logos; generated variants for every size, favicons, PWA and Apple icons, wordmarks and a social image.
-- The logo in the app header, and the deq green and Roj gold as brand colours.
-- A landing page for GitHub Pages, with the app under `app/`, screenshots and the story of the name and the logo.
-- The resume format as a published JSON Schema (`public/schema/resume.schema.json`, also served by the app), generated from the data model and checked by the tests.
-- An AI skill (`skills/open-vitae/`) that teaches assistants to write resumes Open Vitae imports, with tested examples, and `AGENTS.md` for coding agents.
-- Documentation page on the name, the logo and the brand.
-- The interface in Persian, Arabic and Central Kurdish (Sorani) as well as English, chosen from the browser's languages or the Interface language menu, with the page direction following the language, plural forms and local digits.
-- Sorani dates and times with Kurdish month and weekday names and Arabic-Indic digits, also in browsers without Sorani data.
-- Digits setting in Page setup: draw the resume with Western, Arabic-Indic or Persian digits, or as typed; links, email and phone numbers stay unchanged.
-- Date range helper for the Dates field with Gregorian, Persian (Solar Hijri), Islamic (Umm al-Qura) and Kurdish calendars, month names in the resume's language and the word for “present”.
-- Install app button, PNG and maskable app icons, an Apple touch icon and a richer web app manifest.
-- Offline notice, a message when the app is ready to work offline, and an update prompt that saves pending edits before reloading.
-- Optional grammar and spelling check with a self-hosted LanguageTool server: Grammar panel in the editor, a Docker Compose `grammar` profile and an nginx proxy at `/languagetool/`.
-- Documentation page for languages, offline use and accessibility.
-- Export window with PDF, Word (.docx), InDesign (.icml), PNG, JPG, SVG, JSON, Excel (.xlsx), CSV and Markdown.
-- PDF export with pdf-lib: exact paper size, pages as in the preview at 72, 150, 300 (default) or 600 DPI, clickable links, document details and a searchable text layer for Latin script.
-- Word export built from the resume: headings, lists, tables, links, the photo, fonts, colours and right-to-left text.
-- InDesign export as an ICML story with named paragraph and character styles and links.
-- PNG and JPG pages with the resolution stored in the file; several pages download as one zip.
-- Import of JSON backups (any version), CSV, Excel and Markdown resumes, with section kinds guessed from headings in English, Persian, Arabic and Kurdish.
-- Downloadable templates: a blank template or any sample as Excel, CSV, Markdown or JSON.
-- Documentation page for import and export.
-- Profile photo: add from a file or by dragging, crop (move, zoom, turn, Square, Portrait 4:5, Passport 35 × 45 mm or original shape) with mouse, touch or keyboard, and re-crop any time from the original picture.
-- Print-size guide for the photo: pixels needed and the resolution it will print at, rated Sharp, Acceptable or May look soft.
-- Photo shape (square, rounded, circle), width (10 to 80 mm) and position (start, end or centred above the name).
-- Icons for sections, entries and profile links, from 31 sets (Lucide, Font Awesome, Simple Icons brand logos, Tabler, Material Design and more), searchable by name and everyday words, with each set's licence shown.
-- Optional icons in the contact line.
-- Documentation page for photos and icons.
-- Real pages in the preview: each page at true size with its number, smart page breaks that keep headings with what follows and avoid splitting entries, and manual page breaks for sections and single entries.
-- Zoom for the preview: fit width, or 25% to 200%.
-- Print preview, and printing (also with Ctrl+P) that produces exactly the previewed pages at the right paper size, with no app interface and no hidden duplicate text in saved PDFs.
-- Thirteen paper sizes in groups: A3, A4, A5, A6, B4, B5, Letter, Legal, Tabloid, Executive, Statement, Folio and JIS B5, with their dimensions.
-- Notes under a page when a block is taller than a page, or when manual breaks let a page overflow.
-- Arabic and Kurdish (Sorani) sample resumes, with section titles in both languages.
-- Language setting in Page setup that renames default section titles and flips the direction when needed.
-- Documentation page for pages and printing.
-- Fonts: bundled Sahel and Estedad for Persian and Arabic (downloaded by `npm run fonts:fetch`, with checksums and licences), a searchable font picker, and the same fonts in the rich text toolbar.
-- Your own fonts: load TTF, OTF, WOFF or WOFF2 files, kept only in this browser, with a clear warning that clearing site data means loading them again; rename or remove them.
-- Optional Google Fonts, off until you agree, with a curated catalogue or any family by name.
-- Notice listing fonts a resume uses that this browser does not have, with the reason and a link to font settings.
-- Persian (RTL) sample resume, set in Sahel with Persian digits.
-- Documentation page for fonts and right-to-left text.
-- Full rich text editor for descriptions and the summary: headings, fonts, sizes, line spacing, bold, italic, underline, strikethrough, subscript, superscript, colours, highlight, alignment, paragraph direction, quotes, horizontal lines, links, emoji, cut, copy and paste as plain text.
-- Bulleted and numbered lists that nest, with indent size (default 4 spaces) and an optional nesting limit in Page setup.
-- Tables with rows, columns, merged cells, header row and a borderless option.
-- Images embedded from files, shrunk and stripped of metadata, with alignment and width.
-- Code blocks with syntax highlighting for 20 languages, in a monospaced font.
-- Find and replace (match case, whole words in any script), format painter, text presets, word and character counts, spell check toggle.
-- Pronunciation guide in the README.
-- Separate library and editor screens with addresses that survive reloads and work with the back button.
-- Navigator side panel: page setup, profile, sections in page order, add section, version history.
-- Drag and drop for sections, entries and links that works with a mouse, touch and the keyboard, with screen reader announcements.
-- Show or hide any section or entry without deleting it; duplicate and delete, with Undo for deleted sections.
-- Profile, section and entry forms with labels that match each kind of section, and a basic description editor.
-- Undo and redo for the whole document, with typing grouped into sensible steps.
-- Keyboard shortcuts: undo, redo and save now.
-- Clicking a section in the preview opens it for editing.
-- Version history: every save is kept as a numbered version with its date and time; name a version, restore or download any version. Keeping all versions is the recommended default.
-- JSON backup export with versioned, time-stamped file names such as `maya-okafor-v12-2026-11-14_19-05-23.json`.
-- Animated success message after exporting, saving a named version or restoring.
-- Resumes are saved in the browser (IndexedDB) with autosave, an unsaved/saving/saved indicator and a save on tab close.
-- Five sample resumes: technology, finance, cybersecurity, cloud and marketing. Using one creates an editable copy.
-- Resume library: new resume (LTR or RTL), open, duplicate, delete, and delete all data, each with confirmation.
-- Live, true-size page preview with page settings: size, orientation, direction, font, page-break mode, margin, text size, line height and accent colour.
-- Resume schema with validation on every read and write, format versions and migrations.
-- Open tabs stay in sync with each other.
-- Banner explaining that data stays in the browser, with a button to request persistent storage.
-- HTML sanitising for all rich text.
-- Mixed-direction text: English inside RTL resumes (and the reverse) keeps correct punctuation and alignment; Sahel is the fallback for Arabic-script characters in any font.
-- Project scaffold: Vite, React, TypeScript, Tailwind CSS, PWA plugin.
-- Page size catalogue (A4 default) with millimetre-to-pixel conversion and tests.
-- Font configuration: Manrope for LTR, Sahel for RTL, system Arial and Times New Roman.
-- Resume data model types.
-- Phase 1 shell with page size, orientation and direction switching.
-- Hardened Docker image and Compose file for local use.
-- GitHub Actions for CI, GitHub Pages deployment and tagged releases.
-- Git flow helper scripts and branch protection script.
-- Claude Code commands for the implement, review and eval steps.
-- Documentation set with navigation.
+**Writing and editing**
 
-### Changed
+- A library of resumes saved in the browser, with new (left-to-right or right-to-left), open, duplicate and delete, and eight samples to start from: technology, finance, cybersecurity, cloud, marketing, Persian, Arabic and Kurdish (Sorani).
+- An editor with a navigator for page setup, profile, sections and version history; drag and drop for sections, entries and links with the mouse, touch or keyboard; show or hide anything without deleting it; undo and redo.
+- A full rich text editor: headings, fonts, sizes, colours, alignment, paragraph direction, nested lists, tables, links, images, code blocks, find and replace, format painter and text presets.
+- A profile photo with cropping, a print-size guide, shape, width and position; more than 50,000 searchable icons for sections, entries, links and the contact line.
+- A date range helper with the Gregorian, Persian, Islamic and Kurdish calendars.
+- Autosave, with every save kept as a dated version that can be named, restored or downloaded.
 
-- The storage notice wraps under its text on narrow screens.
-- Headings that receive focus after navigation no longer show a focus ring.
-- Code formatted with Prettier.
-- Validation messages, sample names, font notices and every dialog follow the interface language.
-- Focus moves to the new view's heading after navigating; the editor has a page heading for screen readers.
-- Counts and labels that were too light now meet WCAG AA contrast.
-- **Export JSON** in the editor header became **Export**, with every format.
-- Import and export code loads only when used, keeping the first load small.
-- Version history stores the original photo picture once, like the photo itself.
-- Icon sets load on demand, one file per set; only Lucide is kept for offline use from the start.
-- Margins shrink automatically on small paper so at least 20 mm is left for content.
-- “Start on a new page” on a section now works in smart mode too, and entries can start on a new page.
-- The font stack adds Sahel only when the chosen font does not cover Arabic script, then a fallback of the right kind.
-- Resume format version 2: indent size and nesting limit. Older resumes and backups are upgraded automatically.
-- The sanitiser now allows the editor's formatting through strict allowlists and removes remote images entirely.
-- Email and link checks are now warnings under the field and never stop the resume from saving. Only safe addresses are ever turned into links.
+**Pages and printing**
 
-### Fixed
+- Real pages at true size in 13 paper sizes (A4 by default), with smart or manual page breaks, zoom, and a print preview that prints exactly what you see.
+- Bundled Persian and Arabic fonts (Sahel, Estedad), your own font files, and optional Google Fonts that stay off until you agree.
+- A choice of Western, Arabic-Indic or Persian digits on the page; links, email and phone numbers are never changed.
 
-- Ampersand in the finance sample is now properly escaped.
+**Import and export**
+
+- Export to PDF with clickable links, Word, InDesign (ICML), PNG, JPG and SVG at 72 to 600 DPI, and to JSON, Excel, CSV and Markdown.
+- Import from JSON backups, Excel, CSV and Markdown, with downloadable templates.
+- The resume format published as a JSON Schema, and an AI skill that teaches assistants to write resumes Open Vitae imports.
+
+**Languages, privacy and offline use**
+
+- The interface in English, Persian, Arabic and Kurdish (Sorani), with right-to-left layout, plural forms and local digits.
+- Nothing leaves the browser: no account, no server, no analytics. Resumes, photos and fonts are stored on the device, and a notice explains how to keep them.
+- Installable as an app that works offline and asks before updating.
+- Optional grammar checking with a LanguageTool server you run yourself.
+- An accessibility pass to WCAG 2.2 AA: keyboard use throughout, screen reader names and announcements, and sufficient contrast.
+
+**Running and contributing**
+
+- A hardened Docker image and Compose file, with optional development and grammar profiles.
+- A landing page and the app on GitHub Pages, and GitHub releases with the built app, the AI skill and checksums.
+- Documentation for users, self-hosters and contributors, and a logo that joins the chin chevron of deq with Roj, the sun of the flag of Kurdistan.
+
+[Unreleased]: https://github.com/0xdolan/open-vitae/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/0xdolan/open-vitae/releases/tag/v1.0.0

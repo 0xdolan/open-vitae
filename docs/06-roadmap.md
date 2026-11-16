@@ -10,19 +10,19 @@ Previous: [Docker](05-docker.md) · Next: [Data and storage](07-data-and-storage
 
 ## Phases
 
-| #   | Phase                         | Scope                                                                                                                                                                               | Status  |
-| --- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| 1   | Scaffold                      | Tooling, git flow, Docker, CI, Pages, docs skeleton                                                                                                                                 | Done    |
-| 2   | Data and samples              | Runtime validation, local storage, drafts, version history, JSON backup export, five sample resumes (tech, finance, cybersecurity, cloud, marketing)                                | Done    |
-| 3   | Editor shell                  | Library and editor views, navigator panel, accessible drag and drop for sections, entries and links, show/hide, profile and entry forms, undo/redo, shortcuts                       | Done    |
-| 4   | Rich text editor              | Formatting, lists with nesting and indent settings, tables, links, images, code blocks with highlighting, emoji, find and replace, format painter, presets, spell check, sanitising | Done    |
-| 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, RTL sample resume                                                                                          | Done    |
-| 6   | Pages                         | True-size preview, all page sizes, margins, smart and manual page breaks, zoom, print preview                                                                                       | Done    |
-| 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search                                                                                                       | Done    |
-| 8   | Import and export             | JSON, CSV, Excel, Markdown in; plus PDF, Word, InDesign (ICML), PNG, JPG, SVG out; DPI control; templates                                                                           | Done    |
-| 9   | PWA, accessibility, languages | Install and offline polish, WCAG AA audit, translated interface (Persian, Arabic, Sorani), numerals and calendars, optional self-hosted grammar checking (LanguageTool)             | Done    |
-| 10  | Brand and docs                | Logo from the deq chevron and Roj, icon set, landing page, screenshots, social images, published resume JSON Schema, AI skill                                                       | Done    |
-| 11  | First release                 | `v1.0.0` tagged and published                                                                                                                                                       | Planned |
+| #   | Phase                         | Scope                                                                                                                                                                               | Status |
+| --- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | Scaffold                      | Tooling, git flow, Docker, CI, Pages, docs skeleton                                                                                                                                 | Done   |
+| 2   | Data and samples              | Runtime validation, local storage, drafts, version history, JSON backup export, five sample resumes (tech, finance, cybersecurity, cloud, marketing)                                | Done   |
+| 3   | Editor shell                  | Library and editor views, navigator panel, accessible drag and drop for sections, entries and links, show/hide, profile and entry forms, undo/redo, shortcuts                       | Done   |
+| 4   | Rich text editor              | Formatting, lists with nesting and indent settings, tables, links, images, code blocks with highlighting, emoji, find and replace, format painter, presets, spell check, sanitising | Done   |
+| 5   | Typography and direction      | Sahel and Estedad bundled, Google Fonts picker, user fonts with warning, RTL sample resume                                                                                          | Done   |
+| 6   | Pages                         | True-size preview, all page sizes, margins, smart and manual page breaks, zoom, print preview                                                                                       | Done   |
+| 7   | Images and icons              | Photo upload, crop tool, size guide, alignment; Lucide and react-icons search                                                                                                       | Done   |
+| 8   | Import and export             | JSON, CSV, Excel, Markdown in; plus PDF, Word, InDesign (ICML), PNG, JPG, SVG out; DPI control; templates                                                                           | Done   |
+| 9   | PWA, accessibility, languages | Install and offline polish, WCAG AA audit, translated interface (Persian, Arabic, Sorani), numerals and calendars, optional self-hosted grammar checking (LanguageTool)             | Done   |
+| 10  | Brand and docs                | Logo from the deq chevron and Roj, icon set, landing page, screenshots, social images, published resume JSON Schema, AI skill                                                       | Done   |
+| 11  | First release                 | `v1.0.0` tagged and published                                                                                                                                                       | Done   |
 
 ## Decisions already made
 
