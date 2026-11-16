@@ -74,7 +74,6 @@ export default defineConfig({
         short_name: 'Open Vitae',
         description: 'Privacy-first resume builder that runs entirely in your browser.',
         lang: 'en',
-        dir: 'auto',
         categories: ['productivity', 'business'],
         theme_color: '#1d4a2e',
         background_color: '#f8f8f8',
