@@ -12,7 +12,7 @@ RUN npm run build
 
 # ---- Runtime stage ---------------------------------------------------------
 # Unprivileged nginx: runs as a non-root user and listens on 8080.
-FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
+FROM nginxinc/nginx-unprivileged:1.31-alpine AS runtime
 
 COPY docker/security-headers.inc /etc/nginx/conf.d/security-headers.inc
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
