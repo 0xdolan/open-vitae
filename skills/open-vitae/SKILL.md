@@ -33,19 +33,20 @@ Rules the import enforces:
 
 Layout values:
 
-| Field            | Values                                                                                                                                           |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pageSize`       | `a4` (default), `letter`, `legal`, `a3`, `a5`, `a6`, `b4`, `b5`, `jis-b5`, `tabloid`, `executive`, `statement`, `folio`                          |
-| `orientation`    | `portrait` or `landscape`                                                                                                                        |
-| `marginMm`       | 0 to 50; 16 is the default                                                                                                                       |
-| `pageBreaks`     | `smart` or `manual`                                                                                                                              |
-| `direction`      | `ltr` or `rtl`                                                                                                                                   |
-| `fontFamily`     | `Manrope` for left-to-right, `Sahel` (Persian, Arabic) or `Estedad` (Kurdish) for right-to-left; `Arial` and `Times New Roman` also work offline |
-| `baseFontSizePt` | 6 to 24; 10 is the default                                                                                                                       |
-| `lineHeight`     | 1 to 3; 1.4 for Latin script, 1.6 for Arabic script                                                                                              |
-| `indentCh`       | 1 to 12; 4 is the default                                                                                                                        |
-| `maxDepth`       | `null` (unlimited) or 1 to 20                                                                                                                    |
-| `digits`         | optional: `latn`, `arab` (٠١٢٣) or `arabext` (۰۱۲۳); leave it out to keep digits as typed                                                        |
+| Field              | Values                                                                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pageSize`         | `a4` (default), `letter`, `legal`, `a3`, `a5`, `a6`, `b4`, `b5`, `jis-b5`, `tabloid`, `executive`, `statement`, `folio`                                             |
+| `orientation`      | `portrait` or `landscape`                                                                                                                                           |
+| `marginMm`         | 0 to 50; 16 is the default                                                                                                                                          |
+| `pageBreaks`       | `smart` or `manual`                                                                                                                                                 |
+| `direction`        | `ltr` or `rtl`                                                                                                                                                      |
+| `fontFamily`       | `Manrope` for left-to-right, `Sahel` (Persian, Arabic) or `Estedad` (Kurdish) for right-to-left; `Arial` and `Times New Roman` also work offline                    |
+| `baseFontSizePt`   | 6 to 24; 10 is the default                                                                                                                                          |
+| `lineHeight`       | 1 to 3; 1.4 for Latin script, 1.6 for Arabic script                                                                                                                 |
+| `indentCh`         | 1 to 12; 4 is the default                                                                                                                                           |
+| `maxDepth`         | `null` (unlimited) or 1 to 20                                                                                                                                       |
+| `digits`           | optional: `latn`, `arab` (٠١٢٣) or `arabext` (۰۱۲۳); leave it out to keep digits as typed                                                                           |
+| `header`, `footer` | optional: `{ "enabled": true, "text": "{page} / {pages}", "align": "center", "firstPage": true }`; `align` is `start`, `center` or `end`; text up to 200 characters |
 
 Section `kind` is one of `experience`, `education`, `skills`, `projects`, `certifications`, `languages`, `awards`, `publications`, `volunteering`, `references`, `interests` or `custom`. Array order is page order. What the entry fields mean depends on the kind:
 

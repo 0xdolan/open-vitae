@@ -44,7 +44,8 @@ ResumeDocument
 ├── layout               page size, orientation, margin, page breaks, direction,
 │                        font, base text size, line height, accent colour,
 │                        indent size (indentCh), nesting limit (maxDepth),
-│                        showContactIcons?, digits? (latn, arab, arabext)
+│                        showContactIcons?, digits? (latn, arab, arabext),
+│                        header?, footer? (enabled, text, align, firstPage)
 ├── profile              name, headline, email, phone, location, website,
 │                        links[], summary (rich text), name and headline styles
 ├── photo?               finished photo (data URL), alignment, shape, width,

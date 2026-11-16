@@ -6,9 +6,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+
+- An optional page header and footer in **Page setup**, with `{page}` and `{pages}` placeholders for page numbers, start, centre or end alignment and a choice to skip the first page. They show in the preview, printing and page exports, and as real headers and footers in Word.
+
 ### Changed
 
 - Open Vitae moved to the Kanî Labs organisation on GitHub. The website, app, schema and source links now point to `kanilabs.github.io/open-vitae` and `github.com/kanilabs`.
+
+### Fixed
+
+- The rich text toolbar's font menu now lists Google Fonts in their own group, next to the bundled, system and your own fonts, and loads a Google font when you pick it.
+- The website screenshots now show the bundled Manrope, Sahel and Estedad fonts.
 
 ## [1.0.0] - 2026-11-15
 
