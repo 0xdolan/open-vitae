@@ -67,7 +67,15 @@ Icons can be added to:
 - **Links:** the **Icon** button on each profile link, for example a GitHub logo.
 - **The contact line:** tick **Page setup → Icons in the contact line** to show icons before the email, phone, location, website and links.
 
-The icon window searches by name in the chosen set. Typing everyday words works too: "email" finds mail icons, "location" finds map pins, "website" finds globes and "job" finds briefcases. Icons take the size and colour of the text next to them, and are hidden from screen readers because the text already says what they mean.
+The icon window searches by name in the chosen set. Typing everyday words works too: "email" finds mail icons, "location" finds map pins, "website" finds globes and "job" finds briefcases. Icons take the size of the text next to them, and are hidden from screen readers because the text already says what they mean.
+
+Icon colours, from most to least specific:
+
+1. **The icon's own colour:** the **Icon colour** control at the bottom of the icon window, once an icon is chosen.
+2. **A contact icon's colour:** with contact icons on, **Page setup → Icons** has a colour for the email, phone, location and website icons.
+3. **The resume's icon colour:** **Page setup → Icons → Icon colour**, black by default.
+
+Older resumes have no icon colour saved, so their section and entry icons, which used to take the accent colour of the section title, now draw in black. Set **Icon colour** to the accent colour to get the old look back.
 
 ## Icon sets and licences
 
