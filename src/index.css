@@ -8,7 +8,8 @@
 
   --color-paper: #fafaf7;
   --color-ink: #1c1917;
-  --color-brand: #14532d;
+  --color-brand: #1d4a2e;
+  --color-sun: #febd11;
   --color-brand-soft: #dcfce7;
 }
 
@@ -31,6 +32,12 @@
   :focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 2px;
+  }
+
+  /* Headings and the main area receive focus from code after navigation; they are not controls. */
+  h1[tabindex='-1']:focus,
+  main[tabindex='-1']:focus {
+    outline: none;
   }
 }
 

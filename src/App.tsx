@@ -12,6 +12,7 @@ import { Toaster } from '@/components/ui/Toaster';
 import { useHashRoute } from '@/hooks/useHashRoute';
 import { applyDocumentLocale, useT } from '@/i18n';
 import { useFontStore, useResumeStore } from '@/stores';
+import logoUrl from '../assets/brand/logo.svg';
 
 function Messages() {
   const t = useT();
@@ -48,15 +49,18 @@ function LibraryView() {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1
-            className="text-brand text-3xl font-bold tracking-tight"
-            tabIndex={-1}
-            id="page-title"
-          >
-            {t('app.name')}
-          </h1>
-          <p className="text-stone-600">{t('app.tagline')}</p>
+        <div className="flex items-center gap-3">
+          <img src={logoUrl} alt="" width={56} height={56} className="size-14 shrink-0" />
+          <div>
+            <h1
+              className="text-brand text-3xl font-bold tracking-tight"
+              tabIndex={-1}
+              id="page-title"
+            >
+              {t('app.name')}
+            </h1>
+            <p className="text-stone-600">{t('app.tagline')}</p>
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <InstallButton />

@@ -67,7 +67,7 @@ export default defineConfig({
       // Ask before switching to a new version (src/pwa/register.ts saves first).
       registerType: 'prompt',
       injectRegister: false,
-      includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
+      includeAssets: ['favicon.svg', 'favicon.ico', 'icons/apple-touch-icon.png'],
       manifest: {
         id: base,
         name: 'Open Vitae',
@@ -76,8 +76,8 @@ export default defineConfig({
         lang: 'en',
         dir: 'auto',
         categories: ['productivity', 'business'],
-        theme_color: '#14532d',
-        background_color: '#fafaf7',
+        theme_color: '#1d4a2e',
+        background_color: '#f8f8f8',
         display: 'standalone',
         display_override: ['window-controls-overlay', 'standalone'],
         orientation: 'any',
