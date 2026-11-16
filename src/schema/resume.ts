@@ -153,6 +153,15 @@ export const photoSchema = z.object({
     .optional(),
 });
 
+/** A page header or footer: plain text with {page} and {pages} placeholders. */
+export const pageBandSchema = z.object({
+  enabled: z.boolean(),
+  text: text(LIMITS.pageBandText),
+  align: z.enum(HORIZONTAL_ALIGNS),
+  /** Also draw it on the first page. */
+  firstPage: z.boolean(),
+});
+
 export const layoutSchema = z.object({
   pageSize: z.enum(PAGE_SIZE_IDS),
   orientation: z.enum(ORIENTATIONS),
@@ -171,6 +180,9 @@ export const layoutSchema = z.object({
   showContactIcons: z.boolean().optional(),
   /** Digits the resume is drawn with; absent means "as typed". Links, email and phone are never changed. */
   digits: z.enum(DIGIT_SYSTEMS).optional(),
+  /** Optional header and footer drawn inside the top and bottom margins. Absent means none. */
+  header: pageBandSchema.optional(),
+  footer: pageBandSchema.optional(),
 });
 
 /** Collect every id in a document so duplicates can be rejected. */
@@ -215,5 +227,6 @@ export type ProfileLink = z.infer<typeof profileLinkSchema>;
 export type Profile = z.infer<typeof profileSchema>;
 export type ResumePhoto = z.infer<typeof photoSchema>;
 export type PhotoCrop = z.infer<typeof photoCropSchema>;
+export type PageBand = z.infer<typeof pageBandSchema>;
 export type ResumeLayout = z.infer<typeof layoutSchema>;
 export type ResumeDocument = z.infer<typeof resumeSchema>;

@@ -61,6 +61,8 @@ Google Fonts are off until you agree. The consent box explains that Google recei
 
 After you agree, pick a font from the Google group, or type any family name and choose **Load '…' from Google Fonts**. Your loaded families are remembered and loaded again on your next visit.
 
+The same Google group appears in the rich text toolbar's font menu, so a single heading or phrase can use a Google font while the rest of the resume keeps the page font.
+
 ## Missing fonts
 
 When a resume uses a font this browser does not have (a bundled font that is not installed, a user font from another browser, or a Google font without consent), a notice above the editor names each font and the reason. A similar font is shown until it is available. **Open font settings** jumps to the Fonts panel.

@@ -8,6 +8,7 @@ Previous: [Fonts and right-to-left text](10-fonts.md) · Next: [Photos and icons
 - [The page preview](#the-page-preview)
 - [Smart page breaks](#smart-page-breaks)
 - [Manual page breaks](#manual-page-breaks)
+- [Page header and footer](#page-header-and-footer)
 - [Print preview and printing](#print-preview-and-printing)
 - [When something does not fit](#when-something-does-not-fit)
 - [How pagination works](#how-pagination-works)
@@ -53,6 +54,17 @@ Set **Page setup → Page breaks** to **Manual** to turn the automatic rules off
 
 A break on the first entry of a section is moved before the section heading, so the heading is never left behind.
 
+## Page header and footer
+
+Both are optional and off by default. Turn them on in **Page setup → Page header** and **Page footer**.
+
+- **Text** is plain text. `{page}` becomes the page number and `{pages}` the number of pages; **Insert page number** and **Insert page count** add them at the cursor. A new header or footer starts as `{page} / {pages}` (for example "2 / 3").
+- **Alignment** is start, centre or end, so it follows the resume's direction: start is the left in a left-to-right resume and the right in a right-to-left one.
+- **Show on the first page** can be turned off, for example to keep page 1 clean and number the rest.
+- The text is drawn in the middle of the top or bottom margin, in the resume's font at 80% of the base text size. It never moves the content or changes the page breaks. With a margin of 0 there is no room, so nothing is drawn; about 10 mm or more works well.
+- The page numbers use the resume's **Digits** setting, so a Kurdish, Arabic or Persian resume can show ١ / ٢ or ۱ / ۲.
+- They appear in the preview, print preview, printing and every page export (PDF, PNG, JPG, SVG). **Word** gets a real header and footer with Word page-number fields; Word draws those numbers with its own digits. InDesign stories, JSON, Excel, CSV and Markdown carry no page header or footer (JSON keeps the settings).
+
 ## Print preview and printing
 
 **Print preview** (in the preview toolbar) opens every page full screen, with zoom. **Print or save as PDF** opens the browser's print dialog, which also offers **Save as PDF**.
@@ -86,6 +98,8 @@ If one block is taller than a whole page (a very long paragraph or a large table
 | `src/lib/rich-blocks.ts`                | Split rich text into page blocks and join them again |
 | `src/components/pages/FlowMeasure.tsx`  | Invisible layout and measuring                       |
 | `src/components/pages/PageSheet.tsx`    | One page at true size                                |
+| `src/components/pages/PageBand.tsx`     | The page header or footer inside a margin            |
+| `src/lib/page-bands.ts`                 | Header and footer text, page numbers, first page     |
 | `src/components/pages/PageStack.tsx`    | The stacked pages with zoom and notes                |
 | `src/components/pages/PrintPreview.tsx` | Full-screen print preview                            |
 | `src/components/pages/PrintLayer.tsx`   | What the browser prints, and the @page size          |
