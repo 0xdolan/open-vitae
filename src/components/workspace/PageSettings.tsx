@@ -12,6 +12,7 @@ import {
   PAGE_SIZES,
   type PageSizeGroup,
 } from '@/config/page-sizes';
+import { PageBandFields } from '@/components/workspace/PageBandFields';
 import { isDigitSystem } from '@/lib/digits';
 import { clamp } from '@/lib/format';
 import type { ResumeLayout } from '@/schema/resume';
@@ -275,6 +276,17 @@ export function PageSettings({ layout, onChange, language, onLanguageChange }: P
           onChange={(e) => onChange({ accentColor: e.target.value })}
         />
       </Field>
+
+      <PageBandFields
+        kind="header"
+        band={layout.header}
+        onChange={(header) => onChange({ header })}
+      />
+      <PageBandFields
+        kind="footer"
+        band={layout.footer}
+        onChange={(footer) => onChange({ footer })}
+      />
     </fieldset>
   );
 }

@@ -32,6 +32,8 @@ export const LIMITS = {
   indentCh: { min: 1, max: 12 },
   /** Optional limit on list nesting and paragraph indent levels. */
   maxDepth: { min: 1, max: 20 },
+  /** Text of the page header or footer. */
+  pageBandText: 200,
 } as const;
 
 export const DEFAULT_INDENT_CH = 4;
@@ -39,3 +41,12 @@ export const DEFAULT_INDENT_CH = 4;
 /** Digit sets a resume can be drawn with: Western (0123), Arabic-Indic (٠١٢٣) and Persian (۰۱۲۳). */
 export const DIGIT_SYSTEMS = ['latn', 'arab', 'arabext'] as const;
 export type DigitSystem = (typeof DIGIT_SYSTEMS)[number];
+
+/** Placeholders the page header and footer text can contain. */
+export const PAGE_BAND_TOKENS = { page: '{page}', pages: '{pages}' } as const;
+
+/** Text a new header or footer starts with. */
+export const DEFAULT_PAGE_BAND_TEXT = '{page} / {pages}';
+
+/** Header and footer text size relative to the resume's base size. */
+export const PAGE_BAND_FONT_SCALE = 0.8;

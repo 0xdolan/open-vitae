@@ -15,6 +15,12 @@ async function partsOf(blob: Blob) {
     rels: await read('word/_rels/document.xml.rels'),
     numbering: await read('word/numbering.xml'),
     core: await read('docProps/core.xml'),
+    headers: (
+      await Promise.all(zip.file(/^word\/header\d+\.xml$/).map((file) => file.async('string')))
+    ).join(''),
+    footers: (
+      await Promise.all(zip.file(/^word\/footer\d+\.xml$/).map((file) => file.async('string')))
+    ).join(''),
   };
 }
 
@@ -49,5 +55,28 @@ describe('docx export', () => {
     // US Letter landscape: 11 × 8.5 inches = 15840 × 12240 twips.
     expect(document).toMatch(/w:w="1584\d"/);
     expect(document).toContain('w:orient="landscape"');
+  });
+
+  it('writes the page header and footer with Word page fields', async () => {
+    const base = createResumeFromSample('tech', 'Tech');
+    const doc = {
+      ...base,
+      layout: {
+        ...base.layout,
+        header: { enabled: true, text: 'Maya Okafor', align: 'end' as const, firstPage: false },
+        footer: {
+          enabled: true,
+          text: 'Page {page} of {pages}',
+          align: 'center' as const,
+          firstPage: true,
+        },
+      },
+    };
+    const { document, headers, footers } = await partsOf(await buildDocx(doc));
+    expect(headers).toContain('Maya Okafor');
+    expect(footers).toContain('Page ');
+    expect(footers).toContain('PAGE');
+    expect(footers).toContain('NUMPAGES');
+    expect(document).toContain('w:titlePg');
   });
 });
