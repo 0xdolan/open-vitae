@@ -149,5 +149,6 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    setupFiles: ['src/test/jsdom-blob.ts'],
   },
 });
