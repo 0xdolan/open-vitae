@@ -24,7 +24,7 @@ Open Vitae is a static web app with no backend.
 - **Content Security Policy.** No inline or third-party scripts, no `eval`, no plugins, no form submission.
 - **Untrusted input.** Imported files are schema-validated. Rich text is sanitised whenever it is shown, with allowlists for tags, inline styles and classes.
 - **No remote content in resumes.** Only embedded images are allowed, so opening a resume never contacts another site.
-- **Supply chain.** Dependabot updates, `npm audit` in CI, lockfile installs (`npm ci`).
+- **Supply chain.** Dependencies are updated by hand, `npm audit` runs in CI, and installs use the lockfile (`npm ci`).
 - **Containers.** Non-root, read-only filesystem, all capabilities dropped, localhost-only ports.
 
 ## Out of scope
