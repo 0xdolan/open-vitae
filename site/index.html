@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <title>Open Vitae: a private resume builder that runs in your browser</title>
+    <meta
+      name="description"
+      content="Free and open-source resume builder. Write, design and export your resume without an account; nothing leaves your browser. LTR and RTL, works offline."
+    />
+    <meta name="theme-color" content="#1d4a2e" />
+    <link rel="icon" href="favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Open Vitae" />
+    <meta
+      property="og:description"
+      content="A private resume builder that runs entirely in your browser."
+    />
+    <meta property="og:image" content="https://0xdolan.github.io/open-vitae/social-preview.png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <a class="brand" href="./" aria-label="Open Vitae home">
+        <img src="logo.svg" alt="" width="40" height="40" />
+        <span>Open Vitae</span>
+      </a>
+      <nav aria-label="Main">
+        <a href="#features">Features</a>
+        <a href="#languages">Languages</a>
+        <a href="#story">The name</a>
+        <a href="#self-host">Self-host</a>
+        <a href="https://github.com/0xdolan/open-vitae">GitHub</a>
+      </nav>
+      <a class="button primary small" href="app/">Open the app</a>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero-text">
+          <h1>Your resume, in your browser.</h1>
+          <p class="lead">
+            Open Vitae is a free resume builder that keeps everything on your device. No account, no
+            server, no tracking. Write it, lay it out on real pages, and export it to PDF, Word or
+            anything else you need.
+          </p>
+          <p class="actions">
+            <a class="button primary" href="app/">Start writing</a>
+            <a class="button" href="https://github.com/0xdolan/open-vitae">Source on GitHub</a>
+          </p>
+          <ul class="facts" aria-label="At a glance">
+            <li>Free software, GPL-3.0</li>
+            <li>Left-to-right and right-to-left</li>
+            <li>Works offline</li>
+          </ul>
+        </div>
+        <figure class="shot hero-shot">
+          <img
+            src="images/editor.webp"
+            width="1440"
+            height="900"
+            alt="The Open Vitae editor: the section list, a form for the profile, and the resume drawn on an A4 page."
+          />
+        </figure>
+      </section>
+
+      <section class="privacy" aria-labelledby="privacy-title">
+        <h2 id="privacy-title" class="sr-only">Privacy</h2>
+        <div>
+          <strong>Nothing leaves your browser.</strong>
+          Resumes, photos, fonts and every saved version stay on your device. The app has no
+          backend, no analytics and no cookies.
+        </div>
+        <div>
+          <strong>Every save is a version.</strong>
+          Each save is kept with its date and time, so you can go back to any earlier state.
+        </div>
+        <div>
+          <strong>Yours to take away.</strong>
+          Export a full JSON backup at any time and import it anywhere Open Vitae runs.
+        </div>
+      </section>
+
+      <section id="features" aria-labelledby="features-title">
+        <h2 id="features-title">Everything a resume needs</h2>
+        <ul class="features">
+          <li>
+            <h3>Real pages</h3>
+            <p>A4, US Letter and every common paper size, with smart page breaks or your own.</p>
+          </li>
+          <li>
+            <h3>Export anywhere</h3>
+            <p>
+              PDF with clickable links, Word, InDesign, PNG, JPG and SVG at up to 600 DPI, and JSON,
+              Excel, CSV and Markdown.
+            </p>
+          </li>
+          <li>
+            <h3>Import and templates</h3>
+            <p>
+              Bring a resume in from JSON, Excel, CSV or Markdown, or fill in a downloadable
+              template.
+            </p>
+          </li>
+          <li>
+            <h3>A full text editor</h3>
+            <p>Lists, tables, links, colours, find and replace, and a format painter.</p>
+          </li>
+          <li>
+            <h3>Drag to arrange</h3>
+            <p>Reorder sections and entries with the mouse, touch or the keyboard.</p>
+          </li>
+          <li>
+            <h3>Fonts and photos</h3>
+            <p>
+              Bundled, system, Google or your own fonts; crop your photo with a print-size guide.
+            </p>
+          </li>
+          <li>
+            <h3>Installable</h3>
+            <p>Install it like an app. It works offline and asks before updating.</p>
+          </li>
+          <li>
+            <h3>Grammar, privately</h3>
+            <p>Optional grammar checking with a LanguageTool server you run yourself.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="gallery" aria-labelledby="gallery-title">
+        <h2 id="gallery-title">A closer look</h2>
+        <div class="grid">
+          <figure class="shot">
+            <img
+              src="images/library.webp"
+              width="1440"
+              height="900"
+              loading="lazy"
+              alt="My resumes: saved resumes and eight samples to start from."
+            />
+            <figcaption>Start blank or from one of eight samples.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img
+              src="images/editor-section.webp"
+              width="1440"
+              height="900"
+              loading="lazy"
+              alt="Editing the Experience section, with the section outlined on the page preview."
+            />
+            <figcaption>Edit a section and see it on the page as you type.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img
+              src="images/export.webp"
+              width="1440"
+              height="900"
+              loading="lazy"
+              alt="The export window with document, image and data formats and a resolution setting."
+            />
+            <figcaption>Ten export formats, from PDF to InDesign.</figcaption>
+          </figure>
+          <figure class="shot phone">
+            <img
+              src="images/phone-library.webp"
+              width="780"
+              height="1688"
+              loading="lazy"
+              alt="Open Vitae on a phone."
+            />
+            <figcaption>Works on phones too.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="languages" class="languages" aria-labelledby="languages-title">
+        <div>
+          <h2 id="languages-title">Built for every direction</h2>
+          <p>
+            Right-to-left resumes are first-class, not an afterthought. Write in Persian, Arabic or
+            Kurdish with mixed English terms, choose Western, Arabic-Indic or Persian digits, and
+            write dates in the Gregorian, Persian, Islamic or Kurdish calendar.
+          </p>
+          <p>
+            The app itself speaks English,
+            <bdi lang="fa" dir="rtl">فارسی</bdi>, <bdi lang="ar" dir="rtl">العربية</bdi> and
+            <bdi lang="ckb" dir="rtl">کوردی</bdi>.
+          </p>
+        </div>
+        <figure class="shot">
+          <img
+            src="images/editor-kurdish.webp"
+            width="1440"
+            height="900"
+            loading="lazy"
+            alt="A Kurdish (Sorani) resume edited with the interface in Kurdish, laid out right to left."
+          />
+        </figure>
+      </section>
+
+      <section id="story" class="story" aria-labelledby="story-title">
+        <img src="logo.svg" alt="The Open Vitae logo" width="180" height="180" />
+        <div>
+          <h2 id="story-title">The name and the mark</h2>
+          <p>
+            <em>Curriculum vitae</em> means “the course of a life”. The logo joins two Kurdish
+            signs. The <strong>chin chevron</strong> of <em>deq</em>, the traditional Kurdish
+            tattoo, is also the V of Vitae. <strong>Roj</strong>, the 21-ray sun of the flag of
+            Kurdistan, shines in its opening, where the sign would have its dot.
+          </p>
+          <p>
+            A deq has been described as a diary of the life of the person who wears it; a resume is
+            the same story, written for the next step.
+            <a href="https://github.com/0xdolan/open-vitae/blob/main/docs/15-brand-and-story.md"
+              >Read the story</a
+            >.
+          </p>
+          <p class="family">
+            Sibling projects:
+            <a href="https://github.com/0xdolan/roj">Roj</a>,
+            <a href="https://github.com/0xdolan/Zimanyar">Zimanyar</a>,
+            <a href="https://github.com/0xdolan/zimankit">Zimankit</a>,
+            <a href="https://github.com/0xdolan/tajdin">Tajdin</a> and
+            <a href="https://github.com/0xdolan/deq">Deq</a>.
+          </p>
+        </div>
+      </section>
+
+      <section id="self-host" aria-labelledby="self-host-title">
+        <h2 id="self-host-title">Run it yourself</h2>
+        <p>
+          Open Vitae is a static site. Host it anywhere, or run the hardened container (read-only,
+          non-root, no capabilities):
+        </p>
+        <pre><code>git clone https://github.com/0xdolan/open-vitae.git
+cd open-vitae
+docker compose up --build        # http://127.0.0.1:8080</code></pre>
+        <p>
+          Add <code>--profile grammar</code> for a private LanguageTool server. See the
+          <a href="https://github.com/0xdolan/open-vitae/tree/main/docs">documentation</a>.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <img src="logo.svg" alt="" width="28" height="28" />
+      <p>
+        Open Vitae is free software under the
+        <a href="https://github.com/0xdolan/open-vitae/blob/main/LICENSE">GPL-3.0</a>. This page
+        loads nothing from other sites.
+      </p>
+      <p>
+        <a href="app/">Open the app</a> · <a href="https://github.com/0xdolan/open-vitae">GitHub</a>
+      </p>
+    </footer>
+  </body>
+</html>

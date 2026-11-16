@@ -24,17 +24,17 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: Build
+      - name: Build the app
         run: npm run build
         env:
-          # Project pages are served from /<repository-name>/.
-          VITE_BASE: /${{ github.event.repository.name }}/
-      - name: Single-page app fallback
-        run: cp dist/index.html dist/404.html
+          # The landing page is at /<repository-name>/ and the app under /<repository-name>/app/.
+          VITE_BASE: /${{ github.event.repository.name }}/app/
+      - name: Assemble the landing page and the app
+        run: node scripts/build-site.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: dist-site
 
   deploy:
     needs: build
