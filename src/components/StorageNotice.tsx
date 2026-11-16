@@ -33,7 +33,7 @@ export function StorageNotice() {
       aria-label={t('storage.label')}
       className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950"
     >
-      <p className="min-w-0 flex-1">
+      <p className="min-w-0 flex-[1_1_16rem]">
         <strong>{t('storage.title')}</strong> {t('storage.body')}
         {info?.usageBytes ? ` ${t('storage.usage', { size: formatBytes(info.usageBytes) })}` : ''}
       </p>
