@@ -16,7 +16,7 @@ A free, open-source resume builder. No account, no server, no tracking. Built fo
 
 <p align="center"><img src="site/images/editor.webp" alt="The Open Vitae editor: the section list, the profile form and the resume on an A4 page" width="860"></p>
 
-> **Version 1.0.0**, the first release. See what it does in the [changelog](CHANGELOG.md), and what may come next in the [roadmap](docs/06-roadmap.md).
+> **Version 1.1.0**. See what it does in the [changelog](CHANGELOG.md), and what may come next in the [roadmap](docs/06-roadmap.md).
 
 ## Contents
 

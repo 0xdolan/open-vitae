@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-16
+
 ### Added
 
 - An optional page header and footer in **Page setup**, with `{page}` and `{pages}` placeholders for page numbers, start, centre or end alignment and a choice to skip the first page. They show in the preview, printing and page exports, and as real headers and footers in Word.
@@ -70,5 +72,6 @@ The first release of Open Vitae: a private resume builder that runs entirely in 
 - A landing page and the app on GitHub Pages, and GitHub releases with the built app, the AI skill and checksums.
 - Documentation for users, self-hosters and contributors, and a logo that joins the chin chevron of deq with Roj, the sun of the flag of Kurdistan.
 
-[Unreleased]: https://github.com/kanilabs/open-vitae/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/kanilabs/open-vitae/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/kanilabs/open-vitae/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/kanilabs/open-vitae/releases/tag/v1.0.0
