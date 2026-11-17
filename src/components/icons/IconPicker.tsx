@@ -17,7 +17,9 @@ import { cn } from '@/lib/utils';
 import { useT } from '@/i18n';
 import type { IconRef } from '@/schema/resume';
 
-import { ResumeIcon, useIconSet } from './ResumeIcon';
+import { useIconSet } from '@/hooks/useIconSet';
+
+import { ResumeIcon } from './ResumeIcon';
 import { useBackdropDismiss } from '@/hooks/useDismiss';
 
 interface IconPickerProps {
