@@ -12,20 +12,9 @@ import {
 } from 'react';
 
 import { arrayMove } from '@/lib/document-ops';
+import { targetIndex } from '@/lib/sortable';
 import { cn } from '@/lib/utils';
 import { useT } from '@/i18n';
-
-/**
- * Where a dragged item lands: the number of other items whose vertical middle
- * is above the pointer. `middles` are measured when the drag starts.
- */
-export function targetIndex(pointerY: number, middles: readonly number[], from: number): number {
-  let index = 0;
-  middles.forEach((middle, i) => {
-    if (i !== from && middle < pointerY) index += 1;
-  });
-  return index;
-}
 
 interface DragState {
   readonly id: string;

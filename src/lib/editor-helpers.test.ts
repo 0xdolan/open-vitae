@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { targetIndex } from '@/components/ui/sortable';
+import { targetIndex } from '@/lib/sortable';
 import { itemFieldLabels } from '@/config/sections';
 import { parseRoute, routeHref } from '@/hooks/useHashRoute';
 

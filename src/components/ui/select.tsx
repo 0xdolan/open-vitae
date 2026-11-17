@@ -37,7 +37,7 @@ export type SelectItem = SelectOption | SelectGroup;
 const isGroup = (item: SelectItem): item is SelectGroup => 'group' in item;
 
 /** Every option in order, groups flattened. */
-export function flattenItems(items: readonly SelectItem[]): SelectOption[] {
+function flattenItems(items: readonly SelectItem[]): SelectOption[] {
   return items.flatMap((item) => (isGroup(item) ? item.options : [item]));
 }
 

@@ -1,4 +1,5 @@
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button-variants';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { DownloadIcon, PanelIcon, RedoIcon, UndoIcon } from '@/components/ui/icons';
 import { SaveIndicator } from '@/components/workspace/SaveIndicator';
