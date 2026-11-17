@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Sahel and Estedad are bundled in phase 5; until then the stack falls back. */
+  /* Sahel and Estedad are bundled; the system fonts are the fallback while they load. */
   --font-sans: 'Manrope Variable', 'Manrope', 'Sahel', 'Estedad', system-ui, sans-serif;
   --font-rtl: 'Sahel', 'Estedad', 'Manrope Variable', Tahoma, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;

@@ -32,7 +32,7 @@ Previous: [Roadmap](06-roadmap.md) · Next: [The editor](08-editor.md) · [Docs 
 | Preview folded away              | `localStorage` key `open-vitae:preview-collapsed`                                      | `true` or `false`                             |
 | My resumes view                  | `localStorage` key `open-vitae:library-view`                                           | `grid` (default), `list` or `thumbnails`      |
 | Samples hidden                   | `localStorage` key `open-vitae:hide-samples`                                           | `true` or `false`                             |
-| User fonts                       | IndexedDB (phase 5)                                                                    | Never uploaded                                |
+| User fonts                       | Same database, `font:<id>`, the font file and its name                                 | Never uploaded                                |
 
 Nothing is sent to a server. Clearing the site's data in the browser removes all of it. The app tells people this in a banner and offers to ask the browser for **persistent storage**, which stops the browser from evicting the data when disk space runs low.
 
